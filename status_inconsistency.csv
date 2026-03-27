@@ -1,0 +1,13 @@
+bug_report_url,author_reported_status,author_reported_status_source,our_judgement_about_report
+https://jira.mariadb.org/browse/MDEV-35120,confirmed,github_link_from_paper,The developer clarified that the reported behavior is expected and not a bug.
+https://jira.mariadb.org/browse/MDEV-35121,confirmed,github_link_from_paper,The developer explained that the behavior is compliant with the standard and not a bug.
+https://github.com/pingcap/tidb/issues/54810,confirmed,github_link_from_paper,The developer clarified that the issue originates from a bug in another project and is not a bug in their system.
+https://github.com/pingcap/tidb/issues/56552,confirmed,github_link_from_paper,The developer identified the root cause and closed the issue as invalid.
+https://github.com/pingcap/tidb/issues/56553,confirmed,github_link_from_paper,The developer identified the root cause and closed the issue as invalid.
+https://bugs.mysql.com/bug.php?id=116343,confirmed,github_link_from_paper,The developer explained that the behavior is expected and compliant with the standard; the issue was closed as not a bug.
+https://github.com/NethermindEth/nethermind/issues/7629,confirmed,paper_pdf,The developer suggested the correct usage and closed the issue as invalid.
+https://github.com/ethereumjs/ethereumjs-monorepo/issues/3236,confirmed,paper_pdf,The developer identified that the issue was caused by the reporter’s environment and closed it as invalid.
+https://github.com/godbus/dbus/issues/383,accepted,paper_pdf,No responses confirm that the reported issue is a valid bug. One commenter mentions experiencing a similar issue but they are not a project contributor.
+https://bugs.mysql.com/bug.php?id=116425,confirmed,email_from_author,The developer confirmed that the behavior is expected and closed the issue as not a bug.
+https://bugs.mysql.com/bug.php?id=114880,confirmed,email_from_author,"The developer determined that the issue is due to an unsupported query type and closed it as unsupported. "
+https://bugs.mysql.com/bug.php?id=115258,confirmed,email_from_author,The developer explained that the product is not designed for the reported use case and suggested an alternative product; the issue was closed as unsupported.
