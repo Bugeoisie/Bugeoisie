@@ -1,22 +1,34 @@
 This repository contains the anonymized artifact for our ISSTA 2026 submission, “The Discreet Charm of the Bugeoisie.”
 
-# Dataset Column Descriptions
+
+The artifact includes:
+- A curated dataset of bug reports used in the paper
+- **[Update during rebuttal]** Archived HTML snapshots of bug reports
+- **[Update during rebuttal]** A list of bug reports with inconsistencies between paper claims and actual bug report statuses
+
+---
+
+### 1. `bug_report.csv`
+The main dataset used in our study.  
+Contains metadata and annotations for bug reports collected from prior research papers.
+
+#### Column Descriptions
 
 Anonymity note: To reduce the risk of identifying individuals, we omit certain person-related columns entirely from the released `.csv` file. The Markdown may still describe these omitted columns for transparency.
 
-## Columns Omitted from the Released CSV for Anonymity
+#### Columns Omitted from the Released CSV for Anonymity
 
 The following columns were collected during annotation but are **not included** as columns in the released `.csv` file:
 
 - **reporter_username**: Username of the bug reporter on the tracking platform
 - **is_reporter_author_match**: Boolean indicating if the bug reporter is one of the paper authors
 
-## Collection Method
+#### Collection Method
 
 - **Human-annotated**: collected manually by human annotators
 - **GitHub API-derived**: obtained automatically using the GitHub API
 
-## Columns (Manual)
+#### Columns (Manual)
 
 - **bug_report_url**: The direct URL to the original bug report
 - **closure_reason**: The reason given for closing the issue
@@ -31,7 +43,7 @@ The following columns were collected during annotation but are **not included** 
 - **fix_component**: Part of the codebase modified to fix the bug
 - **is_fail_stop**: Boolean indicating if the bug manifests as a fail-stop error
 
-## Columns (GitHub API)
+#### Columns (GitHub API)
 
 - **bug_report_url_redirected**: The final resolved URL of the bug report after following any redirects
 - **bug_report_title**: The title or summary of the bug report as listed on the tracker
@@ -47,3 +59,26 @@ The following columns were collected during annotation but are **not included** 
 - **pr_has_commit_id**: Boolean indicating if the PR is linked to a specific commit ID
 - **pr_review_submission_count**: The number of code review submissions received
 - **pr_review_rounds_estimate**: An estimate of the number of review rounds
+
+---
+
+### [Update during rebuttal] 2. `bug_reports_archive/`
+A collection of downloaded HTML files corresponding to bug reports.
+
+- Each file is a snapshot of the original bug report page
+- Used to ensure reproducibility and prevent data drift
+- File naming convention:
+  ```
+  https_<normalized_url>.html
+  ```
+
+---
+
+### [Update during rebuttal] 3. `status_inconsistency.csv`
+- A list of bug reports with **inconsistencies between paper author claims and actual bug report statuses**.
+
+#### Columns 
+- **bug_report_url**: The direct URL to the original bug report
+- **author_reported_status**: The status of the bug as reported by the paper authors
+- **author_reported_status_source**: The source from which the reported status was obtained
+- **our_judgement_about_report**: Our assessment of how the bug was handled based on available evidence
