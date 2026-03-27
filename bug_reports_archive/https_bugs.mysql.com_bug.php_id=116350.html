@@ -1,0 +1,499 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>MySQL Bugs: #116350: metadata lock fail during sync in mysql NDB cluster</title>
+ <link rel="shortcut icon" href="/favicon.ico" />
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/screen.css" />
+ <link rel="stylesheet" type="text/css" href="/static/chosen/chosen.css" />
+ <script type="text/javascript" src="/static/prototype.js"></script>
+ <!-- script type="text/javascript" src="/static/chosen/event.simulate.js"></script -->
+ <script type="text/javascript" src="/static/scriptaculous.js?load=builder,effects,dragdrop,controls,slider"></script>
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/calendar-blue.css" />
+ <script type="text/javascript" src="/static/calendar.js"></script>
+ <script type="text/javascript" src="/static/calendar-en.js"></script>
+ <script type="text/javascript" src="/static/calendar-setup.js"></script>
+
+                              <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="E6BB6-B37B4-898B7-F97BA-BBCDB",function(){function e(){if(!o){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,i.parentNode.appendChild(e),o=!0}}function t(e){o=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(i.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",i.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"E6BB6-B37B4-898B7-F97BA-BBCDB";var i=document.currentScript||document.getElementsByTagName("script")[0],o=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!o)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),i.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="yuva3zqxgk2m42odsdaa-f-964ebce95-clientnsv4-s.akamaihd.net",i="false"=="true"?2:1,o={"ak.v":"39","ak.cp":"1983232","ak.ai":parseInt("802521",10),"ak.ol":"0","ak.cr":68,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"22c76744","ak.r":50152,"ak.a2":n,"ak.m":"dscx","ak.n":"essl","ak.bpcip":"197.42.13.0","ak.cport":14695,"ak.gh":"2.20.109.4","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1774424256","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==r606+fQorf5CDZFG9sI+k22yeT7dNvZAQLIC6H3OJieBozJq+GqIOu0YA3GgLUiH/1IgTE+NWWhZ1KQ0p2iwLFrC8qB8qchBQEMcokCdFyDWYz96WN1C0APAO3CmPVqJKzhYjsdPY5Lyfnyl1hEbTNDctShqZSTMBX0TLXOHERKO0PjZj85Qv/Fcc4yLtG87BAy6X6Lz+ua2mVwipgTp/6ixiJlYVc+iGBX8LODFjDFsEpFQX9wcoQzFWjV0e//C4LucMl/SQKJz27zHJxnjoEcTdYREt4Bx92Ubhor04MfDJESIPZM0atgyMDfcOSYtfrnbG9iQrW9xCMivjf53saQ9bC6lRsZhteYKj6ulpQjCw54G+ivW3WkJdDReO0Yec3QtDlK9v7IDIc7+1zzpC2eoOpJb/k2ej/atQhRj1aU=","ak.pv":"20","ak.dpoabenc":"","ak.tf":i};if(""!==t)o["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))o["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(o)},rv:function(){var e=["ak.bpcip","ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:o,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+
+<body class="dev bugs">
+<div id="header">
+ <div id="logo"><a href="http://dev.mysql.com/"><img src="/images/mysql_100x52-64.gif" width="100" height="52" border="0" alt="MySQL" /></a></div>
+ <div id="searchandlogin">
+  <div id="searchbox">
+   <form action="/search.php" method="get">
+    <input class="frm" type="text" name="search_for" size="20" maxlength="255" />
+    <input class="submit2" type="submit" value="Search" />
+   </form>
+  </div>
+  <div id="login">
+
+   <p class="s"><a href="https://dev.mysql.com/auth/login/?dest=http%3A%2F%2Fbugs.mysql.com%2Fbug.php%3Fid%3D116350">Login</a> /
+   <a href="https://dev.mysql.com/auth/register/">Register</a></p>
+  </div>
+ </div>
+</div>
+<div id="nav">
+ <ul>
+  <li><a href="http://dev.mysql.com/">Developer Zone</a></li>
+  <li><a href="/">Bugs Home</a></li>
+   <li><a href="/report.php">Report a bug</a></li>
+  <li><a href="/search.php">Advanced search</a></li>
+  <li><a href="/search-saved.php">Saved searches</a></li>
+  <li><a href="/tags.php">Tags</a></li>
+ </ul>
+</div>
+
+<br clear="both" />
+
+<div id="content">
+<table id="bugheader" style="width: 100%">
+ <tr id="title">
+  <th>Bug&nbsp;#116350</th>
+  <td colspan="3">metadata lock fail during sync in mysql NDB cluster</td>
+ </tr>
+ <tr>
+  <th>Submitted:</th> <td>14 Oct 2024 0:36</td>
+  <th>Modified:</th> <td>14 Oct 2024 5:25</td>
+ </tr>
+ <tr>
+  <th>Reporter:</th>
+  <td>
+<a href="/search.php?cmd=display&status=All&severity=all&reporter=17732354">CunDi Fang</a>
+  </td>
+  <th>Email Updates:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/sub.php?action=Subscribe&id=116350" />
+    <input type="submit" name="action" value="Subscribe" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Status:</th>
+  <td>
+  Duplicate  </td>
+  <th>Impact on me:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/impact.php?action=&id=116350" />
+    None&nbsp;<input type="submit" name="action" value="Affects Me" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Category:</th><td>MySQL Cluster: Cluster/J</td>
+  <th>Severity:</th><td>S3 (Non-critical)</td>
+ </tr>
+ <tr>
+  <th>Version:</th><td>8.0.35-cluster MySQL Cluster Community S</td>
+  <th>OS:</th><td>Any</td>
+ </tr>
+ <tr>
+  <th>Assigned to:</th>
+  <td>
+<a href="/search.php?cmd=display&status=Under+Development&assign=8140796">Assigned Account</a>
+  </td>
+  <th>CPU Architecture:</th><td>Any</td>
+ </tr>
+</table>
+
+<ul id="controls">
+<li class=" active">View</li>
+<li class=""><a href="/bug.php?id=116350&amp;edit=3">Add Comment</a></li>
+<li class=""><a href="/bug.php?id=116350&amp;files=1">Files</a></li>
+<li class=""><a href="/bug.php?id=116350&amp;edit=1">Developer</a></li>
+<li class=""><a href="/bug.php?id=116350&amp;edit=2">Edit Submission</a></li>
+<li class=""><a href="/bug.php?id=116350&amp;log=1">View Progress Log</a></li>
+<li class=""><a href="/bug.php?id=116350&amp;contribs=1">Contributions</a></li>
+</ul>
+<br clear="all" />
+ <div id="cmain"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 0:36]
+   CunDi Fang        </div>
+  <pre class="note"><strong>Description:</strong>
+I was performing operations in a data table with some rather complex dependencies, and then it became clear that the synchronization process of the metadata was faulty, resulting in frequent disconnections and links between the two data nodes, and ultimately the entire cluster crashed.
+
+<strong>How to repeat:</strong>
+I was given some more complex data on a cluster of 4 data nodes, i.e. containing some inter-table dependencies, and some column constraints. Then a problem occurred when doing a transaction interaction.
+
+ndb_2_out.log:
+```
+2024-10-08 09:55:42 [ndbd] INFO     -- DROP_TAB_REQ: tab: 120, tabLcpStatus: 3
+2024-10-08 09:55:43 [ndbd] INFO     -- DROP_TAB_REQ: tab: 135, tabLcpStatus: 3
+2024-10-08 09:55:43 [ndbd] INFO     -- DROP_TAB_REQ: tab: 136, tabLcpStatus: 3
+2024-10-08 09:55:43 [ndbd] INFO     -- DROP_TAB_REQ: tab: 134, tabLcpStatus: 3
+2024-10-08 09:55:43 [ndbd] INFO     -- DROP_TAB_REQ: tab: 137, tabLcpStatus: 3
+2024-10-08 09:55:43 [ndbd] INFO     -- DROP_TAB_REQ: tab: 126, tabLcpStatus: 3
+2024-10-08 09:56:27 [ndbd] INFO     -- Node 5 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 09:56:27 [ndbd] INFO     -- findNeighbours from: 6085 old (left: 5 right: 3) new (4 3)
+2024-10-08 09:56:27 [ndbd] ALERT    -- Arbitration check won - node group majority
+2024-10-08 09:56:27 [ndbd] INFO     -- President restarts arbitration thread [state=6]
+2024-10-08 09:56:27 [ndbd] INFO     -- NR Status: node=5,OLD=Initial state,NEW=Node failed, fail handling ongoing
+2024-10-08 09:56:27 [ndbd] INFO     -- DBTC 0: Started failure handling for node 5
+2024-10-08 09:56:27 [ndbd] INFO     -- DBTC 0: Starting take over of node 5
+2024-10-08 09:56:27 [ndbd] INFO     -- DBTC 0: Step NF_BLOCK_HANDLE completed, failure handling for node 5 waiting for NF_TAKEOVER, NF_CHECK_SCAN, NF_CHECK_TRANSACTION.
+2024-10-08 09:56:27 [ndbd] INFO     -- DBTC 0: GCP completion 5782060/10 waiting for node failure handling (1) to complete. Seizing record for GCP.
+2024-10-08 09:56:27 [ndbd] INFO     -- DBTC 0: Step NF_CHECK_SCAN completed, failure handling for node 5 waiting for NF_TAKEOVER, NF_CHECK_TRANSACTION.
+2024-10-08 09:56:27 [ndbd] INFO     -- DBTC 0: Step NF_CHECK_TRANSACTION completed, failure handling for node 5 waiting for NF_TAKEOVER.
+2024-10-08 09:56:27 [ndbd] INFO     -- DBTC 0: Completed take over of failed node 5
+2024-10-08 09:56:27 [ndbd] INFO     -- DBTC 0: Step NF_TAKEOVER completed, failure handling for node 5 complete.
+2024-10-08 09:56:27 [ndbd] INFO     -- DBTC 0: Completing GCP 5782060/10 on node failure takeover completion.
+2024-10-08 09:56:28 [ndbd] INFO     -- Adjusting disk write speed bounds due to : Node restart ongoing
+2024-10-08 09:56:28 [ndbd] INFO     -- NR Status: node=5,OLD=Node failed, fail handling ongoing,NEW=Node failure handling complete
+2024-10-08 09:56:28 [ndbd] INFO     -- Node 5 has completed node fail handling
+2024-10-08 09:56:32 [ndbd] INFO     -- Alloc node id for node 5 succeeded
+2024-10-08 09:56:32 [ndbd] INFO     -- NR Status: node=5,OLD=Node failure handling complete,NEW=Allocated node id
+2024-10-08 09:56:33 [ndbd] INFO     -- findNeighbours from: 2921 old (left: 4 right: 3) new (5 3)
+2024-10-08 09:56:33 [ndbd] INFO     -- NR Status: node=5,OLD=Allocated node id,NEW=Included in heartbeat protocol
+2024-10-08 09:56:33 [ndbd] INFO     -- Start node: 5 using node restart
+2024-10-08 09:56:33 [ndbd] INFO     -- NR Status: node=5,OLD=Included in heartbeat protocol,NEW=NDBCNTR master permitted us
+2024-10-08 09:56:33 [ndbd] INFO     -- NR Status: node=5,OLD=NDBCNTR master permitted us,NEW=All nodes permitted us
+2024-10-08 09:56:33 [ndbd] INFO     -- NR Status: node=5,OLD=All nodes permitted us,NEW=Wait for LCP complete to copy meta data
+2024-10-08 09:56:33 [ndbd] INFO     -- NR Status: node=5,OLD=Wait for LCP complete to copy meta data,NEW=Copy meta data to start node
+2024-10-08 09:56:37 [ndbd] INFO     -- NR Status: node=5,OLD=Copy meta data to start node,NEW=Include node in LCP/GCP protocols
+2024-10-08 09:56:38 [ndbd] INFO     -- NR Status: node=5,OLD=Include node in LCP/GCP protocols,NEW=Restore fragments ongoing
+2024-10-08 09:56:38 [ndbd] INFO     -- NR Status: node=5,OLD=Restore fragments ongoing,NEW=Undo Disk data ongoing
+2024-10-08 09:56:38 [ndbd] INFO     -- NR Status: node=5,OLD=Undo Disk data ongoing,NEW=Execute REDO logs ongoing
+2024-10-08 09:56:38 [ndbd] INFO     -- NR Status: node=5,OLD=Execute REDO logs ongoing,NEW=Build indexes ongoing
+2024-10-08 09:56:38 [ndbd] INFO     -- NR Status: node=5,OLD=Build indexes ongoing,NEW=Synchronize start node with live nodes
+2024-10-08 09:56:40 [ndbd] INFO     -- NR Status: node=5,OLD=Synchronize start node with live nodes,NEW=Wait LCP to ensure durability
+2024-10-08 09:56:41 [ndbd] INFO     -- prepare to takeover bucket: 1
+2024-10-08 09:56:46 [ndbd] INFO     -- 5782070/0 (5782069/4294967295) switchover complete bucket 1 state: 200
+2024-10-08 09:56:46 [ndbd] INFO     -- shutdown handover takeover
+2024-10-08 09:56:47 [ndbd] INFO     -- Node 4 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 09:56:47 [ndbd] INFO     -- findNeighbours from: 6085 old (left: 5 right: 3) new (5 3)
+2024-10-08 09:56:48 [ndbd] INFO     -- Node 5 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 09:56:48 [ndbd] INFO     -- findNeighbours from: 6085 old (left: 5 right: 3) new (3 3)
+2024-10-08 09:56:48 [ndbd] ALERT    -- Arbitration check won - all node groups and more than 1/2 nodes left
+2024-10-08 09:56:48 [ndbd] INFO     -- President restarts arbitration thread [state=6]
+2024-10-08 09:56:48 [ndbd] INFO     -- NR Status: node=4,OLD=Initial state,NEW=Node failed, fail handling ongoing
+2024-10-08 09:56:48 [ndbd] INFO     -- NR Status: node=5,OLD=Wait LCP to ensure durability,NEW=Node failed, fail handling ongoing
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Started failure handling for node 4
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Starting take over of node 4
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Step NF_BLOCK_HANDLE completed, failure handling for node 4 waiting for NF_TAKEOVER, NF_CHECK_SCAN, NF_CHECK_TRANSACTION.
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Started failure handling for node 5
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Inserting failed node 5 into takeover queue, length 1
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Step NF_BLOCK_HANDLE completed, failure handling for node 5 waiting for NF_TAKEOVER, NF_CHECK_SCAN, NF_CHECK_TRANSACTION.
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: GCP completion 5782070/10 waiting for node failure handling (2) to complete. Seizing record for GCP.
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Step NF_CHECK_SCAN completed, failure handling for node 4 waiting for NF_TAKEOVER, NF_CHECK_TRANSACTION.
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Step NF_CHECK_SCAN completed, failure handling for node 5 waiting for NF_TAKEOVER, NF_CHECK_TRANSACTION.
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Step NF_CHECK_TRANSACTION completed, failure handling for node 4 waiting for NF_TAKEOVER.
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Step NF_CHECK_TRANSACTION completed, failure handling for node 5 waiting for NF_TAKEOVER.
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Completed take over of failed node 4
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Starting next DBTC node take over for failed node 5, 0 failed nodes remaining in takeover queue
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Step NF_TAKEOVER completed, failure handling for node 4 complete.
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Completed take over of failed node 5
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Step NF_TAKEOVER completed, failure handling for node 5 complete.
+2024-10-08 09:56:48 [ndbd] INFO     -- DBTC 0: Completing GCP 5782070/10 on node failure takeover completion.
+2024-10-08 09:56:48 [ndbd] INFO     -- Adjusting disk write speed bounds due to : Node restart finished
+2024-10-08 09:56:50 [ndbd] INFO     -- NR Status: node=4,OLD=Node failed, fail handling ongoing,NEW=Node failure handling complete
+2024-10-08 09:56:50 [ndbd] INFO     -- Node 4 has completed node fail handling
+2024-10-08 09:56:50 [ndbd] INFO     -- NR Status: node=5,OLD=Node failed, fail handling ongoing,NEW=Node failure handling complete
+2024-10-08 09:56:50 [ndbd] INFO     -- Node 5 has completed node fail handling
+2024-10-08 09:56:51 [ndbd] INFO     -- Alloc node id for node 4 succeeded
+2024-10-08 09:56:51 [ndbd] INFO     -- NR Status: node=4,OLD=Node failure handling complete,NEW=Allocated node id
+2024-10-08 09:56:52 [ndbd] INFO     -- findNeighbours from: 2921 old (left: 3 right: 3) new (4 3)
+2024-10-08 09:56:52 [ndbd] INFO     -- NR Status: node=4,OLD=Allocated node id,NEW=Included in heartbeat protocol
+2024-10-08 09:56:52 [ndbd] INFO     -- Start node: 4 using node restart
+2024-10-08 09:56:52 [ndbd] INFO     -- NR Status: node=4,OLD=Included in heartbeat protocol,NEW=NDBCNTR master permitted us
+2024-10-08 09:56:52 [ndbd] INFO     -- NR Status: node=4,OLD=NDBCNTR master permitted us,NEW=All nodes permitted us
+2024-10-08 09:56:52 [ndbd] INFO     -- NR Status: node=4,OLD=All nodes permitted us,NEW=Wait for LCP complete to copy meta data
+2024-10-08 09:56:52 [ndbd] INFO     -- NR Status: node=4,OLD=Wait for LCP complete to copy meta data,NEW=Copy meta data to start node
+2024-10-08 09:56:53 [ndbd] INFO     -- Adjusting disk write speed bounds due to : Node restart ongoing
+2024-10-08 09:56:56 [ndbd] INFO     -- NR Status: node=4,OLD=Copy meta data to start node,NEW=Include node in LCP/GCP protocols
+2024-10-08 09:56:56 [ndbd] INFO     -- NR Status: node=4,OLD=Include node in LCP/GCP protocols,NEW=Restore fragments ongoing
+2024-10-08 09:56:56 [ndbd] INFO     -- NR Status: node=4,OLD=Restore fragments ongoing,NEW=Undo Disk data ongoing
+2024-10-08 09:56:56 [ndbd] INFO     -- NR Status: node=4,OLD=Undo Disk data ongoing,NEW=Execute REDO logs ongoing
+2024-10-08 09:56:56 [ndbd] INFO     -- NR Status: node=4,OLD=Execute REDO logs ongoing,NEW=Build indexes ongoing
+2024-10-08 09:56:56 [ndbd] INFO     -- NR Status: node=4,OLD=Build indexes ongoing,NEW=Synchronize start node with live nodes
+2024-10-08 09:56:58 [ndbd] INFO     -- NR Status: node=4,OLD=Synchronize start node with live nodes,NEW=Wait LCP to ensure durability
+2024-10-08 09:57:06 [ndbd] INFO     -- Alloc node id for node 5 succeeded
+2024-10-08 09:57:06 [ndbd] INFO     -- NR Status: node=5,OLD=Node failure handling complete,NEW=Allocated node id
+2024-10-08 09:57:07 [ndbd] INFO     -- findNeighbours from: 2921 old (left: 4 right: 3) new (5 3)
+2024-10-08 09:57:07 [ndbd] INFO     -- NR Status: node=5,OLD=Allocated node id,NEW=Included in heartbeat protocol
+2024-10-08 09:57:07 [ndbd] INFO     -- Start node: 5 using node restart (node not restorable on its own)
+2024-10-08 09:57:07 [ndbd] INFO     -- NR Status: node=5,OLD=Included in heartbeat protocol,NEW=NDBCNTR master permitted us
+2024-10-08 09:57:07 [ndbd] INFO     -- NR Status: node=5,OLD=NDBCNTR master permitted us,NEW=All nodes permitted us
+2024-10-08 09:57:07 [ndbd] INFO     -- NR Status: node=5,OLD=All nodes permitted us,NEW=Wait for LCP complete to copy meta data
+2024-10-08 09:57:07 [ndbd] INFO     -- NR Status: node=5,OLD=Wait for LCP complete to copy meta data,NEW=Copy meta data to start node
+2024-10-08 09:57:08 [ndbd] INFO     -- NR Status: node=4,OLD=Wait LCP to ensure durability,NEW=Wait handover of subscriptions
+2024-10-08 09:57:08 [ndbd] INFO     -- granting SumaStartMe dict lock to 4
+2024-10-08 09:57:08 [ndbd] INFO     -- clearing SumaStartMe dict lock for 4
+2024-10-08 09:57:10 [ndbd] INFO     -- NR Status: node=5,OLD=Copy meta data to start node,NEW=Include node in LCP/GCP protocols
+2024-10-08 09:57:10 [ndbd] INFO     -- NR Status: node=5,OLD=Include node in LCP/GCP protocols,NEW=Restore fragments ongoing
+2024-10-08 09:57:11 [ndbd] INFO     -- NR Status: node=5,OLD=Restore fragments ongoing,NEW=Undo Disk data ongoing
+2024-10-08 09:57:11 [ndbd] INFO     -- NR Status: node=5,OLD=Undo Disk data ongoing,NEW=Execute REDO logs ongoing
+2024-10-08 09:57:11 [ndbd] INFO     -- NR Status: node=5,OLD=Execute REDO logs ongoing,NEW=Build indexes ongoing
+2024-10-08 09:57:11 [ndbd] INFO     -- NR Status: node=5,OLD=Build indexes ongoing,NEW=Synchronize start node with live nodes
+2024-10-08 09:57:12 [ndbd] INFO     -- granting SumaHandover dict lock to 4
+2024-10-08 09:57:12 [ndbd] INFO     -- prepare to handover bucket: 1
+2024-10-08 09:57:13 [ndbd] INFO     -- NR Status: node=5,OLD=Synchronize start node with live nodes,NEW=Wait LCP to ensure durability
+2024-10-08 09:57:17 [ndbd] INFO     -- 5782085/0 (5782084/4294967295) switchover complete bucket 1 state: 2
+2024-10-08 09:57:17 [ndbd] INFO     -- handover
+2024-10-08 09:57:17 [ndbd] INFO     -- clearing SumaHandover dict lock for 4
+2024-10-08 09:57:17 [ndbd] INFO     -- NR Status: node=4,OLD=Wait handover of subscriptions,NEW=Restart completed
+2024-10-08 09:57:17 [ndbd] INFO     -- Node 4 has completed its restart
+2024-10-08 09:57:21 [ndbd] INFO     -- NR Status: node=5,OLD=Wait LCP to ensure durability,NEW=Wait handover of subscriptions
+2024-10-08 09:57:21 [ndbd] INFO     -- granting SumaStartMe dict lock to 5
+2024-10-08 09:57:21 [ndbd] INFO     -- clearing SumaStartMe dict lock for 5
+2024-10-08 09:57:23 [ndbd] INFO     -- granting SumaHandover dict lock to 5
+2024-10-08 09:57:29 [ndbd] INFO     -- clearing SumaHandover dict lock for 5
+2024-10-08 09:57:29 [ndbd] INFO     -- NR Status: node=5,OLD=Wait handover of subscriptions,NEW=Restart completed
+2024-10-08 09:57:29 [ndbd] INFO     -- Node 5 has completed its restart
+2024-10-08 09:57:30 [ndbd] INFO     -- Adjusting disk write speed bounds due to : Node restart finished
+2024-10-08 09:57:35 [ndbd] INFO     -- Adjusting disk write speed bounds due to : Backup started
+2024-10-08 09:57:35 [ndbd] INFO     -- Backup log buffer report : size 16777216 bytes, hwm 52 bytes (0 pct)
+2024-10-08 09:57:36 [ndbd] INFO     -- Backup log buffer report : size 16777216 bytes, hwm 52 bytes (0 pct)
+2024-10-08 09:57:36 [ndbd] INFO     -- Adjusting disk write speed bounds due to : Backup completed
+```
+
+I found that this may be the root cause:
+2024-10-08 09:57:07 [ndbd] INFO     -- NR Status: node=5,OLD=Included in heartbeat protocol,NEW=NDBCNTR master permitted us
+2024-10-08 09:57:07 [ndbd] INFO     -- NR Status: node=5,OLD=NDBCNTR master permitted us,NEW=All nodes permitted us
+2024-10-08 09:57:07 [ndbd] INFO     -- NR Status: node=5,OLD=All nodes permitted us,NEW=Wait for LCP complete to copy meta data
+2024-10-08 09:57:07 [ndbd] INFO     -- NR Status: node=5,OLD=Wait for LCP complete to copy meta data,NEW=Copy meta data to start node
+2024-10-08 09:57:08 [ndbd] INFO     -- NR Status: node=4,OLD=Wait LCP to ensure durability,NEW=Wait handover of subscriptions
+
+At the same time of ndb4_out.log:
+```
+2024-10-08 09:56:57 [ndbd] INFO     -- Bring Database On-line Completed
+2024-10-08 09:56:57 [ndbd] INFO     -- Starting REDO logging
+2024-10-08 09:56:58 [ndbd] INFO     -- Make On-line Database recoverable by waiting for LCP Starting, all parallel threads have now ceased their activity and we have a single wait state here
+2024-10-08 09:57:07 [ndbd] INFO     -- findNeighbours from: 2921 old (left: 3 right: 2) new (3 5)
+2024-10-08 09:57:08 [ndbd] INFO     -- Make On-line Database recoverable by waiting for LCP Completed, LCP id = 398
+2024-10-08 09:57:08 [ndbd] INFO     -- NDB start phase 5 completed
+2024-10-08 09:57:08 [ndbd] INFO     -- Start NDB start phase 6
+2024-10-08 09:57:08 [ndbd] INFO     -- NDB start phase 6 completed
+2024-10-08 09:57:08 [ndbd] INFO     -- Start phase 5 completed
+2024-10-08 09:57:08 [ndbd] INFO     -- Phase 5 restored local fragments in its first NDB phase, then copied metadata to our node, and then actual data was copied over to our node, and finally we waited for a local checkpoint to complete
+2024-10-08 09:57:08 [ndbd] INFO     -- Start phase 6 completed
+2024-10-08 09:57:08 [ndbd] INFO     -- Phase 6 updated blocks about that we&#039;ve now reached the started state.
+2024-10-08 09:57:08 [ndbd] INFO     -- Start phase 7 completed
+2024-10-08 09:57:08 [ndbd] INFO     -- Phase 7 mainly activated the asynchronous change events process, and some other background processes
+2024-10-08 09:57:08 [ndbd] INFO     -- Start NDB start phase 7
+2024-10-08 09:57:08 [ndbd] INFO     -- Foreign Key enabling Starting
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Checking FK trigger ids
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 111 child trigger id to 84 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 77 child trigger id to 94 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 62 child trigger id to 92 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 32 parent trigger id to 59 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 62 parent trigger id to 91 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 91 parent trigger id to 97 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 111 parent trigger id to 83 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 133 parent trigger id to 114 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 82 parent trigger id to 95 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 104 child trigger id to 75 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 77 parent trigger id to 93 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 133 child trigger id to 115 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 125 child trigger id to 118 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 55 child trigger id to 90 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 101 child trigger id to 72 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 32 child trigger id to 62 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 82 child trigger id to 96 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 101 parent trigger id to 71 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 125 parent trigger id to 117 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 55 parent trigger id to 89 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 104 parent trigger id to 74 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Setting FK 91 child trigger id to 98 (4294967040)
+2024-10-08 09:57:08 [ndbd] INFO     -- DICT : Checking FK trigger ids complete
+2024-10-08 09:57:08 [ndbd] INFO     -- Allocate event buffering page chunk in SUMA, 16 pages, first page ref = 7154
+2024-10-08 09:57:09 [ndbd] INFO     -- Foreign key enabling Completed
+2024-10-08 09:57:09 [ndbd] INFO     -- NDB start phase 7 completed
+2024-10-08 09:57:09 [ndbd] INFO     -- Start phase 8 completed
+2024-10-08 09:57:11 [ndbd] INFO     -- Restart complete, updated local sysfile
+2024-10-08 09:57:11 [ndbd] INFO     -- Start phase 9 completed
+2024-10-08 09:57:11 [ndbd] INFO     -- Phase 9 enabled APIs to start connecting
+2024-10-08 09:57:11 [ndbd] INFO     -- Start phase 50 completed
+2024-10-08 09:57:11 [ndbd] INFO     -- Suma: handover waiting up to 120000ms for all subscribers to connect
+2024-10-08 09:57:11 [ndbd] INFO     -- Start phase 101 waiting 120s for absent subscribers to connect : 6,7,8,9
+2024-10-08 09:57:12 [ndbd] INFO     -- Suma: handover from node 2 gci: 5782085 buckets: 00000002 (2)
+```
+
+At the same time of ndb4_out.log:
+```
+2024-10-08 09:57:06 [ndbd] INFO     -- LCPFragWatchdog : WarnElapsed : 60000(ms) MaxElapsed 180000(ms) : MaxGcpWaitLimit 0(ms) period millis : 1000
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 7, name = DBTUX
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 8, name = DBDICT
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 9, name = DBDIH
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 10, name = NDBCNTR
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 11, name = QMGR
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 12, name = TRIX
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 13, name = BACKUP
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 14, name = DBUTIL
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 15, name = SUMA
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 16, name = TSMAN
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 17, name = LGMAN
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 18, name = PGMAN
+2024-10-08 09:57:06 [ndbd] INFO     -- pgman: page buffer entries = 10
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 19, name = RESTORE
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 20, name = DBSPJ
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 21, name = THRMAN
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 22, name = DBQLQH
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 23, name = DBQACC
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 24, name = DBQTUP
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 25, name = QBACKUP
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 26, name = DBQTUX
+2024-10-08 09:57:06 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 27, name = QRESTORE
+2024-10-08 09:57:06 [ndbd] INFO     -- READ_CONFIG_REQ phase completed, this phase is used to read configuration and to calculate various sizes and allocate almost all memory needed by the data node in its lifetime
+2024-10-08 09:57:06 [ndbd] INFO     -- Not initial start
+2024-10-08 09:57:06 [ndbd] INFO     -- Local sysfile: Node not restorable on its own, gci: 5782069, version: 70603
+2024-10-08 09:57:06 [ndbd] INFO     -- Start phase 0 completed
+2024-10-08 09:57:06 [ndbd] INFO     -- Phase 0 has made some file system initialisations
+2024-10-08 09:57:06 [ndbd] INFO     -- We are running with 0 LDM workers and 4 REDO log parts. This means that we can avoid using a mutex to access REDO log parts
+2024-10-08 09:57:06 [ndbd] INFO     -- Watchdog KillSwitch off.
+2024-10-08 09:57:06 [ndbd] INFO     -- Starting QMGR phase 1
+2024-10-08 09:57:06 [ndbd] INFO     -- Starting with m_restart_seq set to 30
+2024-10-08 09:57:06 [ndbd] INFO     -- Node not restorable on its own, now starting the Node Inclusion Protocol
+2024-10-08 09:57:07 [ndbd] INFO     -- findNeighbours from: 3004 old (left: 65535 right: 65535) new (4 2)
+2024-10-08 09:57:07 [ndbd] INFO     -- Include node protocol completed, phase 1 in QMGR completed
+2024-10-08 09:57:07 [ndbd] INFO     -- Start phase 1 completed
+2024-10-08 09:57:07 [ndbd] INFO     -- Phase 1 initialised some variables and included node in cluster, locked memory if configured to do so
+2024-10-08 09:57:07 [ndbd] INFO     -- Starting with m_restart_seq set to 30
+2024-10-08 09:57:07 [ndbd] INFO     -- Asking master node to accept our start (nodeId = 2 is master), GCI = 5782069
+2024-10-08 09:57:07 [ndbd] INFO     -- NDBCNTR master accepted us into cluster, start NDB start phase 1
+2024-10-08 09:57:07 [ndbd] INFO     -- We are performing a node restart
+2024-10-08 09:57:07 [ndbd] INFO     -- LDM(0): Started LDM restart phase 1 (read REDO log page headers to init REDO log data)
+2024-10-08 09:57:07 [ndbd] INFO     -- Schema file initialisation Starting
+2024-10-08 09:57:07 [ndbd] INFO     -- Schema file initialisation Completed
+2024-10-08 09:57:07 [ndbd] INFO     -- NDB start phase 1 completed
+2024-10-08 09:57:07 [ndbd] INFO     -- Start phase 2 completed
+2024-10-08 09:57:07 [ndbd] INFO     -- Phase 2 did more initialisations, master accepted our start, we started REDO log initialisations
+2024-10-08 09:57:07 [ndbd] INFO     -- Start NDB start phase 2
+2024-10-08 09:57:07 [ndbd] INFO     -- Request permission to start our node from master Starting
+2024-10-08 09:57:07 [ndbd] INFO     -- Request permission to start our node from master Completed
+2024-10-08 09:57:07 [ndbd] INFO     -- NDB start phase 2 completed
+2024-10-08 09:57:07 [ndbd] INFO     -- Start phase 3 completed
+2024-10-08 09:57:07 [ndbd] INFO     -- Phase 3 locked the data dictionary, performed local connection setups, we  asked for permission to start our node
+2024-10-08 09:57:07 [ndbd] INFO     -- Start NDB start phase 3
+2024-10-08 09:57:07 [ndbd] INFO     -- NDB start phase 3 completed
+2024-10-08 09:57:07 [ndbd] INFO     -- Start phase 4 completed
+2024-10-08 09:57:07 [ndbd] INFO     -- Phase 4 continued preparations of the REDO log
+2024-10-08 09:57:07 [ndbd] INFO     -- Start NDB start phase 4
+2024-10-08 09:57:07 [ndbd] INFO     -- Request copying of distribution and dictionary information from master Starting
+2024-10-08 09:57:07 [ndbd] INFO     -- Completed setting up multiple transporters to nodes in the same node group
+2024-10-08 09:57:07 [ndbd] INFO     -- c_lcpState.m_participatingLQH bitmap= 000000000000000000000000000000000000001c
+2024-10-08 09:57:07 [ndbd] INFO     -- c_lcpState.m_participatingDIH bitmap= 000000000000000000000000000000000000001c
+2024-10-08 09:57:07 [ndbd] INFO     -- LDM(0):Ready to start execute REDO log phase, prepare REDO log phase completed
+2024-10-08 09:57:07 [ndbd] INFO     -- Receive arbitrator node 1 [ticket=74870001340c1384]
+2024-10-08 09:57:07 [ndbd] INFO     -- Our node now in LCP execution after pausing LCP
+2024-10-08 09:57:07 [ndbd] INFO     -- LCP_COMPLETE_REP_Counter_LQH bitmap= [SignalCounter: m_count=2 000000000000000000000000000000000000000c]
+2024-10-08 09:57:07 [ndbd] INFO     -- Copying of dictionary information from master Starting
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 1
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 32
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 55
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 62
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 77
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 82
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 91
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 101
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 104
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 111
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 125
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 133
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 2
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 3
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 4
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 5
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 6
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 7
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 8
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 10
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 11
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 13
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 19
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 24
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 30
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 33
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 41
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 49
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 56
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 63
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 65
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 78
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 80
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 83
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 92
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 99
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 102
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 105
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 112
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 120
+2024-10-08 09:57:07 [ndbd] INFO     -- Restart recreating table with id = 127
+2024-10-08 09:57:10 [ndbd] INFO     -- Copying of dictionary information from master Completed
+2024-10-08 09:57:10 [ndbd] INFO     -- Request copying of distribution and dictionary information from master Completed
+2024-10-08 09:57:10 [ndbd] INFO     -- NDB start phase 4 completed
+2024-10-08 09:57:10 [ndbd] INFO     -- Start NDB start phase 5 (only to DBDIH)
+2024-10-08 09:57:10 [ndbd] INFO     -- Restore Database Off-line Starting
+2024-10-08 09:57:10 [ndbd] INFO     -- All start fragments sent, requesting LDM to restore all fragments and to execute the REDO log to bring the database to an off-line but consistent state
+2024-10-08 09:57:10 [ndbd] INFO     -- LDM instance 0: Restored T2F1 LCP 25 rows, 25 row operations, 1 millis, 25000 row operations/sec)
+2024-10-08 09:57:10 [ndbd] INFO     -- LDM instance 0: Restored T2F3 LCP 22 rows, 22 row operations, 1 millis, 22000 row operations/sec)
+2024-10-08 09:57:10 [ndbd] INFO     -- LDM instance 0: Restored T3F1 LCP 6 rows, 6 row operations, 1 millis, 6000 row operations/sec)
+2024-10-08 09:57:10 [ndbd] INFO     -- LDM instance 0: Restored T3F3 LCP 4 rows, 4 row operations, 1 millis, 4000 row operations/sec)
+```
+
+<strong>Suggested fix:</strong>
+Suggest checking the synchronization mechanism of the metadata, there seems to be a problem there.</pre>
+ </div>
+ <div id="c547668"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 5:25]
+   MySQL Verification Team        </div>
+  <pre class="note">This is a duplicate of <a href="https://bugs.mysql.com/bug.php?id=116349">Bug #116349</a>, please use <a href="https://bugs.mysql.com/bug.php?id=116349">Bug #116349</a> to write in more details what exactly you did to get the cluster to this state</pre>
+ </div>
+</div>
+<script src="/static/chosen/chosen.proto.js" type="text/javascript"></script>
+<script src="/static/misc.js" type="text/javascript"></script>
+<script type="text/javascript">
+  document.observe('dom:loaded', function(evt) {
+    var config = {
+      '.chzn-select'           : {},
+      '.chzn-select-excl'      : {},
+      '.chzn-select-max1'      : {max_selected_options:1},
+      '.chzn-select-deselect'  : {allow_single_deselect:true},
+      '.chzn-select-no-single' : {disable_search_threshold:10},
+      '.chzn-select-no-results': {no_results_text: "Oops, nothing found!"},
+      '.chzn-select-width'     : {width: "95%"}
+    }
+    var results = [];
+    for (var selector in config) {
+      var elements = $$(selector);
+      for (var i = 0; i < elements.length; i++) {
+        results.push(new Chosen(elements[i],config[selector]));
+      }
+    }
+
+    // initialize (store initial state) selects with exclusive options
+    var elements = $$('.chzn-select-excl');
+    for (var i = 0; i < elements.length; i++) {
+      my_init_select(elements[i]);
+    }
+
+    return results;
+  });
+</script>
+<div id="footer">
+ <ul style="float: right; list-style: none">
+  <li><a href="http://www.mysql.com/about/legal/">Legal Policies</a></li>
+  <li><a href="http://www.oracle.com/us/legal/privacy/index.htm">Your Privacy Rights</a></li>
+  <li><a href="http://www.oracle.com/html/terms.html">Terms of Use</a></li>
+  <li><a href="https://www.mysql.com/about/contact/">Contact Us</a></li>
+ </ul>
+ <br class="clear" />
+ <p>Portions of this website are <a href="http://www.php.net/copyright.php">copyright &copy; 2001, 2002 The PHP Group</a></p>
+ <p style="float: right">
+Page generated in 0.047 sec. using MySQL 8.4.5-u11-cloud </p>
+ <br class="clear" />
+ <br style="line-height: 8px;" />
+ <p style="float: left">Timestamp references displayed by the system are UTC.<br/>
+  Content reproduced on this site is the property of the
+  respective copyright holders.<br />It is not reviewed in advance
+  by Oracle and does not necessarily represent the opinion of
+  Oracle or any other party.</p>
+ <p style="float: right"><a href="http://www.oracle.com/"><img src="/images/logo-oracle-red-91x22.gif" alt="Oracle" width="91" height="22" /></a>&nbsp;&nbsp;&copy; 2026, Oracle Corporation and/or its affiliates</p>
+</div>
+<!-- script type="text/javascript" src="http://www.mysql.com/common/js/s_code_remote.js"></script -->
+</body>
+</html>

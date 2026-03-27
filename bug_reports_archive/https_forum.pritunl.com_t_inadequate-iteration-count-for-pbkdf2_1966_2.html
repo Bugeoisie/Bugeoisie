@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Inadequate iteration count for PBKDF2 - #2 by zach - Pritunl VPN - Pritunl</title>
+    <meta name="description" content="The iteration count here is only 1000. But the current standard is 600,000. 
+You can see it from Wiki: 
+“When the standard was written in the year 2000 the recommended minimum number of iterations was 1,000, but the para&amp;hellip;">
+    <meta name="generator" content="Discourse 2026.3.0-latest.1 - https://github.com/discourse/discourse version ed0ae94f8f4e28003c11639b20ede59b1cfd51bf">
+<link rel="icon" type="image/png" href="https://forum-static.pritunl.com/optimized/1X/7425e20dc7db2075b4c0b2aa468bb6eb7f7884b5_2_32x32.png">
+<link rel="apple-touch-icon" type="image/png" href="https://forum-static.pritunl.com/optimized/1X/209b484ef327d5d76c5bc1d4bc67fc9ffdeadaaa_2_180x180.png">
+<meta name="theme-color" media="all" content="#111111">
+
+<meta name="color-scheme" content="dark">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
+<link rel="canonical" href="https://forum.pritunl.com/t/inadequate-iteration-count-for-pbkdf2/1966" />
+
+
+<link rel="search" type="application/opensearchdescription+xml" href="https://forum.pritunl.com/opensearch.xml" title="Pritunl Search">
+
+    
+    <link href="/stylesheets/color_definitions_dark_1_1_863b856e51c72b8af81582739a454c8bca4f7aaf.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" class="light-scheme" data-scheme-id="1"/>
+
+<link href="/stylesheets/common_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="common"  />
+
+  <link href="/stylesheets/mobile_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="mobile"  />
+  <link href="/stylesheets/desktop_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="(min-width: 40rem)" rel="stylesheet" data-target="desktop"  />
+
+
+
+    <link href="/stylesheets/checklist_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="checklist"  />
+    <link href="/stylesheets/discourse-details_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="discourse-details"  />
+    <link href="/stylesheets/discourse-lazy-videos_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="discourse-lazy-videos"  />
+    <link href="/stylesheets/discourse-local-dates_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="discourse-local-dates"  />
+    <link href="/stylesheets/discourse-narrative-bot_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="discourse-narrative-bot"  />
+    <link href="/stylesheets/discourse-presence_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="discourse-presence"  />
+    <link href="/stylesheets/discourse-solved_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="discourse-solved"  />
+    <link href="/stylesheets/discourse-templates_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="discourse-templates"  />
+    <link href="/stylesheets/discourse-topic-voting_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="discourse-topic-voting"  />
+    <link href="/stylesheets/docker_manager_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="docker_manager"  />
+    <link href="/stylesheets/footnote_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="footnote"  />
+    <link href="/stylesheets/poll_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="poll"  />
+    <link href="/stylesheets/spoiler-alert_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="spoiler-alert"  />
+    <link href="/stylesheets/discourse-solved_mobile_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="discourse-solved_mobile"  />
+    <link href="/stylesheets/discourse-topic-voting_mobile_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="discourse-topic-voting_mobile"  />
+    <link href="/stylesheets/discourse-topic-voting_desktop_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="(min-width: 40rem)" rel="stylesheet" data-target="discourse-topic-voting_desktop"  />
+    <link href="/stylesheets/poll_desktop_38b95a623547c787ee3ca15998ddf57200084f6f.css?__ws=forum.pritunl.com" media="(min-width: 40rem)" rel="stylesheet" data-target="poll_desktop"  />
+
+  <link href="/stylesheets/common_theme_1_91d579aeb580c8db947a0f5598508fdb11f97f65.css?__ws=forum.pritunl.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="1" data-theme-name="default"/>
+    
+    
+
+    
+    
+        <link rel="alternate nofollow" type="application/rss+xml" title="RSS feed of &#39;Inadequate iteration count for PBKDF2&#39;" href="https://forum.pritunl.com/t/inadequate-iteration-count-for-pbkdf2/1966.rss" />
+    <meta property="og:site_name" content="Pritunl" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://forum-static.pritunl.com/original/1X/2861b52a2c0d87e724600dad23cc8916540d2c06.png" />
+<meta property="og:image" content="https://forum-static.pritunl.com/original/1X/209b484ef327d5d76c5bc1d4bc67fc9ffdeadaaa.png" />
+<meta property="og:url" content="https://forum.pritunl.com/t/inadequate-iteration-count-for-pbkdf2/1966/2" />
+<meta name="twitter:url" content="https://forum.pritunl.com/t/inadequate-iteration-count-for-pbkdf2/1966/2" />
+<meta property="og:title" content="Inadequate iteration count for PBKDF2" />
+<meta name="twitter:title" content="Inadequate iteration count for PBKDF2" />
+<meta property="og:description" content="This is an internal script used to build the software it wouldn’t be used on any Pritunl server. The script has been used for a long time and it’s unlikely it will be changed. The build system now is far more secure and these keys are no longer stored outside of the build system. There is less of a need to have the keys encrypted with the newer build system.  The passwords in the software are encrypted with HMAC-SHA512 100k iterations. This won’t provide much protection for the system overall. T..." />
+<meta name="twitter:description" content="This is an internal script used to build the software it wouldn’t be used on any Pritunl server. The script has been used for a long time and it’s unlikely it will be changed. The build system now is far more secure and these keys are no longer stored outside of the build system. There is less of a need to have the keys encrypted with the newer build system.  The passwords in the software are encrypted with HMAC-SHA512 100k iterations. This won’t provide much protection for the system overall. T..." />
+<meta property="og:article:section" content="Pritunl" />
+<meta property="og:article:section:color" content="0088CC" />
+<meta property="og:article:section" content="Pritunl VPN" />
+<meta property="og:article:section:color" content="3AB54A" />
+<meta property="article:published_time" content="2024-04-04T16:17:13+00:00" />
+<meta property="og:ignore_canonical" content="true" />
+
+
+    
+  </head>
+  <body class="crawler ">
+    
+    <header>
+  <a href="/">Pritunl</a>
+</header>
+
+    <div id="main-outlet" class="wrap" role="main">
+        <div id="topic-title">
+    <h1>
+      <a href="/t/inadequate-iteration-count-for-pbkdf2/1966">Inadequate iteration count for PBKDF2</a>
+    </h1>
+
+      <div class="topic-category" itemscope itemtype="http://schema.org/BreadcrumbList">
+          <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+            <a href="/c/pritunl/5" class="badge-wrapper bullet" itemprop="item">
+              <span class='badge-category-bg' style='background-color: #0088CC'></span>
+              <span class='badge-category clear-badge'>
+                <span class='category-name' itemprop='name'>Pritunl</span>
+              </span>
+            </a>
+            <meta itemprop="position" content="1" />
+          </span>
+          <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+            <a href="/c/pritunl/pritunl-vpn/6" class="badge-wrapper bullet" itemprop="item">
+              <span class='badge-category-bg' style='background-color: #3AB54A'></span>
+              <span class='badge-category clear-badge'>
+                <span class='category-name' itemprop='name'>Pritunl VPN</span>
+              </span>
+            </a>
+            <meta itemprop="position" content="2" />
+          </span>
+      </div>
+
+  </div>
+
+  
+
+    <div itemscope itemtype='http://schema.org/DiscussionForumPosting'>
+      <meta itemprop='headline' content='Inadequate iteration count for PBKDF2'>
+      <link itemprop='url' href='https://forum.pritunl.com/t/inadequate-iteration-count-for-pbkdf2/1966'>
+      <meta itemprop='datePublished' content='2024-04-04T12:07:22Z'>
+        <meta itemprop='articleSection' content='Pritunl VPN'>
+      <meta itemprop='keywords' content=''>
+      <div itemprop='publisher' itemscope itemtype="http://schema.org/Organization">
+        <meta itemprop='name' content='Pritunl'>
+          <div itemprop='logo' itemscope itemtype="http://schema.org/ImageObject">
+            <meta itemprop='url' content='https://forum-static.pritunl.com/original/1X/60d9327d9ab6d32a3d22076674fe73c51011ae2c.png'>
+          </div>
+      </div>
+
+          <span itemprop='author' itemscope itemtype="http://schema.org/Person">
+            <meta itemprop='name' content='Gax-c'>
+            <link itemprop='url' rel='nofollow' href='https://forum.pritunl.com/u/Gax-c'>
+          </span>
+        <meta itemprop='text' content='The iteration count here is only 1000. But the current standard is 600,000. 
+You can see it from Wiki: 
+“When the standard was written in the year 2000 the recommended minimum number of iterations was 1,000, but the para&amp;hellip;'>
+
+          <div id='post_2' itemprop='comment' itemscope itemtype='http://schema.org/Comment' class='topic-body crawler-post'>
+            <div class='crawler-post-meta'>
+              <span class="creator" itemprop="author" itemscope itemtype="http://schema.org/Person">
+                <a itemprop="url" rel='nofollow' href='https://forum.pritunl.com/u/zach'><span itemprop='name'>zach</span></a>
+                
+              </span>
+
+
+
+              <span class="crawler-post-infos">
+                  <time itemprop='datePublished' datetime='2024-04-04T16:17:13Z' class='post-time'>
+                    April 4, 2024,  4:17pm
+                  </time>
+                  <meta itemprop='dateModified' content='2024-04-04T16:22:29Z'>
+              <span itemprop='position'>2</span>
+              </span>
+            </div>
+            <div class='post' itemprop='text'>
+              <p>This is an internal script used to build the software it wouldn’t be used on any Pritunl server. The script has been used for a long time and it’s unlikely it will be changed. The build system now is far more secure and these keys are no longer stored outside of the build system. There is less of a need to have the keys encrypted with the newer build system.</p>
+<p>The passwords in the software are encrypted with HMAC-SHA512 100k iterations. This won’t provide much protection for the system overall. The certificate authority will need to be stored in the database and these keys would be more significant if the database were compromised. To have a secure system device authentication should be used for VPN users and YubiKeys for administrators. This will ensure the system is secure even if the keys were extracted from the database. The <a href="https://docs.pritunl.com/docs/high-security"><strong>high security enviroment documentation</strong></a> has information on the recommended security configuration.</p>
+            </div>
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/LikeAction"/>
+              <meta itemprop="userInteractionCount" content="0" />
+              <span class='post-likes'></span>
+            </div>
+
+
+            
+          </div>
+    </div>
+
+      <div role='navigation' itemscope itemtype='http://schema.org/SiteNavigationElement' class="topic-body crawler-post">
+          <span itemprop='name'>
+            <a itemprop="url" href="/t/inadequate-iteration-count-for-pbkdf2/1966#post_2">show post in topic</a>
+          </span>
+      </div>
+
+    
+
+
+
+
+    </div>
+    <footer class="container wrap">
+  <nav class='crawler-nav'>
+    <ul>
+      <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+        <span itemprop='name'>
+          <a href='/' itemprop="url">Home </a>
+        </span>
+      </li>
+      <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+        <span itemprop='name'>
+          <a href='/categories' itemprop="url">Categories </a>
+        </span>
+      </li>
+      <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+        <span itemprop='name'>
+          <a href='/guidelines' itemprop="url">Guidelines </a>
+        </span>
+      </li>
+        <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+          <span itemprop='name'>
+            <a href='/tos' itemprop="url">Terms of Service </a>
+          </span>
+        </li>
+        <li itemscope itemtype='http://schema.org/SiteNavigationElement'>
+          <span itemprop='name'>
+            <a href='/privacy' itemprop="url">Privacy Policy </a>
+          </span>
+        </li>
+    </ul>
+  </nav>
+  <p class='powered-by-link'>Powered by <a href="https://www.discourse.org">Discourse</a>, best viewed with JavaScript enabled</p>
+</footer>
+
+    
+    
+  </body>
+  
+</html>

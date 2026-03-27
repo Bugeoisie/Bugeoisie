@@ -1,0 +1,83 @@
+<html><head><title>A Discussion Request about a maybe-false-positive of UBSAN: OOB Write in do_journal_end in Kernel 6.5-rc3(with POC) - Zhang Zhiyu</title><link rel="alternate" title="Atom feed" href="../new.atom" type="application/atom+xml"><meta name="viewport" content="width=device-width," initial-scale="1"><style>*{overflow-wrap:anywhere;font-size:100%;font-family:monospace}</style><link type="text/css" rel="stylesheet" media="screen,print" href="../216light.css?6914b227"><link type="text/css" rel="stylesheet" href="../216dark.css?6914b227" media="screen and (prefers-color-scheme:dark)"></head><body><form action="../"><pre><a href="../?t=20230801154916"><b>linux-kernel.vger.kernel.org archive mirror</b></a>
+<input name="q" type="text"><input type="submit" value="search"> <a href="../_/text/help/">help</a> / <a href="../_/text/color/">color</a> / <a id="mirror" href="../_/text/mirror/">mirror</a> / <a href="../new.atom">Atom feed</a></pre></form><pre id="b">From: Zhang Zhiyu &lt;zhiyuzhang999@gmail.com&gt;
+To: <a href="../../reiserfs-devel/?t=20230801154916">reiserfs-devel@vger.kernel.org</a>, <a href="../../lkml/?t=20230801154916">linux-kernel@vger.kernel.org</a>
+Subject: <a href="#r" id="t">A Discussion Request about a maybe-false-positive of UBSAN: OOB Write in do_journal_end in Kernel 6.5-rc3(with POC)</a>
+Date: Tue, 1 Aug 2023 23:48:59 +0800	<a href="#r">[thread overview]</a>
+Message-ID: &lt;CALf2hKvsXPbRoqEYL8LEBZOFFoZd-puf6VEiLd60+oYy2TaxLg@mail.gmail.com&gt; (<a href="raw">raw</a>)
+
+Hi UpStream Community,
+
+I found a UBSAN: OOB Write in do_journal_end reported on Linux Kernel
+6.5-rc3 by my  modified version of syzkaller on 25 July. I tried to
+send an email, but it was rejected by the mail system due to HTML
+formatting included in the email. Here is the plain email text:
+
+The .config, report*, repro.prog, repro.cprog can be found in:
+<a href="https://drive.google.com/file/d/1GPN68s6mA0Ee3CyK7OSbdBNABuFEzhtv/view?usp=sharing">https://drive.google.com/file/d/1GPN68s6mA0Ee3CyK7OSbdBNABuFEzhtv/view?usp=sharing</a>
+And the POC can be stably reproduced in the latest kernel (in/after
+6.5-rc3) and the kernel panics. Reproduced screenshot:
+<a href="https://drive.google.com/file/d/10_4PQHSSwEBCHIMDxjb9EzB6UylRjocP/view?usp=sharing">https://drive.google.com/file/d/10_4PQHSSwEBCHIMDxjb9EzB6UylRjocP/view?usp=sharing</a>
+
+After analyzing the root cause, I found it may be a false-positive of
+UBSAN. Firstly, the oob behavior happened at
+fs/reiserfs/journal.c:4166. When i == 1, it overwrites the
+desc-&gt;j_realblock[i], which is declared with a size of 1. However,
+with a further sight, the desc is wrapped with a b_size=0x1000 when
+allocating and i won't be larger than trans_half (smaller than
+blocksize), which would prevent the overwriting at line 4166. It seems
+a trick of memory access of j_realblock.
+
+But in fs/reiserfs/journal.c:4169, is it possible to manually
+construct an extremely long journal link and let i-trans_half &gt;
+0x1000? In this way, commit-&gt;j_realblock[i - trans_half] =
+cpu_to_le32(cn-&gt;bh-&gt;b_blocknr); may destroy the memory outside the
+block "barrier". And maybe conduct a heap spray?
+
+I'm not sure if it's actually an fp, so I haven't patched it yet. I
+hope to have some discussion based on my analysis.
+
+Thanks for your time reading this discussion request. Although I'm a
+newbie in kernel security, I am very glad to help to improve the
+kernel.
+
+Best regards!
+Zhiyu Zhang
+</pre><hr><pre><a href="../20230809153207.zokdmoco4lwa5s6b@quack3/" rel="next">next</a>             <a href="#R">reply</a><a id="related">	</a>other threads:[<a href="../?t=20230801154916">~2023-08-01 15:49 UTC</a>|<a href="../">newest</a>]
+
+<b>Thread overview: </b>4+ messages / expand[<a href="T/#u">flat</a>|<a href="t/#u">nested</a>]  <a href="t.mbox.gz">mbox.gz</a>  <a href="t.atom">Atom feed</a>  <a href="#b">top</a>
+<b>2023-08-01 15:48 <a id="r" href="#t">Zhang Zhiyu [this message]</a></b>
+2023-08-09 15:32 ` <a href="../20230809153207.zokdmoco4lwa5s6b@quack3/">A Discussion Request about a maybe-false-positive of UBSAN: OOB Write in do_journal_end in Kernel 6.5-rc3(with POC)</a> Jan Kara
+2023-08-10  5:15   ` <a href="../20230810051521.GC923@sol.localdomain/">Eric Biggers</a>
+2023-08-11  4:37     ` <a href="../20230811043750.GA1934@sol.localdomain/">Eric Biggers</a>
+</pre><hr><pre id="R"><b>Reply instructions:</b>
+
+You may reply publicly to <a href="#t">this message</a> via plain-text email
+using any one of the following methods:
+
+* Save the following mbox file, import it into your mail client,
+  and reply-to-all from there: <a href="raw">mbox</a>
+
+  Avoid top-posting and favor interleaved quoting:
+  <a href="https://en.wikipedia.org/wiki/Posting_style#Interleaved_style">https://en.wikipedia.org/wiki/Posting_style#Interleaved_style</a>
+
+* Reply using the <b>--to</b>, <b>--cc</b>, and <b>--in-reply-to</b>
+  switches of git-send-email(1):
+
+  git send-email \
+    --in-reply-to=CALf2hKvsXPbRoqEYL8LEBZOFFoZd-puf6VEiLd60+oYy2TaxLg@mail.gmail.com \
+    --to=zhiyuzhang999@gmail.com \
+    --cc=linux-kernel@vger.kernel.org \
+    --cc=reiserfs-devel@vger.kernel.org \
+    /path/to/YOUR_REPLY
+
+  <a href="https://kernel.org/pub/software/scm/git/docs/git-send-email.html">https://kernel.org/pub/software/scm/git/docs/git-send-email.html</a>
+
+* If your mail client supports setting the <b>In-Reply-To</b> header
+  via mailto: links, try the <a href="mailto:zhiyuzhang999@gmail.com?In-Reply-To=%3CCALf2hKvsXPbRoqEYL8LEBZOFFoZd-puf6VEiLd60+oYy2TaxLg@mail.gmail.com%3E&amp;Cc=linux-kernel%40vger.kernel.org%2Creiserfs-devel%40vger.kernel.org&amp;Subject=Re%3A%20A%20Discussion%20Request%20about%20a%20maybe-false-positive%20of%20UBSAN%3A%20OOB%20Write%20in%20do_journal_end%20in%20Kernel%206.5-rc3%28with%20POC%29">mailto: link</a>
+</pre>
+
+  Be sure your reply has a <b>Subject:</b> header at the top and a blank line
+  before the message body.
+<hr><pre>This is a public inbox, see <a href="../_/text/mirror/">mirroring instructions</a>
+for how to clone and mirror all data and code used for this inbox;
+as well as URLs for NNTP newsgroup(s).</pre></body></html>

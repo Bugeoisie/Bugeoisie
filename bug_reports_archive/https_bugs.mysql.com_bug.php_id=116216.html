@@ -1,0 +1,461 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>MySQL Bugs: #116216: restart bug in mysql NDB cluster</title>
+ <link rel="shortcut icon" href="/favicon.ico" />
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/screen.css" />
+ <link rel="stylesheet" type="text/css" href="/static/chosen/chosen.css" />
+ <script type="text/javascript" src="/static/prototype.js"></script>
+ <!-- script type="text/javascript" src="/static/chosen/event.simulate.js"></script -->
+ <script type="text/javascript" src="/static/scriptaculous.js?load=builder,effects,dragdrop,controls,slider"></script>
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/calendar-blue.css" />
+ <script type="text/javascript" src="/static/calendar.js"></script>
+ <script type="text/javascript" src="/static/calendar-en.js"></script>
+ <script type="text/javascript" src="/static/calendar-setup.js"></script>
+
+                              <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="E6BB6-B37B4-898B7-F97BA-BBCDB",function(){function e(){if(!o){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,i.parentNode.appendChild(e),o=!0}}function t(e){o=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(i.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",i.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"E6BB6-B37B4-898B7-F97BA-BBCDB";var i=document.currentScript||document.getElementsByTagName("script")[0],o=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!o)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),i.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="yuva3zqxgk2m42odsv7a-f-76001b4c2-clientnsv4-s.akamaihd.net",i="false"=="true"?2:1,o={"ak.v":"39","ak.cp":"1983232","ak.ai":parseInt("802521",10),"ak.ol":"0","ak.cr":69,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"22cf56a1","ak.r":50152,"ak.a2":n,"ak.m":"dscx","ak.n":"essl","ak.bpcip":"197.42.13.0","ak.cport":6441,"ak.gh":"2.20.109.4","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1774425470","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==lkcfixe6YGovrPVrDzlwvK+NVuUaOASbUJtLz2J3Zh+/SzWrJ5tg2yvEz5xddaO3wjIOQxEr1yGO2uvJo316ZwxwySAnpoVo5EJCFd1Js7PqPkmAnTNiuEygqpahKJjBpM6AHrM4QUeqMrHUhGGLUpYyLWR+s6fU23GM+nF1XNjY2Z5hdsHdsWfbFWHOgz+m1n9pLAwnyQE0r1/w9P0qLC27Fijy0W2D4tr/ngJte2Y6fGol6XLvJvFmAo1e+b0hQytwkXqAs5/xJess+LDBZ/PMv0nbRZ3D0cNKAj5ADQ/cvH4UFS9HENnFhrEroWExEjY9SbPo1wLPKssD/bk+x6pqjsZe7jR4jce4GwLnQiBKyaIWnmgXfr4f8jj4m9mFCRca4zX7NWYXF6LdzsB69Eh4eLm2mHbQt0iqaUgZUB4=","ak.pv":"20","ak.dpoabenc":"","ak.tf":i};if(""!==t)o["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))o["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(o)},rv:function(){var e=["ak.bpcip","ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:o,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+
+<body class="dev bugs">
+<div id="header">
+ <div id="logo"><a href="http://dev.mysql.com/"><img src="/images/mysql_100x52-64.gif" width="100" height="52" border="0" alt="MySQL" /></a></div>
+ <div id="searchandlogin">
+  <div id="searchbox">
+   <form action="/search.php" method="get">
+    <input class="frm" type="text" name="search_for" size="20" maxlength="255" />
+    <input class="submit2" type="submit" value="Search" />
+   </form>
+  </div>
+  <div id="login">
+
+   <p class="s"><a href="https://dev.mysql.com/auth/login/?dest=http%3A%2F%2Fbugs.mysql.com%2Fbug.php%3Fid%3D116216">Login</a> /
+   <a href="https://dev.mysql.com/auth/register/">Register</a></p>
+  </div>
+ </div>
+</div>
+<div id="nav">
+ <ul>
+  <li><a href="http://dev.mysql.com/">Developer Zone</a></li>
+  <li><a href="/">Bugs Home</a></li>
+   <li><a href="/report.php">Report a bug</a></li>
+  <li><a href="/search.php">Advanced search</a></li>
+  <li><a href="/search-saved.php">Saved searches</a></li>
+  <li><a href="/tags.php">Tags</a></li>
+ </ul>
+</div>
+
+<br clear="both" />
+
+<div id="content">
+<table id="bugheader" style="width: 100%">
+ <tr id="title">
+  <th>Bug&nbsp;#116216</th>
+  <td colspan="3">restart bug in mysql NDB cluster</td>
+ </tr>
+ <tr>
+  <th>Submitted:</th> <td>25 Sep 2024 1:43</td>
+  <th>Modified:</th> <td>25 Sep 2024 8:53</td>
+ </tr>
+ <tr>
+  <th>Reporter:</th>
+  <td>
+<a href="/search.php?cmd=display&status=All&severity=all&reporter=17732354">CunDi Fang</a>
+  </td>
+  <th>Email Updates:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/sub.php?action=Subscribe&id=116216" />
+    <input type="submit" name="action" value="Subscribe" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Status:</th>
+  <td>
+  Verified  </td>
+  <th>Impact on me:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/impact.php?action=&id=116216" />
+    None&nbsp;<input type="submit" name="action" value="Affects Me" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Category:</th><td>MySQL Cluster: Cluster/J</td>
+  <th>Severity:</th><td>S2 (Serious)</td>
+ </tr>
+ <tr>
+  <th>Version:</th><td>8.0.35-cluster MySQL Cluster Community S</td>
+  <th>OS:</th><td>Any</td>
+ </tr>
+ <tr>
+  <th>Assigned to:</th>
+  <td>
+  </td>
+  <th>CPU Architecture:</th><td>Any</td>
+ </tr>
+</table>
+
+<ul id="controls">
+<li class=" active">View</li>
+<li class=""><a href="/bug.php?id=116216&amp;edit=3">Add Comment</a></li>
+<li class=""><a href="/bug.php?id=116216&amp;files=1">Files</a></li>
+<li class=""><a href="/bug.php?id=116216&amp;edit=1">Developer</a></li>
+<li class=""><a href="/bug.php?id=116216&amp;edit=2">Edit Submission</a></li>
+<li class=""><a href="/bug.php?id=116216&amp;log=1">View Progress Log</a></li>
+<li class=""><a href="/bug.php?id=116216&amp;contribs=1">Contributions</a></li>
+</ul>
+<br clear="all" />
+ <div id="cmain"
+      class="comment">
+  <div class="header">
+   [25 Sep 2024 1:43]
+   CunDi Fang        </div>
+  <pre class="note"><strong>Description:</strong>
+Attempting to restart the entire cluster in the middle of a node restart will reveal that it can&#039;t be processed, the entire cluster won&#039;t start up properly, and eventually, all the data nodes will crash and need to be restarted.
+
+<strong>How to repeat:</strong>
+I have a 1 admin node, 4 data node 2 replica 2 slice NDB cluster. I try to reboot one of the data nodes, and while that node is trying to rejoin the cluster, rebooting the entire cluster reveals that all of the data nodes are stuck in repeated attempts to reboot and connect, none of which work, and all of which eventually crash.
+
+The log files are recorded as follows:
+```
+2024-09-23 03:57:44 [MgmtSrvr] INFO     -- Node 4: Node shutdown initiated
+2024-09-23 03:57:52 [MgmtSrvr] INFO     -- Node 4: Suma: initiate handover for shutdown with nodes 0000000000000000000000000000000000000020 GCI: 5043627
+2024-09-23 03:57:52 [MgmtSrvr] INFO     -- Node 4: Suma: handover to node 5 gci: 5043627 buckets: 00000001 (2)
+2024-09-23 03:57:58 [MgmtSrvr] INFO     -- Node 4: Suma: handover complete
+2024-09-23 03:57:59 [MgmtSrvr] INFO     -- Node 4 disconnected in recv with errnum: 104 in state: 0
+2024-09-23 03:57:59 [MgmtSrvr] ALERT    -- Node 5: Node 4 Disconnected
+2024-09-23 03:57:59 [MgmtSrvr] INFO     -- Node 2: Communication to Node 4 closed
+2024-09-23 03:57:59 [MgmtSrvr] INFO     -- Node 5: Communication to Node 4 closed
+2024-09-23 03:57:59 [MgmtSrvr] ALERT    -- Node 2: Node 4 Disconnected
+2024-09-23 03:57:59 [MgmtSrvr] INFO     -- Node 3: Communication to Node 4 closed
+2024-09-23 03:57:59 [MgmtSrvr] ALERT    -- Node 1: Node 4 Disconnected
+2024-09-23 03:57:59 [MgmtSrvr] ALERT    -- Node 2: Arbitration check won - node group majority
+2024-09-23 03:57:59 [MgmtSrvr] INFO     -- Node 2: President restarts arbitration thread [state=6]
+2024-09-23 03:57:59 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Initial state,NEW=Node failed, fail handling ongoing
+2024-09-23 03:57:59 [MgmtSrvr] INFO     -- Node 5: NR Status: node=4,OLD=Initial state,NEW=Node failed, fail handling ongoing
+2024-09-23 03:57:59 [MgmtSrvr] INFO     -- Node 3: NR Status: node=4,OLD=Initial state,NEW=Node failed, fail handling ongoing
+2024-09-23 03:57:59 [MgmtSrvr] INFO     -- Node 4: Node shutdown completed.
+2024-09-23 03:57:59 [MgmtSrvr] ALERT    -- Node 3: Node 4 Disconnected
+2024-09-23 03:58:00 [MgmtSrvr] INFO     -- Alloc node id 4 rejected with error code 1703, will retry
+2024-09-23 03:58:00 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Node failed, fail handling ongoing,NEW=Node failure handling complete
+2024-09-23 03:58:00 [MgmtSrvr] INFO     -- Node 5: NR Status: node=4,OLD=Node failed, fail handling ongoing,NEW=Node failure handling complete
+2024-09-23 03:58:00 [MgmtSrvr] INFO     -- Node 3: NR Status: node=4,OLD=Node failed, fail handling ongoing,NEW=Node failure handling complete
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Node failure handling complete,NEW=Allocated node id
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Alloc node id 4 succeeded
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Nodeid 4 allocated for NDB at 192.192.10.11
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Node 1: Node 4 Connected
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Node 4: Buffering maximum epochs 100
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Node 4: Start phase 0 completed (system restart)
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Node 4: Communication to Node 2 opened
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Node 4: Communication to Node 3 opened
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Node 4: Communication to Node 5 opened
+2024-09-23 03:58:01 [MgmtSrvr] INFO     -- Node 4: Waiting 30 sec for nodes 2, 3 and 5 to connect, nodes [ all: 2, 3, 4 and 5 connected: 4 no-wait:  ]
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 5: Communication to Node 4 opened
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: Communication to Node 4 opened
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Node 2 Connected
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: Node 4 Connected
+2024-09-23 03:58:03 [MgmtSrvr] WARNING  -- Node 3: Received request to incorporate node 4, while error handling has not yet completed
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: CM_REGCONF president = 2, own Node = 4, our dynamic id = 0/5
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 5: Node 4 Connected
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Node 5 Connected
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 3: Communication to Node 4 opened
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 3: Node 4 Connected
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Node 3 Connected
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: Node 4: API mysql-8.0.35 ndb-8.0.35
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 3: Node 4: API mysql-8.0.35 ndb-8.0.35
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 5: Node 4: API mysql-8.0.35 ndb-8.0.35
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Allocated node id,NEW=Included in heartbeat protocol
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Node 2: API mysql-8.0.35 ndb-8.0.35
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Node 3: API mysql-8.0.35 ndb-8.0.35
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Node 5: API mysql-8.0.35 ndb-8.0.35
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Start phase 1 completed (system restart)
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: Start node: 4 using node restart
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Included in heartbeat protocol,NEW=NDBCNTR master permitted us
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Start phase 2 completed (node restart)
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: DICT: locked by node 4 for NodeRestart
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 5: NR Status: node=4,OLD=Node failure handling complete,NEW=All nodes permitted us
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 3: NR Status: node=4,OLD=Node failure handling complete,NEW=All nodes permitted us
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=NDBCNTR master permitted us,NEW=All nodes permitted us
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Start phase 3 completed (node restart)
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Start phase 4 completed (node restart)
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=All nodes permitted us,NEW=Wait for LCP complete to copy meta data
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Wait for LCP complete to copy meta data,NEW=Copy meta data to start node
+2024-09-23 03:58:03 [MgmtSrvr] INFO     -- Node 4: Receive arbitrator node 1 [ticket=bb28000145d8aadb]
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 2: Node restart completed copy of distribution information to Node 4
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: Starting to restore schema
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: Restore of schema complete
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 9 done (sys/def/8/ndb_index_stat_sample_x1)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 12 done (sys/def/11/PRIMARY)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 15 done (sys/def/14/PRIMARY)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 16 done (sys/def/14/column5)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 17 done (sys/def/14/column5$unique)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 18 done (sys/def/14/column6)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 19 done (sys/def/14/column6$unique)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 20 done (sys/def/14/column5_2)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 21 done (sys/def/14/column5_2$unique)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 23 done (sys/def/22/PRIMARY)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 24 done (sys/def/22/column3)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 25 done (sys/def/22/column3$unique)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 26 done (sys/def/22/column3_2)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 27 done (sys/def/22/column3_2$unique)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 30 done (sys/def/29/PRIMARY)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 33 done (sys/def/32/PRIMARY)
+2024-09-23 03:58:04 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 34 done (sys/def/32/column3)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 35 done (sys/def/32/column3$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 36 done (sys/def/32/column8)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 37 done (sys/def/32/column8$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 38 done (sys/def/32/column4)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 39 done (sys/def/32/column4$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 40 done (sys/def/32/column5)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 41 done (sys/def/32/column5$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 42 done (sys/def/32/column3_2)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 43 done (sys/def/32/column3_2$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 46 done (sys/def/45/PRIMARY)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 47 done (sys/def/45/column2)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 48 done (sys/def/45/column2$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 49 done (sys/def/45/column3)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 50 done (sys/def/45/column3$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 51 done (sys/def/45/column4)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 52 done (sys/def/45/column4$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 53 done (sys/def/45/column2_2)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 54 done (sys/def/45/column2_2$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 57 done (sys/def/56/PRIMARY)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 59 done (sys/def/58/PRIMARY)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 60 done (sys/def/58/column9)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 61 done (sys/def/58/column9$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 62 done (sys/def/58/column3)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 63 done (sys/def/58/column3$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 64 done (sys/def/58/column7)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 65 done (sys/def/58/column7$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 66 done (sys/def/58/column3_2)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 67 done (sys/def/58/column3_2$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 69 done (sys/def/68/PRIMARY)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 70 done (sys/def/68/column2)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 71 done (sys/def/68/column2$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 72 done (sys/def/68/column6)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 73 done (sys/def/68/column6$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 74 done (sys/def/68/column2_2)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 75 done (sys/def/68/column2_2$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 84 done (sys/def/83/PRIMARY)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 86 done (sys/def/85/PRIMARY)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 87 done (sys/def/85/column2)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 88 done (sys/def/85/column2$unique)
+2024-09-23 03:58:05 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 89 done (sys/def/85/column2_2)
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: DICT: activate index 90 done (sys/def/85/column2_2$unique)
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 2: Node restart completed copy of dictionary information to Node 4
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Copy meta data to start node,NEW=Include node in LCP/GCP protocols
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 3: NR Status: node=4,OLD=All nodes permitted us,NEW=Include node in LCP/GCP protocols
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 5: NR Status: node=4,OLD=All nodes permitted us,NEW=Include node in LCP/GCP protocols
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Include node in LCP/GCP protocols,NEW=Restore fragments ongoing
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: Node restart starting to copy the fragments to Node 4
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: Restore Database Off-line Starting on node 4
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: Node: 4 StartLog: [GCI Keep: 5043574 LastCompleted: 5043623 NewestRestorable: 5043629]
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: LDM instance 0: Restored LCP : 86 fragments, 763 rows, 87 millis, 8770 rows/s
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: Node Start completed restore of LCP id: 2560
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Restore fragments ongoing,NEW=Undo Disk data ongoing
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Undo Disk data ongoing,NEW=Execute REDO logs ongoing
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Execute REDO logs ongoing,NEW=Build indexes ongoing
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: Restore Database Off-line Completed on node 4
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: Bring Database On-line Starting on node 4
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Build indexes ongoing,NEW=Synchronize start node with live nodes
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 3: NR Status: node=4,OLD=Include node in LCP/GCP protocols,NEW=Synchronize start node with live nodes
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 5: NR Status: node=4,OLD=Include node in LCP/GCP protocols,NEW=Synchronize start node with live nodes
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: Node restart completed copying the fragments to Node 4
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: Bring Database On-line Completed on node 4
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: Starting REDO logging on node 4
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: LDM(0): CopyFrag complete. 156 frags, +0/-31098 rows, 1741488 bytes/163 ms 10683975 bytes/s.
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 4: LDM(0): Completed LCP, #frags = 86 #records = 439, #bytes = 31132
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 2: Make On-line Database recoverable by waiting for LCP Starting on node 4, LCP id 2561
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Synchronize start node with live nodes,NEW=Wait LCP to ensure durability
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 3: NR Status: node=4,OLD=Synchronize start node with live nodes,NEW=Wait LCP to ensure durability
+2024-09-23 03:58:06 [MgmtSrvr] INFO     -- Node 5: NR Status: node=4,OLD=Synchronize start node with live nodes,NEW=Wait LCP to ensure durability
+2024-09-23 03:58:07 [MgmtSrvr] INFO     -- Node 2: Cluster shutdown initiated
+2024-09-23 03:58:07 [MgmtSrvr] INFO     -- Node 3: Cluster shutdown initiated
+2024-09-23 03:58:07 [MgmtSrvr] INFO     -- Node 5: Cluster shutdown initiated
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 4 disconnected in recv with errnum: 104 in state: 0
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 4: Node shutdown completed.
+2024-09-23 03:58:08 [MgmtSrvr] ALERT    -- Node 3: Node 4 Disconnected
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 2: Communication to Node 4 closed
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 3: Communication to Node 4 closed
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 5: Communication to Node 4 closed
+2024-09-23 03:58:08 [MgmtSrvr] ALERT    -- Node 1: Node 4 Disconnected
+2024-09-23 03:58:08 [MgmtSrvr] ALERT    -- Node 2: Arbitration check won - node group majority
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 2: President restarts arbitration thread [state=6]
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 2: Removed lock for node 4
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 2: DICT: remove lock by failed node 4 for NodeRestart
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 2: DICT: unlocked by node 4 for NodeRestart
+2024-09-23 03:58:08 [MgmtSrvr] ALERT    -- Node 5: Node 4 Disconnected
+2024-09-23 03:58:08 [MgmtSrvr] ALERT    -- Node 2: Node 4 Disconnected
+2024-09-23 03:58:08 [MgmtSrvr] INFO     -- Node 2: Local checkpoint 2561 started. Keep GCI = 5043590 oldest restorable GCI = 5043590
+2024-09-23 03:58:11 [MgmtSrvr] INFO     -- Node 3: Communication to Node 4 opened
+2024-09-23 03:58:12 [MgmtSrvr] INFO     -- Node 5: Communication to Node 4 opened
+2024-09-23 03:58:12 [MgmtSrvr] INFO     -- Node 2: Communication to Node 4 opened
+2024-09-23 03:58:12 [MgmtSrvr] INFO     -- Node 2: LDM(0): Completed LCP, #frags = 86 #records = 134, #bytes = 9212
+2024-09-23 03:58:12 [MgmtSrvr] INFO     -- Node 3: LDM(0): Completed LCP, #frags = 86 #records = 134, #bytes = 9212
+2024-09-23 03:58:12 [MgmtSrvr] INFO     -- Node 5: LDM(0): Completed LCP, #frags = 86 #records = 192, #bytes = 11508
+2024-09-23 03:58:12 [MgmtSrvr] INFO     -- Node 2: Local checkpoint 2561 completed
+2024-09-23 03:58:14 [MgmtSrvr] INFO     -- Node 3 disconnected in recv with errnum: 104 in state: 0
+2024-09-23 03:58:14 [MgmtSrvr] INFO     -- Node 3: Node shutdown completed.
+2024-09-23 03:58:14 [MgmtSrvr] INFO     -- Node 2 disconnected in recv with errnum: 104 in state: 0
+2024-09-23 03:58:14 [MgmtSrvr] INFO     -- Node 5 disconnected in recv with errnum: 104 in state: 0
+2024-09-23 03:58:14 [MgmtSrvr] INFO     -- Node 2: Node shutdown completed.
+2024-09-23 03:58:14 [MgmtSrvr] ALERT    -- Node 1: Node 3 Disconnected
+2024-09-23 03:58:14 [MgmtSrvr] INFO     -- Node 5: Node shutdown completed.
+2024-09-23 03:58:14 [MgmtSrvr] ALERT    -- Node 1: Node 2 Disconnected
+2024-09-23 03:58:14 [MgmtSrvr] ALERT    -- Node 1: Node 5 Disconnected
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Nodeid 2 allocated for NDB at 192.192.10.9
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Node 1: Node 2 Connected
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Nodeid 3 allocated for NDB at 192.192.10.10
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Node 2: Buffering maximum epochs 100
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Node 1: Node 3 Connected
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Node 2: Start phase 0 completed (system restart)
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Node 2: Communication to Node 3 opened
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Node 2: Communication to Node 4 opened
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Node 2: Communication to Node 5 opened
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Node 2: Waiting 30 sec for nodes 3, 4 and 5 to connect, nodes [ all: 2, 3, 4 and 5 connected: 2 no-wait:  ]
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Alloc node id 4 rejected, no new president yet
+2024-09-23 03:58:15 [MgmtSrvr] INFO     -- Nodeid 4 allocated for NDB at 192.192.10.11
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 3: Buffering maximum epochs 100
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 3: Start phase 0 completed (system restart)
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 3: Communication to Node 2 opened
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 3: Communication to Node 4 opened
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 3: Communication to Node 5 opened
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 3: Waiting 30 sec for nodes 2, 4 and 5 to connect, nodes [ all: 2, 3, 4 and 5 connected: 3 no-wait:  ]
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 1: Node 4 Connected
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Alloc node id 5 rejected, no new president yet
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Nodeid 5 allocated for NDB at 192.192.10.12
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 3: Node 2 Connected
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 2: Node 3 Connected
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 2: Waiting 29 sec for nodes 4 and 5 to connect, nodes [ all: 2, 3, 4 and 5 connected: 2 and 3 no-wait:  ]
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 4: Buffering maximum epochs 100
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 1: Node 5 Connected
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 2 disconnected in recv with errnum: 104 in state: 0
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 3 disconnected in recv with errnum: 104 in state: 0
+2024-09-23 03:58:16 [MgmtSrvr] ALERT    -- Node 1: Node 2 Disconnected
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 4 disconnected in recv with errnum: 104 in state: 0
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 3: Node shutdown completed.
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 2: Node shutdown completed.
+2024-09-23 03:58:16 [MgmtSrvr] INFO     -- Node 5: Buffering maximum epochs 100
+2024-09-23 03:58:17 [MgmtSrvr] INFO     -- Node 4: Node shutdown completed.
+2024-09-23 03:58:17 [MgmtSrvr] ALERT    -- Node 1: Node 3 Disconnected
+2024-09-23 03:58:17 [MgmtSrvr] ALERT    -- Node 1: Node 4 Disconnected
+2024-09-23 03:58:17 [MgmtSrvr] INFO     -- Node 5: Start phase 0 completed (system restart)
+```
+
+The setup of my cluster is as follows:
+```
+[NDBD DEFAULT]
+NoOfReplicas =2
+DataMemory = 512M
+IndexMemory = 64M
+
+[NDB_MGMD]
+NodeId=1
+hostname =192.192.10.8
+datadir =/var/lib/mysql-cluster
+
+[NDBD]
+NodeId =2
+hostname =192.192.10.9
+datadir =/usr/local/mysql-cluster/data
+[NDBD]
+NodeId =3
+hostname =192.192.10.10
+datadir =/usr/local/mysql-cluster/data
+[NDBD]
+NodeId =4
+hostname =192.192.10.11
+datadir =/usr/local/mysql-cluster/data
+[NDBD]
+NodeId =5
+hostname =192.192.10.12
+datadir =/usr/local/mysql-cluster/data
+
+[mysqld]
+NodeId =6
+hostname =192.192.10.9
+[mysqld]
+NodeId =7
+hostname =192.192.10.10
+[mysqld]
+NodeId =8
+hostname =192.192.10.11
+[mysqld]
+NodeId =9
+hostname =192.192.10.12
+```
+
+<strong>Suggested fix:</strong>
+When attempting a restart, it is best to add a global lock that describes whether a node is currently undergoing a restart operation as a way to cope with the concurrent restart requirements of the scenario.</pre>
+ </div>
+ <div id="c547286"
+      class="comment">
+  <div class="header">
+   [25 Sep 2024 8:53]
+   MySQL Verification Team        </div>
+  <pre class="note">Hi,
+
+Thanks for the report.</pre>
+ </div>
+ <div id="c547309"
+      class="comment">
+  <div class="header">
+   [25 Sep 2024 13:35]
+   MySQL Verification Team        </div>
+  <pre class="note"><a href="https://bugs.mysql.com/bug.php?id=116218" style="text-decoration: line-through">Bug #116218</a> is marked as duplicate of this one</pre>
+ </div>
+</div>
+<script src="/static/chosen/chosen.proto.js" type="text/javascript"></script>
+<script src="/static/misc.js" type="text/javascript"></script>
+<script type="text/javascript">
+  document.observe('dom:loaded', function(evt) {
+    var config = {
+      '.chzn-select'           : {},
+      '.chzn-select-excl'      : {},
+      '.chzn-select-max1'      : {max_selected_options:1},
+      '.chzn-select-deselect'  : {allow_single_deselect:true},
+      '.chzn-select-no-single' : {disable_search_threshold:10},
+      '.chzn-select-no-results': {no_results_text: "Oops, nothing found!"},
+      '.chzn-select-width'     : {width: "95%"}
+    }
+    var results = [];
+    for (var selector in config) {
+      var elements = $$(selector);
+      for (var i = 0; i < elements.length; i++) {
+        results.push(new Chosen(elements[i],config[selector]));
+      }
+    }
+
+    // initialize (store initial state) selects with exclusive options
+    var elements = $$('.chzn-select-excl');
+    for (var i = 0; i < elements.length; i++) {
+      my_init_select(elements[i]);
+    }
+
+    return results;
+  });
+</script>
+<div id="footer">
+ <ul style="float: right; list-style: none">
+  <li><a href="http://www.mysql.com/about/legal/">Legal Policies</a></li>
+  <li><a href="http://www.oracle.com/us/legal/privacy/index.htm">Your Privacy Rights</a></li>
+  <li><a href="http://www.oracle.com/html/terms.html">Terms of Use</a></li>
+  <li><a href="https://www.mysql.com/about/contact/">Contact Us</a></li>
+ </ul>
+ <br class="clear" />
+ <p>Portions of this website are <a href="http://www.php.net/copyright.php">copyright &copy; 2001, 2002 The PHP Group</a></p>
+ <p style="float: right">
+Page generated in 0.057 sec. using MySQL 8.4.5-u11-cloud </p>
+ <br class="clear" />
+ <br style="line-height: 8px;" />
+ <p style="float: left">Timestamp references displayed by the system are UTC.<br/>
+  Content reproduced on this site is the property of the
+  respective copyright holders.<br />It is not reviewed in advance
+  by Oracle and does not necessarily represent the opinion of
+  Oracle or any other party.</p>
+ <p style="float: right"><a href="http://www.oracle.com/"><img src="/images/logo-oracle-red-91x22.gif" alt="Oracle" width="91" height="22" /></a>&nbsp;&nbsp;&copy; 2026, Oracle Corporation and/or its affiliates</p>
+</div>
+<!-- script type="text/javascript" src="http://www.mysql.com/common/js/s_code_remote.js"></script -->
+</body>
+</html>

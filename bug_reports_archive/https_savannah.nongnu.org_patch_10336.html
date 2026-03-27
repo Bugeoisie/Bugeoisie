@@ -1,0 +1,406 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0051)https://savannah.nongnu.org/patch/?10336#discussion -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>lwIP - A Lightweight TCP/IP stack - Patches: patch #10336, mdns: Add null check for pbuf_skip [Savannah]</title>
+<meta name="Generator" content="Savane 3.17-9b68, see https://savannah.nongnu.org/source/savane-9b684d621d606340ec3f8b1a290873daf3ff5474.tar.gz">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<link rel="stylesheet" type="text/css" href="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/Savannah.css">
+<link rel="icon" type="image/png" href="https://savannah.nongnu.org/images/Savannah.theme/icon.png">
+<meta name="Author" content="Copyright 2026 Free Software Foundation, Inc.
+Verbatim copying and distribution of this entire article
+is permitted in any medium, provided this notice is preserved.">
+<meta name="description" content="Savannah is a central point for development, distribution
+and maintenance of free software, both GNU and non-GNU.">
+
+</head>
+<body>
+<div class="realbody">
+
+<ul class="menu">
+<li class="menulogo">
+          <a href="https://savannah.nongnu.org/"><img alt="Back to Savannah Homepage" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/floating.png" width="144" height="125"></a>
+</li><!-- end menulogo -->
+<li class="menutitle">Not Logged in</li><!-- end menutitle -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/account/login.php?uri=%2Fpatch%2F%3F10336" class="menulink" title="Login page - you must have registered an account first">Login</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/account/register.php" class="menulink" title="Account registration form">New User</a></li><!-- end menuitem -->
+<li class="menutitle">This Page</li><!-- end menutitle -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/i18n.php?lang_uri=%2Fpatch%2F%3F10336" class="menulink" title="Choose website language">Language</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/patch/index.php?reload=1&amp;func=detailitem&amp;item_id=10336" class="menulink" title="Reload the page without risk of reposting data">Clean Reload</a></li><!-- end menuitem -->
+<li class="menutitle">Search</li><!-- end menutitle -->
+       <li class="menusearch">
+<form action="https://savannah.nongnu.org/search/#options" method="get">
+<input type="text" id="words1" name="words1" title="Terms to look for"><br>
+ <label for="type_of_search1">Area to search in</label>
+<select name="type_of_search" id="type_of_search1">
+<option value="soft" selected="selected">Groups</option>
+<option value="people">People</option>
+<option value="support"><!-- Search... in -->Support</option>
+<option value="bugs"><!-- Search... in -->Bugs</option>
+<option value="task"><!-- Search... in -->Tasks</option>
+<option value="patch"><!-- Search... in -->Patches</option>
+</select>
+<input type="hidden" name="exact" value="1">
+<br>
+<input type="submit" name="search" value="Search">&nbsp;
+</form>
+       </li><!-- end menusearch --><li class="menutitle">Hosted Projects</li><!-- end menutitle -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/register/requirements.php" class="menulink">Hosting requirements</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/register/" class="menulink" title="Register your project at Savannah">Register New Project</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/search/index.php?type_of_search=soft&amp;words=%%%" class="menulink" title="Browse the full list of hosted projects">Full List</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/people/" class="menulink" title="Browse the list of request for contributions">Contributors Wanted</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/stats/" class="menulink" title="Browse statistics about Savannah">Statistics</a></li><!-- end menuitem -->
+<li class="menutitle">Site Help</li><!-- end menutitle -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/maintenance/FrontPage/" class="menulink">User Docs: FAQ</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/maintenance/back-page/" class="menulink" title="In-depth Documentation dedicated to any users, including group admins">User Docs: In Depth Guide</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/support/?group=administration" class="menulink" title="Get help from the Admins of Savannah, when documentation is not enough">Get Support</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.nongnu.org/contact.php" class="menulink" title="Contact address of Savannah Admins">Contact Savannah</a></li><!-- end menuitem -->
+<li class="menutitle">GNU Project</li><!-- end menutitle -->
+
+<li class="menuitem">
+<a href="https://www.gnu.org/help/help.html" class="menulink">Help GNU</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://www.gnu.org/software/software.html" class="menulink">All GNU Packages</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://www.gnu.org/software/devel.html" class="menulink">Dev Resources</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://www.gnu.org/licenses/license-list.html" class="menulink">License List</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://www.gnu.org/prep/ftp.html" class="menulink">GNU Mirrors</a></li><!-- end menuitem -->
+<li><span class="button"><a href="https://www.fsf.org/associate/support_freedom/join_fsf?referrer=2442"><img alt="Support freedom" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/thin-image.png" width="240" height="28">
+<br>Help us protect your freedom and the rights of computer
+users everywhere by becoming a member of the FSF.
+<br><strong>Join Now!</strong></a></span>
+</li>
+
+<li class="menutitle">Free Software Foundation</li><!-- end menutitle -->
+
+<li class="menuitem">
+<a href="https://www.fsf.org/events/" class="menulink">Coming Events</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://www.fsf.org/directory/" class="menulink">Free Software Directory</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://savannah.gnu.org/maintenance/SavannahCryptographicRestrictions" class="menulink">Cryptographic software legal notice</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://www.fsf.org/about/dmca-notice" class="menulink">Copyright infringement notification</a></li><!-- end menuitem -->
+<li class="menutitle">Related Forges</li><!-- end menutitle -->
+
+<li class="menuitem">
+<a href="https://savannah.gnu.org/" class="menulink">GNU Savannah</a></li><!-- end menuitem -->
+
+<li class="menuitem">
+<a href="https://puszcza.gnu.org.ua/" class="menulink">Puszcza</a></li><!-- end menuitem -->
+
+</ul><!-- end menu -->
+<div id="top" class="main">
+<h1 class="toptitle"><img width="48" height="48" alt="patch" class="pageicon" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/patch.orig.png">lwIP - A Lightweight TCP/IP stack - Patches: patch #10336, mdns: Add null check for pbuf_skip</h1>
+
+<div class="topmenu" id="topmenu">
+<span class="topmenutitle" title="Group Scope"> Group
+</span><!-- end topmenutitle -->
+<div class="topmenuitem"><ul id="topmenuitem">
+  <li class="topmenuitemmainitem">
+<a href="https://savannah.nongnu.org/projects/lwip/" class="tabs" title="Group main page at Savannah">Main</a><ul id="submenu1" class="topmenuitemsubmenu"><li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/projects/lwip/">Main</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/project/memberlist.php?group=lwip">View members</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/project/search.php?group=lwip">Search</a></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class="topmenuitemmainitem">
+<a href="http://www.nongnu.org/lwip/" class="tabs" title="Browse group home page (outside of Savane)">Homepage</a>  </li><!-- end topmenuitemmainitem -->
+
+  <li class="topmenuitemmainitem">
+<a href="https://savannah.nongnu.org/files/?group=lwip" class="tabs" title="Visit download area: files released">Download</a>  </li><!-- end topmenuitemmainitem -->
+
+  <li class="topmenuitemmainitem">
+<a href="https://savannah.nongnu.org/mail/?group=lwip" class="tabs" title="List existing mailing lists">Mailing lists</a>  </li><!-- end topmenuitemmainitem -->
+
+  <li class="topmenuitemmainitem">
+<a href="https://savannah.nongnu.org/projects/lwip/#devtools" class="tabs" title="Source code management">Source code</a><ul id="submenu5" class="topmenuitemsubmenu"><li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/cvs/?group=lwip" title="CVS Repository">Use CVS</a></li>
+<li class="topmenuitemsubmenu"><a href="http://web.cvs.savannah.nongnu.org/viewvc/?root=lwip">Browse Web Pages Repository</a></li>
+<li class="topmenuitemsubmenuseparator">&nbsp;</li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/git/?group=lwip" title="Git Repository">Use Git</a></li>
+<li class="topmenuitemsubmenu"><span>Browse Git repositories</span></li>
+
+<li><a href="https://git.savannah.nongnu.org/cgit/lwip.git">lwIP - A Lightweight TCPIP stack</a></li>
+<li><a href="https://git.savannah.nongnu.org/cgit/lwip/lwip-contrib.git">lwIP Contrib - Contributed code for Lightweight TCP/IP stack</a></li>
+
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class="topmenuitemmainitem">
+<a href="https://savannah.nongnu.org/bugs/?group=lwip" class="tabs" title="Bug Tracker: report, search and track bugs">Bugs</a><ul id="submenu6" class="topmenuitemsubmenu"><li class="topmenuitemsubmenu"><span class="unavailable"><del>Submit new</del></span></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/bugs/?group=lwip">Browse</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/bugs/?group=lwip&amp;func=browse&amp;set=open">Reset to open</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/bugs/?group=lwip&amp;func=digest">Digest</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/bugs/dependencies.php?group=lwip">Dependencies</a></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Export</del></span></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/bugs/reporting.php?group=lwip">Get statistics</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/bugs/?group=lwip&amp;func=search">Search</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/bugs/admin/field_values.php?group=lwip"><img alt="" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/help.png" width="24" height="24">Field values</a></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class="topmenuitemmainitem">
+<a href="https://savannah.nongnu.org/task/?group=lwip" class="tabs" title="Task Manager: post, search and manage tasks">Tasks</a><ul id="submenu7" class="topmenuitemsubmenu"><li class="topmenuitemsubmenu"><span class="unavailable"><del>Submit new</del></span></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/task/?group=lwip">Browse</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/task/?group=lwip&amp;func=browse&amp;set=open">Reset to open</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/task/?group=lwip&amp;func=digest">Digest</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/task/dependencies.php?group=lwip">Dependencies</a></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Export</del></span></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/task/reporting.php?group=lwip">Get statistics</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/task/?group=lwip&amp;func=search">Search</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/task/admin/field_values.php?group=lwip"><img alt="" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/help.png" width="24" height="24">Field values</a></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class="topmenuitemmainitem">
+<a href="https://savannah.nongnu.org/patch/?group=lwip" class="tabselect" title="Patch Manager: post, search and manage patches">Patches</a><ul id="submenu8" class="topmenuitemsubmenu"><li class="topmenuitemsubmenu"><span class="unavailable"><del>Submit new</del></span></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/patch/?group=lwip">Browse</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/patch/?group=lwip&amp;func=browse&amp;set=open">Reset to open</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/patch/?group=lwip&amp;func=digest">Digest</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/patch/dependencies.php?group=lwip">Dependencies</a></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Export</del></span></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/patch/reporting.php?group=lwip">Get statistics</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/patch/?group=lwip&amp;func=search">Search</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/patch/admin/field_values.php?group=lwip"><img alt="" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/help.png" width="24" height="24">Field values</a></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class="topmenuitemmainitem">
+<a href="https://savannah.nongnu.org/news/?group=lwip" class="tabs" title="Read latest News, post News">News</a><ul id="submenu9" class="topmenuitemsubmenu"><li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/news/?group=lwip">Browse</a></li>
+<li class="topmenuitemsubmenu"><a href="https://savannah.nongnu.org/news/atom.php?group=lwip">Atom feed</a></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Submit</del></span></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Manage</del></span></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+</ul></div><!-- end topmenuitem -->
+</div><!-- end pagemenu -->
+<div id="topmenunooverlap">&nbsp;</div>
+<div id="topmenunooverlapbis">&nbsp;</div>
+<p> You are not allowed to post comments on this tracker with your current
+authentication level.</p>
+<h1 class="prioreclosed"><i><a href="https://savannah.nongnu.org/patch/?10336">patch #10336</a></i>: mdns: Add null check for pbuf_skip</h1>
+<form enctype="multipart/form-data" name="item_form" action="https://savannah.nongnu.org/patch/index.php?10336" method="post">
+<input type="hidden" name="form_id" value="599a500694ad366325d6555a3b8fce42">
+<input type="hidden" name="group_id" value="3159">
+<input type="hidden" name="func" value="detailitem">
+
+
+<table cellpadding="0" width="100%">
+<tbody><tr>
+<td class="preinput" width="15%">Submitter:&nbsp;</td>
+<td width="35%"><a href="https://savannah.nongnu.org/users/szsam">Mingjie Shen &lt;szsam&gt;</a></td>
+<td colspan="2" width="50%" align="center" valign="top"><span class="noprint"><input type="submit" name="submit" value="Submit changes and browse items" class="bold"> <input type="text" id="website" name="website" value="http://"></span></td>
+</tr>
+<tr>
+<td class="preinput" width="15%">Submitted:&nbsp;</td>
+<td width="35%">Fri 14 Apr 2023 09:24:23 PM UTC</td>
+<td colspan="2" width="50%" align="center" valign="top"><span class="noprint"><input type="submit" name="submitreturn" value="Submit changes and return to this item"></span></td>
+</tr>
+
+<tr>
+<td class="preinput" width="15%">&nbsp;</td>
+<td width="35%">&nbsp;</td>
+<td colspan="2" width="50%" align="center" valign="top"><span class="noprint"><input type="submit" name="preview" value="Preview"></span></td>
+</tr>
+<tr><td colspan="4">&nbsp;</td></tr>
+
+<tr><td valign="middle" width="15%"><a href="https://savannah.nongnu.org/patch/admin/field_values.php?group_id=3159&amp;field=category_id&amp;list_value=1"><span class="preinput help" title="Generally high level modules or functionalities of the software (e.g. User interface, Configuration Manager, etc)">Category:</span></a>&nbsp;</td>
+<td valign="middle" width="35%">None</td>
+
+<td valign="middle" width="15%"><a href="https://savannah.nongnu.org/patch/admin/field_values.php?group_id=3159&amp;field=priority&amp;list_value=1"><span class="preinput help" title="How quickly the item should be handled (Immediate, Normal, Low, Later,...)">Priority:</span></a>&nbsp;</td>
+<td valign="middle" width="35%">5 - Normal</td>
+</tr>
+
+<tr class="boxitemalt"><td valign="middle" width="15%"><a href="https://savannah.nongnu.org/patch/admin/field_values.php?group_id=3159&amp;field=resolution_id&amp;list_value=1"><span class="preinput help" title="Current status of the item">Status:</span></a>&nbsp;</td>
+<td valign="middle" width="35%">Done</td>
+
+<td valign="middle" width="15%"><a href="https://savannah.nongnu.org/patch/admin/field_values.php?group_id=3159&amp;field=privacy&amp;list_value=1"><span class="preinput help" title="Whether the item can be seen by members of the group only or anybody">Privacy:</span></a>&nbsp;</td>
+<td valign="middle" width="35%">Public</td>
+</tr>
+
+<tr><td valign="middle" width="15%"><a href="https://savannah.nongnu.org/patch/admin/field_values.php?group_id=3159&amp;field=assigned_to&amp;list_value=1"><span class="preinput help" title="Who is in charge of handling the item">Assigned to:</span></a>&nbsp;</td>
+<td valign="middle" width="35%">goldsimon</td>
+
+<td valign="middle" width="15%"><a href="https://savannah.nongnu.org/patch/admin/field_values.php?group_id=3159&amp;field=status_id&amp;list_value=1"><span class="preinput help" title="Most basic status of the item: is the item considered as dealt with or not.">Open/Closed:</span></a>&nbsp;</td>
+<td valign="middle" width="35%">Closed</td>
+</tr>
+
+<tr class="boxitemalt"><td valign="middle" width="15%"><a href="https://savannah.nongnu.org/patch/admin/field_values.php?group_id=3159&amp;field=plan_release_id&amp;list_value=1"><span class="preinput help" title="Release in which it is planned to have the item handled">Planned Release:</span></a>&nbsp;</td>
+<td valign="middle" width="35%">None</td>
+
+</tr></tbody></table>
+<h2 id="discussion"><a href="https://savannah.nongnu.org/patch/?10336#discussion">Discussion</a></h2>
+<div id="hidsubpartcontentdiscussion">
+<p><input type="submit" name="reverse_bis" value="Reverse comment order"></p>
+
+<table class="box">
+<tbody><tr>
+</tr>
+
+<tr class="boxhighlight"><td valign="top">
+<a id="comment1" href="https://savannah.nongnu.org/patch/?10336#comment1" class="preinput">
+Thu 11 May 2023 07:26:45 PM UTC, comment #1:</a>&nbsp;<br>
+<div class="tracker_comment"><p>Pushed, thanks for the patch<br>
+</p>
+</div>
+</td>
+<td class="boxhighlightextra"><a href="https://savannah.nongnu.org/users/goldsimon">Simon Goldschmidt &lt;goldsimon&gt;</a><br>
+<span class="help"><img alt="Group administrator" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/project-admin.png" width="24" height="24"></span><img title="In charge of this item." alt="" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/assignee.png" width="24" height="24"></td></tr>
+
+<tr class="boxitemalt"><td valign="top">
+<a id="comment0" href="https://savannah.nongnu.org/patch/?10336#comment0" class="preinput">
+Fri 14 Apr 2023 09:24:23 PM UTC, <b>original submission:</b>
+</a>&nbsp;<br>
+<div class="tracker_comment"><p><br>
+</p>
+</div>
+</td>
+<td class="boxitemaltextra"><a href="https://savannah.nongnu.org/users/szsam">Mingjie Shen &lt;szsam&gt;</a></td></tr>
+</tbody></table>
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+<h2 id="attached"><a href="https://savannah.nongnu.org/patch/?10336#attached">Attached Files</a></h2>
+<div id="hidsubpartcontentattached">
+<div class="box">
+<div class="boxtitle">Attached Files</div><!-- end boxtitle -->
+<div class="boxitemalt"><!-- file --><a href="https://file.savannah.nongnu.org/file/0001-mdns-Add-null-check-for-pbuf_skip.patch?file_id=54630">file #54630: &nbsp;0001-mdns-Add-null-check-for-pbuf_skip.patch</a> added by <a href="https://savannah.nongnu.org/users/szsam">szsam</a> <span class="smaller">(910B - text/x-patch)</span></div>
+
+</div><!-- end box -->
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+<h2 id="dependencies"><a href="https://savannah.nongnu.org/patch/?10336#dependencies">Dependencies</a></h2>
+<div id="hidsubpartcontentdependencies">
+<p>This item does not depend on any other items.</p>
+<p>No items depend on this one.</p>
+
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+<h2 id="cc"><a href="https://savannah.nongnu.org/patch/?10336#cc">Mail Notification Carbon-Copy List</a></h2>
+<div id="hidsubpartcontentcc">
+<div class="box">
+<div class="boxtitle">Carbon-Copy List</div><!-- end boxtitle -->
+<li class="boxitemalt"><!-- email --> <span class="help" title="This information is not provided to anonymous users">-email is unavailable-</span> added by <a href="https://savannah.nongnu.org/users/goldsimon">goldsimon</a> <span class="smaller">(Posted a comment)</span></li><li class="boxitem"><!-- email --> <span class="help" title="This information is not provided to anonymous users">-email is unavailable-</span> added by <a href="https://savannah.nongnu.org/users/szsam">szsam</a> <span class="smaller">(Submitted the item)</span>
+</li></div><!-- end box -->
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+<h2 id="votes"><a href="https://savannah.nongnu.org/patch/?10336#votes">Votes</a></h2>
+<div id="hidsubpartcontentvotes">
+<p>There are 0 votes so far. Votes easily highlight which items people would like to see resolved
+in priority, independently of the priority of the item set by tracker
+managers.</p>
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+</form>
+<h2 id="history"><a href="https://savannah.nongnu.org/patch/?10336#history">History</a></h2>
+<div id="hidsubpartcontenthistory">
+
+<p>Follow 4 latest changes.</p>
+
+<table class="box">
+<tbody><tr>
+<th class="boxtitle">Date</th>
+<th class="boxtitle">Changed by</th>
+<th class="boxtitle">Updated Field</th>
+<th class="boxtitle">Previous Value</th>
+<th class="boxtitle">=&gt;</th>
+<th class="boxtitle">Replaced by</th>
+</tr>
+
+<tr class="boxitem"><td align="center" class="smaller">2023-05-11</td>
+<td align="center" class="smaller"><a href="https://savannah.nongnu.org/users/goldsimon">goldsimon</a></td>
+<td class="smaller" align="center">Status</td><td class="smaller" align="right">None</td>
+<td class="smaller" align="center"><img alt="" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/next.png" width="24" height="24"></td>
+<td class="smaller" align="left">Done</td>
+</tr>
+
+<tr class="boxitem"><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td class="smaller" align="center">Assigned to</td><td class="smaller" align="right">None</td>
+<td class="smaller" align="center"><img alt="" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/next.png" width="24" height="24"></td>
+<td class="smaller" align="left">goldsimon</td>
+</tr>
+
+<tr class="boxitem"><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td class="smaller" align="center">Open/Closed</td><td class="smaller" align="right">Open</td>
+<td class="smaller" align="center"><img alt="" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/next.png" width="24" height="24"></td>
+<td class="smaller" align="left">Closed</td>
+</tr>
+
+<tr class="boxitemalt"><td align="center" class="smaller">2023-04-14</td>
+<td align="center" class="smaller"><a href="https://savannah.nongnu.org/users/szsam">szsam</a></td>
+<td class="smaller" align="center">Attached File</td><td class="smaller" align="right">-</td>
+<td class="smaller" align="center"><img alt="" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/next.png" width="24" height="24"></td>
+<td class="smaller" align="left">Added 0001-mdns-Add-null-check-for-pbuf_skip.patch, #54630</td>
+</tr>
+</tbody></table>
+
+</div><!-- closing hidsubpart -->
+
+<p class="backtotop">
+<a href="https://savannah.nongnu.org/patch/?10336#top"><img alt="Back to the top" border="0" src="./lwIP - A Lightweight TCP_IP stack - Patches_ patch #10336, mdns_ Add null check for pbuf_skip [Savannah]_files/top.orig.png" width="48" height="48"></a>
+</p>
+<p class="footer">
+Copyright © 2026 Free Software Foundation, Inc.
+<br>
+Verbatim copying and distribution of this entire article
+is permitted in any medium, provided this notice is preserved.
+<br>
+The <a href="https://www.gnu.org/graphics/meditate.html">Levitating,
+Meditating, Flute-playing Gnu</a> logo is a GNU GPL'ed image provided
+by the Nevrax Design Team.<br>
+<a href="https://git.savannah.nongnu.org/cgit/administration/savane.git/plain//frontend/php/bugs/index.php?id=9b684d621d606340ec3f8b1a290873daf3ff5474">Page source code</a></p>
+<div align="right"><p>Powered by Savane 3.17-9b68.<br><a href="https://savannah.nongnu.org/source/savane-9b684d621d606340ec3f8b1a290873daf3ff5474.tar.gz">Corresponding source code</a></p></div>
+</div> <!-- class='main' -->
+</div> <!-- class='realbody' -->
+
+
+
+</body></html>

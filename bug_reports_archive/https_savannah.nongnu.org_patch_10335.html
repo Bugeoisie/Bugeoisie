@@ -1,0 +1,457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>lwIP - A Lightweight TCP/IP stack - Patches: patch #10335, api,sockets: Fix signed overflow... [Savannah]</title>
+<meta name="Generator" content="Savane 3.17-9b68, see https://savannah.nongnu.org/source/savane-9b684d621d606340ec3f8b1a290873daf3ff5474.tar.gz" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<link rel="stylesheet" type="text/css" href="/css/Savannah.css" />
+<link rel="icon" type="image/png" href="/images/Savannah.theme/icon.png" />
+<meta name="Author" content="Copyright 2026 Free Software Foundation, Inc.
+Verbatim copying and distribution of this entire article
+is permitted in any medium, provided this notice is preserved." />
+<meta name="description" content="Savannah is a central point for development, distribution
+and maintenance of free software, both GNU and non-GNU." />
+
+</head>
+<body>
+<div class='realbody'>
+
+<ul class='menu'>
+<li class='menulogo'>
+          <a href="/"><img  alt="Back to Savannah Homepage" border="0" src="/images/Savannah.theme/floating.png" width="144" height="125" /></a>
+</li><!-- end menulogo -->
+<li class='menutitle'>Not Logged in</li><!-- end menutitle -->
+
+<li class='menuitem'>
+<a href="/account/login.php?uri=%2Fpatch%2F%3F10335" class="menulink" title="Login page - you must have registered an account first">Login</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="/account/register.php" class="menulink" title="Account registration form">New User</a></li><!-- end menuitem -->
+<li class='menutitle'>This Page</li><!-- end menutitle -->
+
+<li class='menuitem'>
+<a href="/i18n.php?lang_uri=%2Fpatch%2F%3F10335" class="menulink" title="Choose website language">Language</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="/patch/index.php?reload=1&amp;func=detailitem&amp;item_id=10335" class="menulink" title="Reload the page without risk of reposting data">Clean Reload</a></li><!-- end menuitem -->
+<li class='menutitle'>Search</li><!-- end menutitle -->
+       <li class="menusearch">
+<form action="/search/#options" method="get">
+<input type="text" id="words1" name="words1"  title="Terms to look for" /><br />
+ <label for='type_of_search1'>Area to search in</label>
+<select name='type_of_search' id='type_of_search1'>
+<option value="soft" selected="selected">Groups</option>
+<option value="people">People</option>
+<option value="support"><!-- Search... in -->Support</option>
+<option value="bugs"><!-- Search... in -->Bugs</option>
+<option value="task"><!-- Search... in -->Tasks</option>
+<option value="patch"><!-- Search... in -->Patches</option>
+</select>
+<input type='hidden' name="exact" value="1" />
+<br />
+<input type="submit" name="search" value="Search" />&nbsp;
+</form>
+       </li><!-- end menusearch --><li class='menutitle'>Hosted Projects</li><!-- end menutitle -->
+
+<li class='menuitem'>
+<a href="/register/requirements.php" class="menulink">Hosting requirements</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="/register/" class="menulink" title="Register your project at Savannah">Register New Project</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="/search/index.php?type_of_search=soft&amp;words=%%%" class="menulink" title="Browse the full list of hosted projects">Full List</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="/people/" class="menulink" title="Browse the list of request for contributions">Contributors Wanted</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="/stats/" class="menulink" title="Browse statistics about Savannah">Statistics</a></li><!-- end menuitem -->
+<li class='menutitle'>Site Help</li><!-- end menutitle -->
+
+<li class='menuitem'>
+<a href="/maintenance/FrontPage/" class="menulink">User Docs: FAQ</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="/maintenance/back-page/" class="menulink" title="In-depth Documentation dedicated to any users, including group admins">User Docs: In Depth Guide</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="/support/?group=administration" class="menulink" title="Get help from the Admins of Savannah, when documentation is not enough">Get Support</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="/contact.php" class="menulink" title="Contact address of Savannah Admins">Contact Savannah</a></li><!-- end menuitem -->
+<li class='menutitle'>GNU Project</li><!-- end menutitle -->
+
+<li class='menuitem'>
+<a href="//www.gnu.org/help/help.html" class="menulink">Help GNU</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="//www.gnu.org/software/software.html" class="menulink">All GNU Packages</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="//www.gnu.org/software/devel.html" class="menulink">Dev Resources</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="//www.gnu.org/licenses/license-list.html" class="menulink">License List</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="//www.gnu.org/prep/ftp.html" class="menulink">GNU Mirrors</a></li><!-- end menuitem -->
+<li><span class="button"><a href="//www.fsf.org/associate/support_freedom/join_fsf?referrer=2442"><img  alt="Support freedom" border="0" src="/images/Savannah.theme/thin-image.png" width="240" height="28" />
+<br />Help us protect your freedom and the rights of computer
+users everywhere by becoming a member of the FSF.
+<br /><strong>Join Now!</strong></a></span>
+</li>
+
+<li class='menutitle'>Free Software Foundation</li><!-- end menutitle -->
+
+<li class='menuitem'>
+<a href="//www.fsf.org/events/" class="menulink">Coming Events</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="//www.fsf.org/directory/" class="menulink">Free Software Directory</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="//savannah.gnu.org/maintenance/SavannahCryptographicRestrictions" class="menulink">Cryptographic software legal notice</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="//www.fsf.org/about/dmca-notice" class="menulink">Copyright infringement notification</a></li><!-- end menuitem -->
+<li class='menutitle'>Related Forges</li><!-- end menutitle -->
+
+<li class='menuitem'>
+<a href="//savannah.gnu.org/" class="menulink">GNU Savannah</a></li><!-- end menuitem -->
+
+<li class='menuitem'>
+<a href="//puszcza.gnu.org.ua/" class="menulink">Puszcza</a></li><!-- end menuitem -->
+
+</ul><!-- end menu -->
+<div id='top' class='main'>
+<h1 class='toptitle'><img  width="48" height="48" alt="patch" class="pageicon" border="0" src="/images/Savannah.theme/contexts/patch.orig.png" />lwIP - A Lightweight TCP/IP stack - Patches: patch #10335, api,sockets: Fix signed overflow...</h1>
+
+<div class='topmenu' id='topmenu'>
+<span class='topmenutitle' title="Group Scope"> Group
+</span><!-- end topmenutitle -->
+<div class='topmenuitem'><ul id='topmenuitem'>
+  <li class='topmenuitemmainitem'>
+<a href="/projects/lwip/" class="tabs" title="Group main page at Savannah">Main</a><ul id='submenu1' class='topmenuitemsubmenu'><li class="topmenuitemsubmenu"><a href="/projects/lwip/">Main</a></li>
+<li class="topmenuitemsubmenu"><a href="/project/memberlist.php?group=lwip">View members</a></li>
+<li class="topmenuitemsubmenu"><a href="/project/search.php?group=lwip">Search</a></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class='topmenuitemmainitem'>
+<a href="http://www.nongnu.org/lwip/" class="tabs" title="Browse group home page (outside of Savane)">Homepage</a>  </li><!-- end topmenuitemmainitem -->
+
+  <li class='topmenuitemmainitem'>
+<a href="/files/?group=lwip" class="tabs" title="Visit download area: files released">Download</a>  </li><!-- end topmenuitemmainitem -->
+
+  <li class='topmenuitemmainitem'>
+<a href="/mail/?group=lwip" class="tabs" title="List existing mailing lists">Mailing lists</a>  </li><!-- end topmenuitemmainitem -->
+
+  <li class='topmenuitemmainitem'>
+<a href="/projects/lwip/#devtools" class="tabs" title="Source code management">Source code</a><ul id='submenu5' class='topmenuitemsubmenu'><li class="topmenuitemsubmenu"><a href="/cvs/?group=lwip" title="CVS Repository">Use CVS</a></li>
+<li class="topmenuitemsubmenu"><a href="http://web.cvs.savannah.nongnu.org/viewvc/?root=lwip">Browse Web Pages Repository</a></li>
+<li class='topmenuitemsubmenuseparator'>&nbsp;</li>
+<li class="topmenuitemsubmenu"><a href="/git/?group=lwip" title="Git Repository">Use Git</a></li>
+<li class="topmenuitemsubmenu"><span>Browse Git repositories</span></li>
+
+<li><a href="//git.savannah.nongnu.org/cgit/lwip.git">lwIP - A Lightweight TCPIP stack</a></li>
+<li><a href="//git.savannah.nongnu.org/cgit/lwip/lwip-contrib.git">lwIP Contrib - Contributed code for Lightweight TCP/IP stack</a></li>
+
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class='topmenuitemmainitem'>
+<a href="/bugs/?group=lwip" class="tabs" title="Bug Tracker: report, search and track bugs">Bugs</a><ul id='submenu6' class='topmenuitemsubmenu'><li class="topmenuitemsubmenu"><span class="unavailable"><del>Submit new</del></span></li>
+<li class="topmenuitemsubmenu"><a href="/bugs/?group=lwip">Browse</a></li>
+<li class="topmenuitemsubmenu"><a href="/bugs/?group=lwip&amp;func=browse&amp;set=open">Reset to open</a></li>
+<li class="topmenuitemsubmenu"><a href="/bugs/?group=lwip&amp;func=digest">Digest</a></li>
+<li class="topmenuitemsubmenu"><a href="/bugs/dependencies.php?group=lwip">Dependencies</a></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Export</del></span></li>
+<li class="topmenuitemsubmenu"><a href="/bugs/reporting.php?group=lwip">Get statistics</a></li>
+<li class="topmenuitemsubmenu"><a href="/bugs/?group=lwip&amp;func=search">Search</a></li>
+<li class="topmenuitemsubmenu"><a href="/bugs/admin/field_values.php?group=lwip"><img  alt="" border="0" src="/images/Savannah.theme/contexts/help.png" width="24" height="24" />Field values</a></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class='topmenuitemmainitem'>
+<a href="/task/?group=lwip" class="tabs" title="Task Manager: post, search and manage tasks">Tasks</a><ul id='submenu7' class='topmenuitemsubmenu'><li class="topmenuitemsubmenu"><span class="unavailable"><del>Submit new</del></span></li>
+<li class="topmenuitemsubmenu"><a href="/task/?group=lwip">Browse</a></li>
+<li class="topmenuitemsubmenu"><a href="/task/?group=lwip&amp;func=browse&amp;set=open">Reset to open</a></li>
+<li class="topmenuitemsubmenu"><a href="/task/?group=lwip&amp;func=digest">Digest</a></li>
+<li class="topmenuitemsubmenu"><a href="/task/dependencies.php?group=lwip">Dependencies</a></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Export</del></span></li>
+<li class="topmenuitemsubmenu"><a href="/task/reporting.php?group=lwip">Get statistics</a></li>
+<li class="topmenuitemsubmenu"><a href="/task/?group=lwip&amp;func=search">Search</a></li>
+<li class="topmenuitemsubmenu"><a href="/task/admin/field_values.php?group=lwip"><img  alt="" border="0" src="/images/Savannah.theme/contexts/help.png" width="24" height="24" />Field values</a></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class='topmenuitemmainitem'>
+<a href="/patch/?group=lwip" class="tabselect" title="Patch Manager: post, search and manage patches">Patches</a><ul id='submenu8' class='topmenuitemsubmenu'><li class="topmenuitemsubmenu"><span class="unavailable"><del>Submit new</del></span></li>
+<li class="topmenuitemsubmenu"><a href="/patch/?group=lwip">Browse</a></li>
+<li class="topmenuitemsubmenu"><a href="/patch/?group=lwip&amp;func=browse&amp;set=open">Reset to open</a></li>
+<li class="topmenuitemsubmenu"><a href="/patch/?group=lwip&amp;func=digest">Digest</a></li>
+<li class="topmenuitemsubmenu"><a href="/patch/dependencies.php?group=lwip">Dependencies</a></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Export</del></span></li>
+<li class="topmenuitemsubmenu"><a href="/patch/reporting.php?group=lwip">Get statistics</a></li>
+<li class="topmenuitemsubmenu"><a href="/patch/?group=lwip&amp;func=search">Search</a></li>
+<li class="topmenuitemsubmenu"><a href="/patch/admin/field_values.php?group=lwip"><img  alt="" border="0" src="/images/Savannah.theme/contexts/help.png" width="24" height="24" />Field values</a></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+  <li class='topmenuitemmainitem'>
+<a href="/news/?group=lwip" class="tabs" title="Read latest News, post News">News</a><ul id='submenu9' class='topmenuitemsubmenu'><li class="topmenuitemsubmenu"><a href="/news/?group=lwip">Browse</a></li>
+<li class="topmenuitemsubmenu"><a href="/news/atom.php?group=lwip">Atom feed</a></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Submit</del></span></li>
+<li class="topmenuitemsubmenu"><span class="unavailable"><del>Manage</del></span></li>
+
+</ul><!-- end submenu -->
+  </li><!-- end topmenuitemmainitem -->
+
+</ul></div><!-- end topmenuitem -->
+</div><!-- end pagemenu -->
+<div id='topmenunooverlap'>&nbsp;</div>
+<div id='topmenunooverlapbis'>&nbsp;</div>
+<p> You are not allowed to post comments on this tracker with your current
+authentication level.</p>
+<h1 class='prioreclosed'><i><a href="?10335">patch #10335</a></i>: api,sockets: Fix signed overflow check</h1>
+<form  enctype="multipart/form-data" name="item_form" action="/patch/index.php?10335" method="post">
+<input type='hidden' name="form_id" value="430f57e3e728a94a149742294c3a4e08" />
+<input type='hidden' name="group_id" value="3159" />
+<input type='hidden' name="func" value="detailitem" />
+
+
+<table cellpadding='0' width='100%'>
+<tr>
+<td class='preinput' width='15%'>Submitter:&nbsp;</td>
+<td width='35%'><a href="/users/szsam">Mingjie Shen &lt;szsam&gt;</a></td>
+<td colspan='2' width='50%' align='center' valign='top'><span class='noprint'><input type="submit" name="submit" value="Submit changes and browse items" class="bold" /> <input type="text" id="website" name="website" value="http://" /></span></td>
+</tr>
+<tr>
+<td class='preinput' width='15%'>Submitted:&nbsp;</td>
+<td width='35%'>Fri 14 Apr 2023 09:21:46 PM UTC</td>
+<td colspan='2' width='50%' align='center' valign='top'><span class='noprint'><input type="submit" name="submitreturn" value="Submit changes and return to this item" /></span></td>
+</tr>
+
+<tr>
+<td class='preinput' width='15%'>&nbsp;</td>
+<td width='35%'>&nbsp;</td>
+<td colspan='2' width='50%' align='center' valign='top'><span class='noprint'><input type="submit" name="preview" value="Preview" /></span></td>
+</tr>
+<tr><td colspan="4">&nbsp;</td></tr>
+
+<tr><td valign='middle' width='15%'><a href="/patch/admin/field_values.php?group_id=3159&field=category_id&list_value=1"><span class='preinput help' title="Generally high level modules or functionalities of the software (e.g. User interface, Configuration Manager, etc)">Category:</span></a>&nbsp;</td>
+<td valign='middle' width='35%'>None</td>
+
+<td valign='middle' width='15%'><a href="/patch/admin/field_values.php?group_id=3159&field=priority&list_value=1"><span class='preinput help' title="How quickly the item should be handled (Immediate, Normal, Low, Later,...)">Priority:</span></a>&nbsp;</td>
+<td valign='middle' width='35%'>5 - Normal</td>
+</tr>
+
+<tr class="boxitemalt"><td valign='middle' width='15%'><a href="/patch/admin/field_values.php?group_id=3159&field=resolution_id&list_value=1"><span class='preinput help' title="Current status of the item">Status:</span></a>&nbsp;</td>
+<td valign='middle' width='35%'>Done</td>
+
+<td valign='middle' width='15%'><a href="/patch/admin/field_values.php?group_id=3159&field=privacy&list_value=1"><span class='preinput help' title="Whether the item can be seen by members of the group only or anybody">Privacy:</span></a>&nbsp;</td>
+<td valign='middle' width='35%'>Public</td>
+</tr>
+
+<tr><td valign='middle' width='15%'><a href="/patch/admin/field_values.php?group_id=3159&field=assigned_to&list_value=1"><span class='preinput help' title="Who is in charge of handling the item">Assigned to:</span></a>&nbsp;</td>
+<td valign='middle' width='35%'>goldsimon</td>
+
+<td valign='middle' width='15%'><a href="/patch/admin/field_values.php?group_id=3159&field=status_id&list_value=1"><span class='preinput help' title="Most basic status of the item: is the item considered as dealt with or not.">Open/Closed:</span></a>&nbsp;</td>
+<td valign='middle' width='35%'>Closed</td>
+</tr>
+
+<tr class="boxitemalt"><td valign='middle' width='15%'><a href="/patch/admin/field_values.php?group_id=3159&field=plan_release_id&list_value=1"><span class='preinput help' title="Release in which it is planned to have the item handled">Planned Release:</span></a>&nbsp;</td>
+<td valign='middle' width='35%'>None</td>
+
+</table>
+<h2 id='discussion'><a href="#discussion">Discussion</a></h2>
+<div id="hidsubpartcontentdiscussion">
+<p><input type="submit" name="reverse_bis" value="Reverse comment order" /></p>
+
+<table class='box'>
+<tr>
+</tr>
+
+<tr class="boxhighlight"><td valign='top'>
+<a id='comment2' href='#comment2' class='preinput'>
+Thu 11 May 2023 07:29:35 PM UTC, comment #2:</a>&nbsp;<br />
+<div class='tracker_comment'><p>Pushed, thanks for the patch<br />
+</p>
+</div>
+</td>
+<td class="boxhighlightextra"><a href="/users/goldsimon">Simon Goldschmidt &lt;goldsimon&gt;</a><br />
+<span class='help'><img  alt="Group administrator" border="0" src="/images/Savannah.theme/roles/project-admin.png" width="24" height="24" /></span><img  title="In charge of this item." alt="" border="0" src="/images/Savannah.theme/roles/assignee.png" width="24" height="24" /></td></tr>
+
+<tr class="boxitem"><td valign='top'>
+<a id='comment1' href='#comment1' class='preinput'>
+Wed 19 Apr 2023 05:57:57 AM UTC, comment #1:</a>&nbsp;<br />
+<div class='tracker_comment'><p>When checking for integer overflow, you may often write tests like a + b &lt; a. This works fine if a or b are unsigned integers, since any overflow in the addition will cause the value to simply &quot;wrap around.&quot; However, using signed integers is problematic because signed overflow has undefined behavior according to the C and C++ standards. If the addition overflows and has an undefined result, the comparison will likewise be undefined; it may produce an unintended result, or may be deleted entirely by an optimizing compiler.<br />
+See <a href="https://codeql.github.com/codeql-query-help/cpp/cpp-signed-overflow-check/">https://codeql.gi ... d-overflow-check/</a> <br />
+<i><a href="#comment0">original submission:</a></i><br />
+</p>
+<blockquote class='quote'><p>&gt; Signed overflow is undefined behaviour in C/C++.<br />
+&gt; ---<br />
+&gt;&nbsp; src/api/sockets.c | 2 +-<br />
+&gt;&nbsp; 1 file changed, 1 insertion(+), 1 deletion(-)<br />
+&gt; <br />
+&gt; diff --git a/src/api/sockets.c b/src/api/sockets.c<br />
+&gt; index 929cd652..50365589 100644<br />
+&gt; --- a/src/api/sockets.c<br />
+&gt; +++ b/src/api/sockets.c<br />
+&gt; @@ -1012,7 +1012,7 @@ lwip_recv_tcp(struct lwip_sock *sock, void *mem, size_t len, int flags)<br />
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {<br />
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; copylen = (u16_t)recv_left;<br />
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&gt; -&nbsp;&nbsp;&nbsp; if (recvd + copylen &lt; recvd) {<br />
+&gt; +&nbsp;&nbsp;&nbsp; if (recvd &gt; SSIZE_MAX - copylen) {<br />
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* overflow */<br />
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; copylen = (u16_t)(SSIZE_MAX - recvd);<br />
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&gt; -- <br />
+&gt; 2.25.1<br />
+</p></blockquote>
+</div>
+</td>
+<td class="boxitemextra"><a href="/users/szsam">Mingjie Shen &lt;szsam&gt;</a></td></tr>
+
+<tr class="boxitemalt"><td valign='top'>
+<a id='comment0' href='#comment0' class='preinput'>
+Fri 14 Apr 2023 09:21:46 PM UTC, <b>original submission:</b>
+</a>&nbsp;<br />
+<div class='tracker_comment'><p>Signed overflow is undefined behaviour in C/C++.<br />
+---<br />
+&nbsp;src/api/sockets.c | 2 +-<br />
+&nbsp;1 file changed, 1 insertion(+), 1 deletion(-)<br />
+<br />
+diff --git a/src/api/sockets.c b/src/api/sockets.c<br />
+index 929cd652..50365589 100644<br />
+--- a/src/api/sockets.c<br />
++++ b/src/api/sockets.c<br />
+@@ -1012,7 +1012,7 @@ lwip_recv_tcp(struct lwip_sock *sock, void *mem, size_t len, int flags)<br />
+&nbsp;&nbsp;&nbsp;&nbsp; } else {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; copylen = (u16_t)recv_left;<br />
+&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+-&nbsp;&nbsp;&nbsp; if (recvd + copylen &lt; recvd) {<br />
++&nbsp;&nbsp;&nbsp; if (recvd &gt; SSIZE_MAX - copylen) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* overflow */<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; copylen = (u16_t)(SSIZE_MAX - recvd);<br />
+&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+-- <br />
+2.25.1<br />
+</p>
+</div>
+</td>
+<td class="boxitemaltextra"><a href="/users/szsam">Mingjie Shen &lt;szsam&gt;</a></td></tr>
+</table>
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+<h2 id='attached'><a href="#attached">Attached Files</a></h2>
+<div id="hidsubpartcontentattached">
+<div class="box">
+<div class='boxtitle'>Attached Files</div><!-- end boxtitle -->
+<div class="boxitemalt"><!-- file --><a href="https://file.savannah.nongnu.org/file/0001-api-sockets-Fix-signed-overflow-check.patch?file_id=54629">file #54629: &nbsp;0001-api-sockets-Fix-signed-overflow-check.patch</a> added by <a href="/users/szsam">szsam</a> <span class="smaller">(776B - text/x-patch)</span></div>
+
+</div><!-- end box -->
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+<h2 id='dependencies'><a href="#dependencies">Dependencies</a></h2>
+<div id="hidsubpartcontentdependencies">
+<p>This item does not depend on any other items.</p>
+<p>No items depend on this one.</p>
+
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+<h2 id='cc'><a href="#cc">Mail Notification Carbon-Copy List</a></h2>
+<div id="hidsubpartcontentcc">
+<div class="box">
+<div class='boxtitle'>Carbon-Copy List</div><!-- end boxtitle -->
+<li class="boxitemalt"><!-- email --> <span class='help' title="This information is not provided to anonymous users">-email is unavailable-</span> added by <a href="/users/goldsimon">goldsimon</a> <span class="smaller">(Posted a comment)</span><li class="boxitem"><!-- email --> <span class='help' title="This information is not provided to anonymous users">-email is unavailable-</span> added by <a href="/users/szsam">szsam</a> <span class="smaller">(Submitted the item)</span>
+</div><!-- end box -->
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+<h2 id='votes'><a href="#votes">Votes</a></h2>
+<div id="hidsubpartcontentvotes">
+<p>There are 0 votes so far. Votes easily highlight which items people would like to see resolved
+in priority, independently of the priority of the item set by tracker
+managers.</p>
+<p>&nbsp;</p>
+
+</div><!-- closing hidsubpart -->
+</form>
+<h2 id='history'><a href="#history">History</a></h2>
+<div id="hidsubpartcontenthistory">
+
+<p>Follow 4 latest changes.</p>
+
+<table class='box'>
+<tr>
+<th class='boxtitle'>Date</th>
+<th class='boxtitle'>Changed by</th>
+<th class='boxtitle'>Updated Field</th>
+<th class='boxtitle'>Previous Value</th>
+<th class='boxtitle'>=></th>
+<th class='boxtitle'>Replaced by</th>
+</tr>
+
+<tr class="boxitem"><td align="center" class="smaller">2023-05-11</td>
+<td align="center" class="smaller"><a href="/users/goldsimon">goldsimon</a></td>
+<td class='smaller' align='center'>Status</td><td class="smaller" align="right">None</td>
+<td class='smaller' align='center'><img  alt="" border="0" src="/images/Savannah.theme/arrows/next.png" width="24" height="24" /></td>
+<td class="smaller" align="left">Done</td>
+</tr>
+
+<tr class="boxitem"><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td class='smaller' align='center'>Assigned to</td><td class="smaller" align="right">None</td>
+<td class='smaller' align='center'><img  alt="" border="0" src="/images/Savannah.theme/arrows/next.png" width="24" height="24" /></td>
+<td class="smaller" align="left">goldsimon</td>
+</tr>
+
+<tr class="boxitem"><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td class='smaller' align='center'>Open/Closed</td><td class="smaller" align="right">Open</td>
+<td class='smaller' align='center'><img  alt="" border="0" src="/images/Savannah.theme/arrows/next.png" width="24" height="24" /></td>
+<td class="smaller" align="left">Closed</td>
+</tr>
+
+<tr class="boxitemalt"><td align="center" class="smaller">2023-04-14</td>
+<td align="center" class="smaller"><a href="/users/szsam">szsam</a></td>
+<td class='smaller' align='center'>Attached File</td><td class="smaller" align="right">-</td>
+<td class='smaller' align='center'><img  alt="" border="0" src="/images/Savannah.theme/arrows/next.png" width="24" height="24" /></td>
+<td class="smaller" align="left">Added 0001-api-sockets-Fix-signed-overflow-check.patch, #54629</td>
+</tr>
+</table>
+
+</div><!-- closing hidsubpart -->
+
+<p class='backtotop'>
+<a href="#top"><img  alt="Back to the top" border="0" src="/images/Savannah.theme/arrows/top.orig.png" width="48" height="48" /></a>
+</p>
+<p class="footer">
+Copyright &copy; 2026 Free Software Foundation, Inc.
+<br />
+Verbatim copying and distribution of this entire article
+is permitted in any medium, provided this notice is preserved.
+<br />
+The <a href="//www.gnu.org/graphics/meditate.html">Levitating,
+Meditating, Flute-playing Gnu</a> logo is a GNU GPL'ed image provided
+by the Nevrax Design Team.<br />
+<a href="//git.savannah.nongnu.org/cgit/administration/savane.git/plain//frontend/php/bugs/index.php?id=9b684d621d606340ec3f8b1a290873daf3ff5474">Page source code</a></p>
+<div align='right'><p>Powered by Savane 3.17-9b68.<br /><a href="https://savannah.nongnu.org/source/savane-9b684d621d606340ec3f8b1a290873daf3ff5474.tar.gz">Corresponding source code</a></p></div>
+</div> <!-- class='main' -->
+</div> <!-- class='realbody' -->
+
+</body>
+</html>

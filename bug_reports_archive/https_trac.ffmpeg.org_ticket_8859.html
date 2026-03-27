@@ -1,0 +1,943 @@
+
+
+<!DOCTYPE html>
+<html lang="en-US">   <head>
+    <!-- # block head (placeholder in theme.html) -->
+        <!-- # block head (content inherited from layout.html) -->
+    <title>
+      #8859 (A heap-buffer-overflow in aacdec_template.c:543:15)
+          – FFmpeg
+
+    </title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!--[if IE]><script>
+        if (/^#__msie303:/.test(window.location.hash))
+        window.location.replace(window.location.hash.replace(/^#__msie303:/, '#'));
+        </script><![endif]-->
+
+    <link rel="start"  href="/wiki" />
+    <link rel="search"  href="/search" />
+    <link rel="help"  href="/wiki/TracGuide" />
+    <link rel="stylesheet"  href="/chrome/common/css/trac.css" type="text/css" />
+    <link rel="stylesheet"  href="/chrome/common/css/ticket.css" type="text/css" />
+    <link rel="stylesheet"  href="/chrome/common/css/jquery-ui/jquery-ui.css" type="text/css" />
+    <link rel="stylesheet"  href="/chrome/common/css/jquery-ui-addons.css" type="text/css" />
+    <link rel="stylesheet"  href="/chrome/vote/css/tracvote.css" type="text/css" />
+    <link rel="icon"  href="/chrome/common/trac.ico" type="image/x-icon" />
+    <link rel="first"  href="/ticket/1" title="Ticket #1" />
+    <link rel="prev"  href="/ticket/8858" title="Ticket #8858" />
+    <link rel="last"  href="/ticket/11696" title="Ticket #11696" />
+    <link rel="next"  href="/ticket/8860" title="Ticket #8860" />
+    <link rel="alternate"  class="rss" href="/ticket/8859?format=rss" title="RSS Feed" type="application/rss+xml" />
+    <link rel="alternate"  class="csv" href="/ticket/8859?format=csv" title="Comma-delimited Text" type="text/csv" />
+    <link rel="alternate"  class="tab" href="/ticket/8859?format=tab" title="Tab-delimited Text" type="text/tab-separated-values" />
+    <noscript>
+      <style>
+        .trac-noscript { display: none !important }
+      </style>     </noscript>
+    <link type="application/opensearchdescription+xml" rel="search"
+          href="/search/opensearch"
+          title="Search FFmpeg"/>
+    <script>
+      var comments_prefs={"comments_order":"oldest","show_comments":"true","show_prop_changes":"true"};
+      var old_values={"analyzed":"0","blockedby":"","blocking":"","cc":"","changetime":"2020-08-24T21:33:50Z","component":"avcodec","description":"== System info ==\r\n\r\nUbuntu x86_64, clang 6.0, ffmpeg (git-master [https://github.com/FFmpeg/FFmpeg/commit/3fc3d712a99cf39f69a2258b48cbc81fa8ae5471])\r\n\r\n== Configure ==\r\n\r\n{{{\r\n./configure --disable-shared --enable-debug=3 --disable-ffplay --disable-ffprobe --disable-doc --disable-asm --cc=clang --cxx=clang++ --ld=clang --toolchain=clang-asan\r\n}}}\r\n\r\n== Command line ==\r\n\r\n{{{\r\n./ffmpeg -y -f mov /dev/null -i @@ \r\n}}}\r\n\r\n== AddressSanitizer ==\r\n\r\n{{{\r\n=================================================================\r\n==35580==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x624000008308 at pc 0x0000030dcdfc bp 0x7ffe3ba63450 sp 0x7ffe3ba63448\r\nREAD of size 8 at 0x624000008308 thread T0\r\n    #0 0x30dcdfb  (/home/seviezhou/ffmpeg/ffmpeg+0x30dcdfb)\r\n    #1 0x30d1314  (/home/seviezhou/ffmpeg/ffmpeg+0x30d1314)\r\n    #2 0x30e7f96  (/home/seviezhou/ffmpeg/ffmpeg+0x30e7f96)\r\n    #3 0x30c7dbc  (/home/seviezhou/ffmpeg/ffmpeg+0x30c7dbc)\r\n    #4 0x179945c  (/home/seviezhou/ffmpeg/ffmpeg+0x179945c)\r\n    #5 0x1798a55  (/home/seviezhou/ffmpeg/ffmpeg+0x1798a55)\r\n    #6 0x145def6  (/home/seviezhou/ffmpeg/ffmpeg+0x145def6)\r\n    #7 0x1451f5d  (/home/seviezhou/ffmpeg/ffmpeg+0x1451f5d)\r\n    #8 0x519abb  (/home/seviezhou/ffmpeg/ffmpeg+0x519abb)\r\n    #9 0x5179a6  (/home/seviezhou/ffmpeg/ffmpeg+0x5179a6)\r\n    #10 0x516e1b  (/home/seviezhou/ffmpeg/ffmpeg+0x516e1b)\r\n    #11 0x5839c2  (/home/seviezhou/ffmpeg/ffmpeg+0x5839c2)\r\n    #12 0x7f6ec8c51b96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310\r\n    #13 0x41e179 in _init (/home/seviezhou/ffmpeg/ffmpeg+0x41e179)\r\n\r\nAddress 0x624000008308 is a wild pointer.\r\nSUMMARY: AddressSanitizer: heap-buffer-overflow (/home/seviezhou/ffmpeg/ffmpeg+0x30dcdfb)\r\nShadow bytes around the buggy address:\r\n  0x0c487fff9010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff9020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff9030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff9040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff9050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n=\u003e0x0c487fff9060: fa[fa]fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff9070: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff9080: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff9090: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff90a0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff90b0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\nShadow byte legend (one shadow byte represents 8 application bytes):\r\n  Addressable:           00\r\n  Partially addressable: 01 02 03 04 05 06 07\r\n  Heap left redzone:       fa\r\n  Freed heap region:       fd\r\n  Stack left redzone:      f1\r\n  Stack mid redzone:       f2\r\n  Stack right redzone:     f3\r\n  Stack after return:      f5\r\n  Stack use after scope:   f8\r\n  Global redzone:          f9\r\n  Global init order:       f6\r\n  Poisoned by user:        f7\r\n  Container overflow:      fc\r\n  Array cookie:            ac\r\n  Intra object redzone:    bb\r\n  ASan internal:           fe\r\n  Left alloca redzone:     ca\r\n  Right alloca redzone:    cb\r\n==35580==ABORTING\r\n}}}","id":8859,"keywords":"aac","owner":"","priority":"normal","reporter":"seviezhou","reproduced":"0","resolution":"duplicate","status":"closed","summary":"A heap-buffer-overflow in aacdec_template.c:543:15","time":"2020-08-22T02:37:55Z","type":"defect","version":"git-master"};
+      var changes=[{"author":"cehoyos","cnum":1,"comment":"Replying to [ticket:8859 seviezhou]:\r\n\u003e {{{\r\n\u003e ./configure --disable-shared --enable-debug=3 --disable-ffplay --disable-ffprobe --disable-doc --disable-asm --cc=clang --cxx=clang++ --ld=clang --toolchain=clang-asan\r\n\u003e }}}\r\nThis will get more readable if you use `./configure --toolchain=clang-asan \u0026\u0026 make ffmpeg_g`, feel free to add `--disable-asm`.\r\n\r\n\u003e {{{\r\n\u003e ./ffmpeg -y -f mov /dev/null -i @@ \r\n\u003e }}}\r\n\r\nThis is unfortunately useless, use `ffmpeg_g` instead and post everything that gets printed, not only the part you consider important (we disagree).\r\n\r\nPlease do not use zip here and please explain what \"JIT\" means.","comment_history":{"0":{"author":"cehoyos","comment":"Replying to [ticket:8859 seviezhou]:\r\n\u003e {{{\r\n\u003e ./configure --disable-shared --enable-debug=3 --disable-ffplay --disable-ffprobe --disable-doc --disable-asm --cc=clang --cxx=clang++ --ld=clang --toolchain=clang-asan\r\n\u003e }}}\r\nThis will get more readable if you use `./configure --toolchain=clang-asan \u0026\u0026 make ffmpeg_g`, feel free to add `--disable-asm`.\r\n\r\n\u003e {{{\r\n\u003e ./ffmpeg -y -f mov /dev/null -i @@ \r\n\u003e }}}\r\n\r\nThis is unfortunately useless, use `ffmpeg_g` instead and post everything that gets printed, not only the part you consider important (we disagree).\r\n\r\nPlease do not use zip here and please explain what \"JIT\" means.","date":1598096969125074}},"date":1598096969125074,"fields":{"component":{"label":"Component","new":"avcodec","old":"ffmpeg","rendered":"\"\\u003cspan class=\\\"trac-field-old\\\"\\u003effmpeg\\u003c/span\\u003e \u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003eavcodec\\u003c/span\\u003e\""},"keywords":{"label":"Keywords","new":"aac","old":"","rendered":"\"aac added\""}},"permanent":1,"replyto":"description"},{"author":"cehoyos","comment":"","comment_history":{"0":{"author":"cehoyos","comment":"","date":1598096987619729}},"date":1598096987619729,"fields":{"attachment":{"label":"Attachment","new":"heap-overflow-ffmpeg-JIT","old":"","rendered":"\"\u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003eheap-overflow-ffmpeg-JIT\\u003c/span\\u003e\""}},"permanent":0},{"author":"Cigaes","cnum":2,"comment":"Just a small question: what is this \"JIT code\" you are referring to?","comment_history":{"0":{"author":"Cigaes","comment":"Just a small question: what is this \"JIT code\" you are referring to?","date":1598097063258540}},"date":1598097063258540,"fields":{},"permanent":1},{"author":"seviezhou","cnum":3,"comment":"Just because although I enabled debug information and disable inline assembly, I still cannot get any source line information from the backtrace. So I think the crash point might not in the source code, but in the assembly code. So I guess that the crash point is in some \"just in time generated\" code. Any ideas about this?","comment_history":{"0":{"author":"seviezhou","comment":"Just because although I enabled debug information and disable inline assembly, I still cannot get any source line information from the backtrace. So I think the crash point might not in the source code, but in the assembly code. So I guess that the crash point is in some \"just in time generated\" code. Any ideas about this?","date":1598097282096099}},"date":1598097282096099,"fields":{},"permanent":1},{"author":"seviezhou","cnum":4,"comment":"Here is the output of ffmpeg_g, I am sorry for my previous post:\r\n\r\n{{{\r\nffmpeg version N-98801-g3fc3d712a9 Copyright (c) 2000-2020 the FFmpeg developers\r\n  built with clang version 6.0.0-1ubuntu2 (tags/RELEASE_600/final)\r\n  configuration: --disable-shared --enable-debug=3 --disable-ffplay --disable-ffprobe --disable-doc --disable-asm --cc=clang --cxx=clang++ --ld=clang --toolchain=clang-asan\r\n  libavutil      56. 58.100 / 56. 58.100\r\n  libavcodec     58.101.100 / 58.101.100\r\n  libavformat    58. 51.100 / 58. 51.100\r\n  libavdevice    58. 11.101 / 58. 11.101\r\n  libavfilter     7. 87.100 /  7. 87.100\r\n  libswscale      5.  8.100 /  5.  8.100\r\n  libswresample   3.  8.100 /  3.  8.100\r\n[aac @ 0x61b000000080] Format aac detected only with low score of 1, misdetection possible!\r\n[aac @ 0x619000000580] More than one AAC RDB per ADTS frame is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.\r\n[aac @ 0x61b000000080] Packet corrupt (stream = 0, dts = NOPTS).\r\n[aac @ 0x619000000580] Error decoding AAC frame header.\r\n[aac @ 0x619000000580] Sample rate index in program config element does not match the sample rate index configured by the container.\r\n=================================================================\r\n==36919==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x6240000055d0 at pc 0x0000027e9428 bp 0x7ffe1de34230 sp 0x7ffe1de34228\r\nREAD of size 8 at 0x6240000055d0 thread T0\r\n    #0 0x27e9427 in che_configure /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c\r\n    #1 0x27db93d in output_configure /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c:543:15\r\n    #2 0x27ef51c in aac_decode_frame_int /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c:3312:23\r\n    #3 0x27d7843 in aac_decode_frame /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c:3457:15\r\n    #4 0x12659b8 in decode_simple_internal /home/seviezhou/ffmpeg/libavcodec/decode.c:342:15\r\n    #5 0x12659b8 in decode_simple_receive_frame /home/seviezhou/ffmpeg/libavcodec/decode.c:538\r\n    #6 0x12659b8 in decode_receive_frame_internal /home/seviezhou/ffmpeg/libavcodec/decode.c:556\r\n    #7 0x12652cd in avcodec_send_packet /home/seviezhou/ffmpeg/libavcodec/decode.c:614:15\r\n    #8 0xfabadf in try_decode_frame /home/seviezhou/ffmpeg/libavformat/utils.c:3111:19\r\n    #9 0xfa3054 in avformat_find_stream_info /home/seviezhou/ffmpeg/libavformat/utils.c:3954:9\r\n    #10 0x5181fa in open_input_file /home/seviezhou/ffmpeg/fftools/ffmpeg_opt.c:1186:15\r\n    #11 0x516d6a in open_files /home/seviezhou/ffmpeg/fftools/ffmpeg_opt.c:3303:15\r\n    #12 0x516795 in ffmpeg_parse_options /home/seviezhou/ffmpeg/fftools/ffmpeg_opt.c:3343:11\r\n    #13 0x555d8f in main /home/seviezhou/ffmpeg/fftools/ffmpeg.c:4850:11\r\n    #14 0x7fd409933b96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310\r\n    #15 0x41df49 in _start (/home/seviezhou/ffmpeg/ffmpeg_g+0x41df49)\r\n\r\nAddress 0x6240000055d0 is a wild pointer.\r\nSUMMARY: AddressSanitizer: heap-buffer-overflow /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c in che_configure\r\nShadow bytes around the buggy address:\r\n  0x0c487fff8a60: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8a70: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8a80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8a90: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8aa0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n=\u003e0x0c487fff8ab0: fa fa fa fa fa fa fa fa fa fa[fa]fa fa fa fa fa\r\n  0x0c487fff8ac0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8ad0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8ae0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8af0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8b00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\nShadow byte legend (one shadow byte represents 8 application bytes):\r\n  Addressable:           00\r\n  Partially addressable: 01 02 03 04 05 06 07\r\n  Heap left redzone:       fa\r\n  Freed heap region:       fd\r\n  Stack left redzone:      f1\r\n  Stack mid redzone:       f2\r\n  Stack right redzone:     f3\r\n  Stack after return:      f5\r\n  Stack use after scope:   f8\r\n  Global redzone:          f9\r\n  Global init order:       f6\r\n  Poisoned by user:        f7\r\n  Container overflow:      fc\r\n  Array cookie:            ac\r\n  Intra object redzone:    bb\r\n  ASan internal:           fe\r\n  Left alloca redzone:     ca\r\n  Right alloca redzone:    cb\r\n==36919==ABORTING\r\n}}}","comment_history":{"0":{"author":"seviezhou","comment":"Here is the output of ffmpeg_g, I am sorry for my previous post:\r\n\r\n{{{\r\nffmpeg version N-98801-g3fc3d712a9 Copyright (c) 2000-2020 the FFmpeg developers\r\n  built with clang version 6.0.0-1ubuntu2 (tags/RELEASE_600/final)\r\n  configuration: --disable-shared --enable-debug=3 --disable-ffplay --disable-ffprobe --disable-doc --disable-asm --cc=clang --cxx=clang++ --ld=clang --toolchain=clang-asan\r\n  libavutil      56. 58.100 / 56. 58.100\r\n  libavcodec     58.101.100 / 58.101.100\r\n  libavformat    58. 51.100 / 58. 51.100\r\n  libavdevice    58. 11.101 / 58. 11.101\r\n  libavfilter     7. 87.100 /  7. 87.100\r\n  libswscale      5.  8.100 /  5.  8.100\r\n  libswresample   3.  8.100 /  3.  8.100\r\n[aac @ 0x61b000000080] Format aac detected only with low score of 1, misdetection possible!\r\n[aac @ 0x619000000580] More than one AAC RDB per ADTS frame is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.\r\n[aac @ 0x61b000000080] Packet corrupt (stream = 0, dts = NOPTS).\r\n[aac @ 0x619000000580] Error decoding AAC frame header.\r\n[aac @ 0x619000000580] Sample rate index in program config element does not match the sample rate index configured by the container.\r\n=================================================================\r\n==36919==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x6240000055d0 at pc 0x0000027e9428 bp 0x7ffe1de34230 sp 0x7ffe1de34228\r\nREAD of size 8 at 0x6240000055d0 thread T0\r\n    #0 0x27e9427 in che_configure /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c\r\n    #1 0x27db93d in output_configure /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c:543:15\r\n    #2 0x27ef51c in aac_decode_frame_int /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c:3312:23\r\n    #3 0x27d7843 in aac_decode_frame /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c:3457:15\r\n    #4 0x12659b8 in decode_simple_internal /home/seviezhou/ffmpeg/libavcodec/decode.c:342:15\r\n    #5 0x12659b8 in decode_simple_receive_frame /home/seviezhou/ffmpeg/libavcodec/decode.c:538\r\n    #6 0x12659b8 in decode_receive_frame_internal /home/seviezhou/ffmpeg/libavcodec/decode.c:556\r\n    #7 0x12652cd in avcodec_send_packet /home/seviezhou/ffmpeg/libavcodec/decode.c:614:15\r\n    #8 0xfabadf in try_decode_frame /home/seviezhou/ffmpeg/libavformat/utils.c:3111:19\r\n    #9 0xfa3054 in avformat_find_stream_info /home/seviezhou/ffmpeg/libavformat/utils.c:3954:9\r\n    #10 0x5181fa in open_input_file /home/seviezhou/ffmpeg/fftools/ffmpeg_opt.c:1186:15\r\n    #11 0x516d6a in open_files /home/seviezhou/ffmpeg/fftools/ffmpeg_opt.c:3303:15\r\n    #12 0x516795 in ffmpeg_parse_options /home/seviezhou/ffmpeg/fftools/ffmpeg_opt.c:3343:11\r\n    #13 0x555d8f in main /home/seviezhou/ffmpeg/fftools/ffmpeg.c:4850:11\r\n    #14 0x7fd409933b96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310\r\n    #15 0x41df49 in _start (/home/seviezhou/ffmpeg/ffmpeg_g+0x41df49)\r\n\r\nAddress 0x6240000055d0 is a wild pointer.\r\nSUMMARY: AddressSanitizer: heap-buffer-overflow /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c in che_configure\r\nShadow bytes around the buggy address:\r\n  0x0c487fff8a60: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8a70: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8a80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8a90: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8aa0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n=\u003e0x0c487fff8ab0: fa fa fa fa fa fa fa fa fa fa[fa]fa fa fa fa fa\r\n  0x0c487fff8ac0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8ad0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8ae0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8af0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\n  0x0c487fff8b00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\r\nShadow byte legend (one shadow byte represents 8 application bytes):\r\n  Addressable:           00\r\n  Partially addressable: 01 02 03 04 05 06 07\r\n  Heap left redzone:       fa\r\n  Freed heap region:       fd\r\n  Stack left redzone:      f1\r\n  Stack mid redzone:       f2\r\n  Stack right redzone:     f3\r\n  Stack after return:      f5\r\n  Stack use after scope:   f8\r\n  Global redzone:          f9\r\n  Global init order:       f6\r\n  Poisoned by user:        f7\r\n  Container overflow:      fc\r\n  Array cookie:            ac\r\n  Intra object redzone:    bb\r\n  ASan internal:           fe\r\n  Left alloca redzone:     ca\r\n  Right alloca redzone:    cb\r\n==36919==ABORTING\r\n}}}","date":1598097594431523}},"date":1598097594431523,"fields":{},"permanent":1},{"author":"seviezhou","cnum":5,"comment":"","comment_history":{"0":{"author":"seviezhou","comment":"","date":1598097973033547}},"date":1598097973033547,"fields":{"summary":{"label":"Summary","new":"A heap-buffer-overflow in aacdec_template.c:543:15","old":"A heap-buffer-overflow in FFmpeg JIT code","rendered":"\"\\u003cspan class=\\\"trac-field-old\\\"\\u003eA heap-buffer-overflow in FFmpeg JIT code\\u003c/span\\u003e \u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003eA heap-buffer-overflow in aacdec_template.c:543:15\\u003c/span\\u003e\""}},"permanent":1},{"author":"cehoyos","cnum":6,"comment":"Fixed by Jan Ekstr\u00f6m in d6f293353c94c7ce200f6e0975ae3de49787f91f","comment_history":{"0":{"author":"cehoyos","comment":"Fixed by Jan Ekstr\u00f6m in d6f293353c94c7ce200f6e0975ae3de49787f91f","date":1598304830236047}},"date":1598304830236047,"fields":{"resolution":{"label":"Resolution","new":"duplicate","old":"","rendered":"\"\u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003eduplicate\\u003c/span\\u003e\""},"status":{"label":"Status","new":"closed","old":"new","rendered":"\"\\u003cspan class=\\\"trac-field-old\\\"\\u003enew\\u003c/span\\u003e \u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003eclosed\\u003c/span\\u003e\""}},"permanent":1}];
+      var auto_preview_timeout=2.0;
+      var form_token="8dd94f0765e935c10c13708e";
+      var jquery_ui={"ampm":true,"date_format":"M d, yy","day_names":{"abbreviated":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"narrow":["S","M","T","W","T","F","S"],"wide":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]},"default_timezone":0,"first_week_day":0,"month_names":{"abbreviated":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wide":["January","February","March","April","May","June","July","August","September","October","November","December"]},"period_names":{"am":["AM","AM"],"pm":["PM","PM"]},"show_timezone":false,"time_format":"h:mm:ss TT","timepicker_separator":", ","timezone_iso8601":false,"timezone_list":null};
+      var tags={"autocomplete_field":"field-keywords","help_href":null,"help_new_window":false,"keywords":["\"keep","-","-map","-t","-tmcd",".ape",".yuv","/","10","100i","1088","2-pass","2024","264_metadata","3.3.2","302","3221225725","3gpp","404","422.y4m","60000","8","AAC","AIF","AMF","APE","AVI","AVS2","Atmos","Audio","Audiotoolbox","Broken","CC_IDENT","CHUNK","CLosed-caption","CP1252","CSS","ChromaLocation","Crop","D3D11","DASH","DNxHD","DTS","Error","FFREPORT","FFmpeg","FLAC","FPE","G723_1","GPMF","H264","HDS","HLS","HTML","Hevc","ICY","ID3","ID3v2","IDR","IMX","Intel","LCW2","LEAD","LTO","Lyra","METADATA","MP3","MQA","MXF","Metadata","NUT","NVDEC","NVENC","NewTek","No","Non-monotonic","Non-monotonous","Nvidia","OOM","OPUS","PGS","QSV","RDP","RTMP","RTP","RTSP","ReplayGain","Rext","SAP","SCTE-35","SDL2","SEEK","SEGFAULT","SIGSEGV","STF","SVQ1","TARGETDURATION","TIF","TMCD","Tag","VAAPI","VBK","VPP_QSV","Version","Widevine","Windows","YUV4MPEG2","ZyGo","a","a12v","aac","aax","abort","ac3","ac4","acrossfade","adpcm","afade","aiff","aja","alac","alimiter","alive\"","alpha","als","alsa","altivec","amd","amf","amlogic","amovie","amr","amr_nb","amrnb","amrp","analyzeduration","android","anim","animation","ansi","anull","anullsrc","apac","ape","apng","apple","aptx","aresample","arm","art","artifact","asegment","asf","asp","aspect","ass","assertion","astats","astreamselect","async","atmos","atrac","atrac3","atrac3p","atsc","audio","audio/video","audiotoolbox","auth","auto","av1","av1_amf","av1_nvenc","av_get_token","av_interleaved_write_frame","av_log","avc","avc;","avchroma","avcodec","avfilter","avfoundation","avi","avid","avio","avio_close_dir","avio_open_dir","avio_skip","avisynth","binary","bit","bitexact","bitrate","bk2","black","blackmagic","blueiris","blur","bluray","books","bounce","bounty","bpg","bsf","buffer","buffersink","bugs","build","building","bwdif","bytes","cache","caf","callback","caption","captions","capture","carbon","cavs","cc","cc1","ccaption_dec","cdxl","centos","cfhd","cfr","channel_layout","channelmap","channels","channelsplit","chapters","checksum","chromakey","chunk","clang","clipping","cllc","closed","clv","cmdutils","cmyk","codecpar","coder","colon","color_primaries","color_trc","colorhold","colorspace","command","comment","compilation","compile","concat","concatenate","configuration","conversion","convert","convertion","cook","cookie","copy","copyts","corrupted","coverrect","crash","crc","creation","creation_time","crop","cropdetect","cropping","csf","css","csv","cts","cuda","cues","cursor","curve","curves","cuts","cuvid","d3d11va","d3d12va","dahua","dash","dashdec","dashencoder","data","dca","ddagrab","dead","deadlock","debug","decimate","decklink","decode","decode_block","decoder","decoding","default","delay","demuxer","denoise","dereference","deshake","desync","detelecine","device","dicom","direct3d","directio","directshow","disable-x86asm","disconnected","discontinuity","disposition","dither","dithering","divx","djgpp","dn","dnxhd","dnxhr","doc","docker","docs","documentation","dolby_e","dovi","downmix","dplii","dpx","drawtext","drm","drmeter","drop","dropouts","ds2","dsd","dsf","dshow","dss","dts","dtsshift","dual","duplicate","duration","dv","dvb_subtitle","dvb_teletext","dvbsub","dvcpro50","dvd","dvdsub","dvdsubdec","dvvideo","dwab","dxva2","dynaudnorm","eac3","ease_of_use","easy","ebur128","editlist","edl","edts","eia-608","eia608","electronicarts","email","encoder","encoding","encrypt","eof","eq","equirect","error","examples","exif","exit","expression","exr","facebook","failed","faststart","fate","fateclient","fault","fec","fedora","ffjni","ffmetadata","ffmpeg","ffmpeg-vaapi","ffplay","ffprobe","ffreport","ffrprobe","ffserver","fftools","ffv1","ffv1_vulkan","fifo","file","filename","filter","filter_complex","filtering","filters","fits","flac","flic","flif","flite","flv","flv;","fmp4","font","force_key_frames","format","formatting","fps","fps_mode","frame","frame;","frame_num","frame_pts","framerate","frames","framesync","freeze","freezing","frei0r","fsb","fuzz","fuzzer","fuzzing","g722","g726","g729","gamma","gapless","gaps","gaussian","gblur","gdigrab","gfxcapture","gif","glob","global","gmp4","gnutls","gpu","gradfun","granule","grayscale","gsm","gsoc","gxf","h.264","h.264;","h263","h264","h264_amf","h264_mmal","h264_nvenc","h264_omx","h264_qsv","h264_vaapi","h264_vulkan","h265","haiku","handbrake","hang","hardware","hdcd","hdr","hdr10plus","header","header.","headers","heif","help","hevc","hevc_amf","hevc_cuvid","hevc_nvenc","hevc_vaapi","hevc_videotoolbox","hevc_vulkan","histogram","hls","htmlsubtitles","http","http_proxy","https","huge","hv60","hw_decode","hwaccel","hwcontext_qsv","hwdownload","hwupload","hwupload_qsv","i686","iXML","iac","iamf","icecast","ictcp","id","id3","id3v1","id3v2","iec61883","ieee1394","iff","image2","images","indeo3","indeo4","init","initialization","input","intel","interlaced","interrupt","invalid","ios","ip","is","ismindex","itsoffset","ivalid","j2k","jack","join","jpeg2000","jpegls","jump","keyframe","kitty","klfs","klv","kmsgrab","kodi","lame","language","latency","latm","lavf","lavfi","leading","leak","lensfun","libaom","libaom-av1","libass","libatomic","libav","libcdio","libfdk-aac","libiec61883","libjxl","libmp3lame","libndi","libopenh264","libopenjpeg","libopenmpt","libopus","libplacebo","librtmp","libsrt","libsvtav1","libvidstab","libvmaf","libvorbis","libvpx","libx264","libx265","libxvid","libzvbi","linear","links","live","ljpeg","log","logging","login","loglevel","lookahead","loop","loss","lossless","loudness","loudnorm","lowres","lra","lrc","lto","lut3d","lv2","lxf","lyrics","m2v","m3u8","m4a","m4b","m4v","maco","macos","manifest","map","matroska","matrox","max_interleave_delta","maxrate","mbedtls","mcdeint","mdec","media","mediacodec","mediafoundation","megacd","memleak","memory","mesa","mestimate","metadata","mime_type","mingw","mips","mismatch","misplaced","missing","mitchell","mjpeg","mka","mkv","mlp","mlv","mmal","mms","mmsh","mmst","monkey's","mosaic","mouse","mov","mov_text","movement","movie","movtomp4","mp1","mp2","mp3","mp4","mp4a","mpc","mpeg2_vaapi","mpeg2video","mpeg4","mpeg4ssp","mpegps","mpegts","mpegtsraw","mpegvideo","mpfilter","mpg123","mpjpeg","mpjpegdec","mpv","msc","msmpeg4","msvc","msvideo1","multi-client","multiple","multivariante","muxer","muxer:","muxing","mvc","mxf","mxf_opatom","nasm","native","network","nlmeans","nodisp","noexec","nokey","non-existing","normalization","normalize","npp","nsv","null","nullsrc","nut","nvdec","nvenc","nvidia","nvidia-container-toolkit","ocr","ogg","oma","omx","on2avc","oom","op1a","openCL","openal","opencl","opencv","opengl","opus","opw","order","osx","output","outreachy","overflow","overlay","packed","packet","pad","paf","pal8","palettegen","pan","pass","password","pat","pattern_type","pause","pcm_dvd","pcm_s16le","pcm_s24le","performance","perspective","pgssub","photocd","pipe","pixels","pixfmt","piz","pkg-config","pkt_duration","plain-text","playback","pmf","pmp","pmt","png","pngdec","pointer","pos","postprocessing","ppc","ppc64el","premiere","preset","probe","prompeg","prores","prores_ks","protocol","proxy","psf2","psnr","pts","pulldown","pulseaudio","qclp","qcp","qdm2","qdraw","qmax","qmin","qmv","qscale","qsv","qtkit","quality","quick","quicksync","quicktime","r3d","ra28","race","range","rawvideo","rdft","readrate","real","reconnect","rectilinear","redirection","reencode","reference","refs","regression","remux","render","report","resampling","resolv","resources","reverb","rfc6381","rhel","rhozet","riff","rotate","rotated","rounding","roundup","rpl","rpuenc","rtm","rtmp","rtmpe","rtmps","rtp","rtsp","rv10","rv20","rv30","rv40","rw_timeout","s12m","s302m","s337m","sar","saturation","sbr","scale","scale_cuda","scale_qsv","scaling","scenecut","scpr","screen","screencasting","scte_35","sdk","sdl","sdp","sdp_file","search","security","seek","seeking","segacd","segfault","segment","select","sendcmd","separator","sequence","series","server","setpts","sfd","sftp","shader","sharpen","sharpen_npp","shorten","shortest","shoutcast","show_region","showcqt","showcwt","showspectrumpic","showwaves","showwavespic","shq","sighup","sigint","signaling","signature","sigpipe","sigsegv","silicon","sipr","skip","slide","slideshow","slow","slower","smaf","smartblur","smpl","sn40","snow","sofdec","solaris","soxr","spdif","speedhq","speedhqenc","speex","split","srt","srtdec","srtp","ssegment","ssim","stack-overflow","start_pts","status","stdin","stdout","stream","stream_loop","stream_map","streaming","streamselect","stsd","studio","sub","sub-rip","subfile","submitting","subrip","subtitle","subtitles","subviewer","sup","surfaces","svq3","swf","swr_convert","sws_dither","sws_flags","swscale","symbol","sync","synchronous","tags","targa","tcp","tee","template","terminology","test","texi","textfile","thd","the","theora","thumbnail","tif","tiff","time","timecode","timeline","timeout","timescale","timestamp","tiny_psnr","title","tls","tmpdir","to","tpad","track","tracks","tracwiki","transform.trf","transparent","transpose","trim","truehd","truncation","tsan","tta","tunneled","twitch","tx3g","typo","ubsan","udp","underflow","unicode","unsharp","unsupported","url","uspp","ustream","utf16","v360","v4l","v4l2","v4l2loopback","v4l2m2m","va-api","vaapi","vaapi_h264","variance","vbr","vbv","vc1","vce","vda","vdom","vdpau","vfr","vfwcap","via","video","video4linux2","videolan","videotoolbox","vidstabdetect","vimeo","visual","vmixdec","vobsub","volume","volumedetect","vorbis","voxware","vp3","vp6","vp7","vp8","vp9","vpp_qsv","vqavideo","vs2015","vsx","vsync","vulkan","vvc","wav","wavdec","waveform","wavpack","webcam","webm","webp","websocket","webvtt","wiki","wiki-redirect","win","win10","win32","windows","winrt","wish","with","wma","wmalossless","wmapro","wmav2","wmavoice","wmserver","wmv2","wmv3","wrap","wtv","x11grab","x264","x265","x86","xHE-AAC","xerror","xfade","xml","xmv","xsub","xvba","xvid","xyz","y4v","yadif","youtube","yuv","yuv2rgb","yuv420p","yuv420p10le","yuv422p10le","zip","zmq","zoompan","zvr"],"match_from_start":"","separator":" "};
+    </script>
+    <script src="/chrome/common/js/jquery.js"></script>
+    <script src="/chrome/common/js/babel.js"></script>
+    <script src="/chrome/common/js/trac.js"></script>
+    <script src="/chrome/common/js/search.js"></script>
+    <script src="/chrome/common/js/folding.js"></script>
+    <script src="/chrome/common/js/wikitoolbar.js"></script>
+    <script src="/chrome/common/js/resizer.js"></script>
+    <script src="/chrome/common/js/auto_preview.js"></script>
+    <script src="/chrome/common/js/jquery-ui.js"></script>
+    <script src="/chrome/common/js/jquery-ui-addons.js"></script>
+    <script src="/chrome/common/js/jquery-ui-i18n.js"></script>
+    <script src="/chrome/tags/js/autocomplete_tags.js"></script>
+    <script>
+      jQuery(function($) {
+        $(".trac-autofocus").focus();
+        $(".trac-target-new").attr("target", "_blank");
+        if ($.ui) { /* is jquery-ui added? */
+          $(".trac-datepicker:not([readonly])")
+            .prop("autocomplete", "off").datepicker();
+          // Input current date when today is pressed.
+          var _goToToday = $.datepicker._gotoToday;
+          $.datepicker._gotoToday = function(id) {
+            _goToToday.call(this, id);
+            this._selectDate(id)
+          };
+          $(".trac-datetimepicker:not([readonly])")
+            .prop("autocomplete", "off").datetimepicker();
+        }
+        $(".trac-disable").disableSubmit(".trac-disable-determinant");
+        setTimeout(function() { $(".trac-scroll").scrollToTop() }, 1);
+        $(".trac-disable-on-submit").disableOnSubmit();
+      });
+    </script>
+    <!--   # include 'site_head.html' (layout.html) -->
+    <!--   end of site_head.html -->
+    <!-- # endblock head (content inherited from layout.html) -->
+
+
+    <script src="/chrome/common/js/threaded_comments.js"></script>
+    <script>
+      jQuery(function($) {
+        $("div.description").find("h1,h2,h3,h4,h5,h6")
+          .addAnchor(_("Link to this section"));
+        $(".foldable").enableFolding(false, true);
+        $("#attachments").toggleClass("collapsed");
+        $("#trac-up-attachments").click(function () {
+          $("#attachments").removeClass("collapsed");
+          return true;
+        });
+        $("#modify").parent().toggleClass("collapsed");
+        $(".trac-topnav a").click(function() {
+          $("#modify").parent().removeClass("collapsed");
+        });
+
+        function setRevertHandler() {
+          $("button.trac-revert").click(function() {
+            var div = $("div", this);
+            var field_name = div[0].id.substr(7);
+            var field_value = div.text();
+            var input = $("#propertyform *[name=field_" + field_name + "]");
+            if (input.length > 0) {
+              if (input.filter("input[type=radio]").length > 0) {
+                input.val([field_value]);
+              } else if (input.filter("input[type=checkbox]").length > 0) {
+                input.val(field_value == "1" ? [field_value] : []);
+              } else {
+                input.val(field_value);
+              }
+            } else { // Special case for CC checkbox
+              input = $("#propertyform input[name=cc_update]").val([]);
+            }
+            input.change();
+            // Remove the revert button
+            if ($(this).closest("tbody").children("tr").length === 1)
+              $(this).closest(".trac-change-panel").remove();
+            else
+              $(this).closest("tr").remove();
+            return false;
+          });
+        }
+        setRevertHandler();
+
+        var comment_focused = false;
+        $("#comment").focus(function() { comment_focused = true; })
+                     .blur(function() { comment_focused = false; });
+        $("#propertyform").autoSubmit({preview: '1'}, function(data, reply) {
+          var items = $(reply);
+          // Update ticket box
+          $("#ticket").replaceWith(items.filter('#ticket'));
+          // Replaces content of #changelog, without recreating it
+          $("#changelog").empty().append(items.filter("#changelog").contents());
+          // Apply comments order and "Show" preferences
+          applyCommentsOrder(
+            $('#prefs input[name="trac-comments-order"]:checked').val());
+          // Show warnings
+          var new_changes = $("#changelog .trac-new");
+          $("#trac-edit-warning").toggle(new_changes.length != 0);
+          if (new_changes.length != 0)
+            $("#changelog").parent().show().removeClass("collapsed");
+          $("#trac-preview-warning").remove();
+          $("#trac-edit-warning").before(items.filter('#trac-preview-warning'));
+          // Update view time
+          $("#propertyform input[name='view_time']")
+            .replaceWith(items.filter("input[name='view_time']"));
+          // Update preview
+          var preview = $("#ticketchange")
+            .html(items.filter('#preview').children());
+          var show_preview = preview.children().length != 0;
+          $("#ticketchange").toggle(show_preview);
+          setRevertHandler();
+          // Execute scripts to load stylesheets
+          items.filter("script").appendTo("head");
+        }, "#ticketchange .trac-loading");
+        $("#trac-comment-editor")
+            .autoSubmit({preview_comment: '1'}, function(data, reply) {
+          var comment = $("#trac-comment-editor")
+            .next("div.comment").html(reply);
+          comment.toggle(comment.children().length != 0);
+        }, "#changelog .trac-loading");
+
+      });
+    </script>
+    <!-- # endblock head (placeholder in theme.html) -->
+  </head> 
+  <body>
+    <!-- # block body (content inherited from theme.html) -->
+    <!--   # include 'site_header.html' (theme.html) -->
+    <!--   end of site_header.html -->
+
+    <div id="banner">
+      <div id="header">
+        <a id="logo"
+           href="https://ffmpeg.org">
+          <img  alt="FFmpeg" src="/ffmpeg-logo.png" /></a>
+
+
+      </div>
+      <form id="search" action="/search" method="get">
+        <div>
+          <label for="proj-search">Search:</label>
+          <input type="text" id="proj-search" name="q" size="18"
+                  value="" />
+          <input type="submit" value="Search" />
+        </div>
+      </form>
+          <div id="metanav" class="nav">
+      <ul><li  class="first"><a href="/login">Login</a></li><li ><a href="/prefs">Preferences</a></li><li ><a href="/wiki/TracGuide">Help/Guide</a></li><li ><a href="/about">About Trac</a></li><li ><a href="/register">Register</a></li><li  class="last"><a href="/reset_password">Forgot your password?</a></li></ul>
+    </div>
+
+    </div>
+        <div id="mainnav" class="nav">
+      <ul><li  class="first"><a href="/wiki">Wiki</a></li><li ><a href="/timeline">Timeline</a></li><li  class="active"><a href="/report">View Tickets</a></li><li ><a href="/search">Search</a></li><li  class="last"><a accesskey="T" href="/tags">Tags</a></li></ul>
+    </div>
+
+
+    <div id="main"
+         >
+      <div id="ctxtnav" class="nav">
+        <h2>Context Navigation</h2>
+        <ul>
+          <li  class="first"><span id="vote" title="Vote count"><img alt="Up-vote" src="/chrome/vote/aupgray.png" /><span id="votes">+0</span><img alt="Down-vote" src="/chrome/vote/adowngray.png" /></span></li>
+          <li ><span>&larr; <a class="prev" href="/ticket/8858" title="Ticket #8858">Previous Ticket</a></span></li>
+          <li  class="last"><span><a class="next" href="/ticket/8860" title="Ticket #8860">Next Ticket</a> &rarr;</span></li>
+        </ul>
+        <hr />
+      </div>
+
+      
+
+      
+
+      <!-- # block content (placeholder in theme.html) -->
+    <div id="content" class="ticket">
+
+
+
+<div id="ticket">
+  <div id="ticketbox" class="trac-content">
+    <div class="date">
+      <p>Opened <a class="timeline" href="/timeline?from=2020-08-22T02%3A37%3A55Z&amp;precision=second" title="See timeline at Aug 22, 2020, 2:37:55 AM">6 years ago</a></p>
+      <p>Closed <a class="timeline" href="/timeline?from=2020-08-24T21%3A33%3A50Z&amp;precision=second" title="See timeline at Aug 24, 2020, 9:33:50 PM">6 years ago</a></p>
+    </div>
+
+
+    <h2>
+      <a href="/ticket/8859" class="trac-id">#8859</a>
+      <span class="trac-status">
+        <a href="/query?status=closed">closed</a>
+      </span>
+      <span class="trac-type">
+        <a href="/query?status=!closed&amp;type=defect">defect</a>
+      </span>
+      <span class="trac-resolution">
+        (<a href="/query?resolution=duplicate&amp;status=closed">duplicate</a>)
+      </span>
+    </h2>
+
+    <h1 id="trac-ticket-title" class="searchable">
+      <span class="summary">A heap-buffer-overflow in aacdec_template.c:543:15</span>
+    </h1>
+
+    <table class="properties">
+
+      <tr>
+        <th id="h_reporter">Reported by:</th>
+        <td class="searchable" headers="h_reporter"><a class="trac-author" href="/query?reporter=seviezhou&amp;status=!closed">Zhou Anshunkang</a></td>
+
+        <th id="h_owner" class="missing">Owned by:</th>
+        <td headers="h_owner"></td>
+      </tr>
+      <tr>
+        <th id="h_priority">
+          Priority:
+        </th>
+        <td headers="h_priority">
+          <a href="/query?priority=normal&amp;status=!closed">normal</a>
+        </td>
+        <th id="h_component">
+          Component:
+        </th>
+        <td headers="h_component">
+          <a href="/query?component=avcodec&amp;status=!closed">avcodec</a>
+        </td>
+      </tr>
+      <tr>
+        <th id="h_version">
+          Version:
+        </th>
+        <td headers="h_version">
+          <a href="/query?status=!closed&amp;version=git-master">git-master</a>
+        </td>
+        <th id="h_keywords">
+          Keywords:
+        </th>
+        <td class="searchable" headers="h_keywords">
+          <a href="/query?keywords=~aac&amp;status=!closed">aac</a>
+        </td>
+      </tr>
+      <tr>
+        <th class="missing" id="h_cc">
+          Cc:
+        </th>
+        <td class="searchable" headers="h_cc">
+          
+        </td>
+        <th class="missing" id="h_blockedby">
+          Blocked By:
+        </th>
+        <td headers="h_blockedby">
+        </td>
+      </tr>
+      <tr>
+        <th class="missing" id="h_blocking">
+          Blocking:
+        </th>
+        <td headers="h_blocking">
+        </td>
+        <th id="h_reproduced">
+          Reproduced by developer:
+        </th>
+        <td headers="h_reproduced">
+          <a href="/query?reproduced=0&amp;status=!closed">no</a>
+        </td>
+      </tr>
+      <tr>
+        <th id="h_analyzed">
+          Analyzed by developer:
+        </th>
+        <td headers="h_analyzed">
+          <a href="/query?analyzed=0&amp;status=!closed">no</a>
+        </td>
+        <th class="missing">
+        </th>
+        <td>
+        </td>
+      </tr>
+    </table>
+    <div class="description">
+      <h2 id="comment:description">Description
+      </h2>
+
+
+
+      <script>
+        // float left elements like inlinebuttons will be presented in
+        // right-to-left order, i.e. those added before #addreply will
+        // be on the right, those added after will be on the left
+        function insertNearReplyToDescription(content, side) {
+          if (side === 'right') {
+            $("#ticket .description #addreply").before(content);
+          } else if (side === 'rightmost') {
+            $("#ticket .description > h2").after(content);
+          } else if (side === 'leftmost') {
+            $("#ticket .description").children(".searchable, br")
+              .before(content);
+          } else { // 'left'
+            $("#ticket .description #addreply").after(content);
+          }
+        }
+      </script>
+
+      <div class="searchable">
+        <h2 class="section" id="Systeminfo">System info</h2>
+<p>
+Ubuntu x86_64, clang 6.0, ffmpeg (git-master <a class="ext-link" href="https://github.com/FFmpeg/FFmpeg/commit/3fc3d712a99cf39f69a2258b48cbc81fa8ae5471"><span class="icon">​</span>https://github.com/FFmpeg/FFmpeg/commit/3fc3d712a99cf39f69a2258b48cbc81fa8ae5471</a>)<br />
+</p>
+<h2 class="section" id="Configure">Configure</h2>
+<pre class="wiki">./configure --disable-shared --enable-debug=3 --disable-ffplay --disable-ffprobe --disable-doc --disable-asm --cc=clang --cxx=clang++ --ld=clang --toolchain=clang-asan
+</pre><h2 class="section" id="Commandline">Command line</h2>
+<pre class="wiki">./ffmpeg -y -f mov /dev/null -i @@ 
+</pre><h2 class="section" id="AddressSanitizer">AddressSanitizer</h2>
+<pre class="wiki">=================================================================
+==35580==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x624000008308 at pc 0x0000030dcdfc bp 0x7ffe3ba63450 sp 0x7ffe3ba63448
+READ of size 8 at 0x624000008308 thread T0
+    #0 0x30dcdfb  (/home/seviezhou/ffmpeg/ffmpeg+0x30dcdfb)
+    #1 0x30d1314  (/home/seviezhou/ffmpeg/ffmpeg+0x30d1314)
+    #2 0x30e7f96  (/home/seviezhou/ffmpeg/ffmpeg+0x30e7f96)
+    #3 0x30c7dbc  (/home/seviezhou/ffmpeg/ffmpeg+0x30c7dbc)
+    #4 0x179945c  (/home/seviezhou/ffmpeg/ffmpeg+0x179945c)
+    #5 0x1798a55  (/home/seviezhou/ffmpeg/ffmpeg+0x1798a55)
+    #6 0x145def6  (/home/seviezhou/ffmpeg/ffmpeg+0x145def6)
+    #7 0x1451f5d  (/home/seviezhou/ffmpeg/ffmpeg+0x1451f5d)
+    #8 0x519abb  (/home/seviezhou/ffmpeg/ffmpeg+0x519abb)
+    #9 0x5179a6  (/home/seviezhou/ffmpeg/ffmpeg+0x5179a6)
+    #10 0x516e1b  (/home/seviezhou/ffmpeg/ffmpeg+0x516e1b)
+    #11 0x5839c2  (/home/seviezhou/ffmpeg/ffmpeg+0x5839c2)
+    #12 0x7f6ec8c51b96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310
+    #13 0x41e179 in _init (/home/seviezhou/ffmpeg/ffmpeg+0x41e179)
+
+Address 0x624000008308 is a wild pointer.
+SUMMARY: AddressSanitizer: heap-buffer-overflow (/home/seviezhou/ffmpeg/ffmpeg+0x30dcdfb)
+Shadow bytes around the buggy address:
+  0x0c487fff9010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff9020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff9030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff9040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff9050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=&gt;0x0c487fff9060: fa[fa]fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff9070: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff9080: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff9090: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff90a0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff90b0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==35580==ABORTING
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<div id="attachments">
+  <h3  class="foldable">
+    Attachments
+    <span class="trac-count">(1)</span></h3>
+  <div class="attachments">
+    <dl class="attachments">
+      <dt><a href="/attachment/ticket/8859/heap-overflow-ffmpeg-JIT" title="View attachment">heap-overflow-ffmpeg-JIT</a><a href="/raw-attachment/ticket/8859/heap-overflow-ffmpeg-JIT"
+          class="trac-rawlink" title="Download">&#8203;</a>
+ (<span title="227 bytes">227 bytes</span>
+) - added by <span class="trac-author">Carl Eugen Hoyos</span> <a class="timeline" href="/timeline?from=2020-08-22T11%3A49%3A47Z&amp;precision=second" title="See timeline at Aug 22, 2020, 11:49:47 AM">6 years ago</a>.</dt>
+    </dl>
+    <p>
+  Download all attachments as:
+  <a rel="nofollow" href="/zip-attachment/ticket/8859/">.zip</a>
+</p>
+
+
+
+
+  </div>
+</div>
+      <div>
+        <div class="trac-noscript" style="position: relative">
+          <form id="prefs" method="get" action="/prefs"
+                style="position: absolute; right: 0">
+            <div id="trac-comments-order">
+              <input type="radio" id="trac-comments-oldest"
+                     name="trac-comments-order" value="oldest"
+                     checked="checked" />
+              <label for="trac-comments-oldest">Oldest first</label>
+              <input type="radio" id="trac-comments-newest"
+                     name="trac-comments-order" value="newest" />
+              <label for="trac-comments-newest">Newest first</label>
+              <span id="trac-threaded-toggle" style="display: none">
+                <input type="radio" id="trac-comments-threaded"
+                       name="trac-comments-order" value="threaded" />
+                <label for="trac-comments-threaded">Threaded</label>
+              </span>
+            </div>
+            <div>
+              <input id="trac-show-comments-toggle" type="checkbox"
+                     checked="checked" />
+              <label for="trac-show-comments-toggle">Show comments</label>
+              <input id="trac-show-property-changes-toggle" type="checkbox" />
+              <label for="trac-show-property-changes-toggle">
+                Show property changes</label>
+            </div>
+          </form>
+        </div>
+
+        <h3 class="foldable">
+          Change History
+          <span class="trac-count">(7)</span></h3>
+
+        <div id="changelog">
+          <div class="change" id="trac-change-1-1598096969125074">
+
+
+
+
+
+
+<h3 class="change" id="comment:1">
+  <span class="threading">
+    <span class="trac-in-reply-to">
+in reply to: <a href="#comment:description" class="in-reply-to">&nbsp;description</a>
+
+
+    </span>
+  </span>
+  <span class="cnum"><a href="#comment:1" class="">comment:1</a>
+</span>
+  by <span class="trac-author">Carl Eugen Hoyos</span>, <a class="timeline" href="/timeline?from=2020-08-22T11%3A49%3A29Z&amp;precision=second" title="See timeline at Aug 22, 2020, 11:49:29 AM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+  <table class="changes">
+
+
+    <tr class="trac-field-component">
+      <th class="trac-field-component">Component:</th>
+      <td>
+        <span class="trac-field-old">ffmpeg</span> → <span class="trac-field-new">avcodec</span>
+      </td>
+    </tr>
+
+    <tr class="trac-field-keywords">
+      <th class="trac-field-keywords">Keywords:</th>
+      <td>
+        aac added
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+Replying to <a class="closed ticket" href="/ticket/8859" title="#8859: defect: A heap-buffer-overflow in aacdec_template.c:543:15 (closed: duplicate)">seviezhou</a>:<br />
+</p>
+<blockquote class="citation">
+<pre class="wiki">./configure --disable-shared --enable-debug=3 --disable-ffplay --disable-ffprobe --disable-doc --disable-asm --cc=clang --cxx=clang++ --ld=clang --toolchain=clang-asan
+</pre></blockquote>
+<p>
+This will get more readable if you use <code>./configure --toolchain=clang-asan &amp;&amp; make ffmpeg_g</code>, feel free to add <code>--disable-asm</code>.<br />
+</p>
+<blockquote class="citation">
+<pre class="wiki">./ffmpeg -y -f mov /dev/null -i @@ 
+</pre></blockquote>
+<p>
+This is unfortunately useless, use <code>ffmpeg_g</code> instead and post everything that gets printed, not only the part you consider important (we disagree).<br />
+</p>
+<p>
+Please do not use zip here and please explain what "JIT" means.<br />
+</p>
+
+</div>
+          </div>
+          <div class="change">
+
+
+
+
+
+
+<h3 class="change">
+  <span class="threading">
+  </span>
+  by <span class="trac-author">Carl Eugen Hoyos</span>, <a class="timeline" href="/timeline?from=2020-08-22T11%3A49%3A47Z&amp;precision=second" title="See timeline at Aug 22, 2020, 11:49:47 AM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+  <table class="changes">
+
+
+    <tr class="trac-field-attachment">
+      <th class="trac-field-attachment">Attachment:</th>
+      <td>
+        <a href="/attachment/ticket/8859/heap-overflow-ffmpeg-JIT"><em>heap-overflow-ffmpeg-JIT</em></a><a href="/raw-attachment/ticket/8859/heap-overflow-ffmpeg-JIT"
+                                  title="Download"
+                                  class="trac-rawlink">&#8203;</a>
+ added      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+          </div>
+          <div class="change" id="trac-change-2-1598097063258540">
+
+
+
+
+
+
+<h3 class="change" id="comment:2">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:2" class="">comment:2</a>
+</span>
+  by <span class="trac-author">Cigaes</span>, <a class="timeline" href="/timeline?from=2020-08-22T11%3A51%3A03Z&amp;precision=second" title="See timeline at Aug 22, 2020, 11:51:03 AM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+Just a small question: what is this "JIT code" you are referring to?<br />
+</p>
+
+</div>
+          </div>
+          <div class="change" id="trac-change-3-1598097282096099">
+
+
+
+
+
+
+<h3 class="change" id="comment:3">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:3" class="">comment:3</a>
+</span>
+  by <span class="trac-author">Zhou Anshunkang</span>, <a class="timeline" href="/timeline?from=2020-08-22T11%3A54%3A42Z&amp;precision=second" title="See timeline at Aug 22, 2020, 11:54:42 AM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+Just because although I enabled debug information and disable inline assembly, I still cannot get any source line information from the backtrace. So I think the crash point might not in the source code, but in the assembly code. So I guess that the crash point is in some "just in time generated" code. Any ideas about this?<br />
+</p>
+
+</div>
+          </div>
+          <div class="change" id="trac-change-4-1598097594431523">
+
+
+
+
+
+
+<h3 class="change" id="comment:4">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:4" class="">comment:4</a>
+</span>
+  by <span class="trac-author">Zhou Anshunkang</span>, <a class="timeline" href="/timeline?from=2020-08-22T11%3A59%3A54Z&amp;precision=second" title="See timeline at Aug 22, 2020, 11:59:54 AM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+Here is the output of ffmpeg_g, I am sorry for my previous post:<br />
+</p>
+<pre class="wiki">ffmpeg version N-98801-g3fc3d712a9 Copyright (c) 2000-2020 the FFmpeg developers
+  built with clang version 6.0.0-1ubuntu2 (tags/RELEASE_600/final)
+  configuration: --disable-shared --enable-debug=3 --disable-ffplay --disable-ffprobe --disable-doc --disable-asm --cc=clang --cxx=clang++ --ld=clang --toolchain=clang-asan
+  libavutil      56. 58.100 / 56. 58.100
+  libavcodec     58.101.100 / 58.101.100
+  libavformat    58. 51.100 / 58. 51.100
+  libavdevice    58. 11.101 / 58. 11.101
+  libavfilter     7. 87.100 /  7. 87.100
+  libswscale      5.  8.100 /  5.  8.100
+  libswresample   3.  8.100 /  3.  8.100
+[aac @ 0x61b000000080] Format aac detected only with low score of 1, misdetection possible!
+[aac @ 0x619000000580] More than one AAC RDB per ADTS frame is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.
+[aac @ 0x61b000000080] Packet corrupt (stream = 0, dts = NOPTS).
+[aac @ 0x619000000580] Error decoding AAC frame header.
+[aac @ 0x619000000580] Sample rate index in program config element does not match the sample rate index configured by the container.
+=================================================================
+==36919==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x6240000055d0 at pc 0x0000027e9428 bp 0x7ffe1de34230 sp 0x7ffe1de34228
+READ of size 8 at 0x6240000055d0 thread T0
+    #0 0x27e9427 in che_configure /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c
+    #1 0x27db93d in output_configure /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c:543:15
+    #2 0x27ef51c in aac_decode_frame_int /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c:3312:23
+    #3 0x27d7843 in aac_decode_frame /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c:3457:15
+    #4 0x12659b8 in decode_simple_internal /home/seviezhou/ffmpeg/libavcodec/decode.c:342:15
+    #5 0x12659b8 in decode_simple_receive_frame /home/seviezhou/ffmpeg/libavcodec/decode.c:538
+    #6 0x12659b8 in decode_receive_frame_internal /home/seviezhou/ffmpeg/libavcodec/decode.c:556
+    #7 0x12652cd in avcodec_send_packet /home/seviezhou/ffmpeg/libavcodec/decode.c:614:15
+    #8 0xfabadf in try_decode_frame /home/seviezhou/ffmpeg/libavformat/utils.c:3111:19
+    #9 0xfa3054 in avformat_find_stream_info /home/seviezhou/ffmpeg/libavformat/utils.c:3954:9
+    #10 0x5181fa in open_input_file /home/seviezhou/ffmpeg/fftools/ffmpeg_opt.c:1186:15
+    #11 0x516d6a in open_files /home/seviezhou/ffmpeg/fftools/ffmpeg_opt.c:3303:15
+    #12 0x516795 in ffmpeg_parse_options /home/seviezhou/ffmpeg/fftools/ffmpeg_opt.c:3343:11
+    #13 0x555d8f in main /home/seviezhou/ffmpeg/fftools/ffmpeg.c:4850:11
+    #14 0x7fd409933b96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310
+    #15 0x41df49 in _start (/home/seviezhou/ffmpeg/ffmpeg_g+0x41df49)
+
+Address 0x6240000055d0 is a wild pointer.
+SUMMARY: AddressSanitizer: heap-buffer-overflow /home/seviezhou/ffmpeg/libavcodec/aacdec_template.c in che_configure
+Shadow bytes around the buggy address:
+  0x0c487fff8a60: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff8a70: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff8a80: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff8a90: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff8aa0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=&gt;0x0c487fff8ab0: fa fa fa fa fa fa fa fa fa fa[fa]fa fa fa fa fa
+  0x0c487fff8ac0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff8ad0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff8ae0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff8af0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c487fff8b00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==36919==ABORTING
+</pre>
+</div>
+          </div>
+          <div class="change" id="trac-change-5-1598097973033547">
+
+
+
+
+
+
+<h3 class="change" id="comment:5">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:5" class="">comment:5</a>
+</span>
+  by <span class="trac-author">Zhou Anshunkang</span>, <a class="timeline" href="/timeline?from=2020-08-22T12%3A06%3A13Z&amp;precision=second" title="See timeline at Aug 22, 2020, 12:06:13 PM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+  <table class="changes">
+
+
+    <tr class="trac-field-summary">
+      <th class="trac-field-summary">Summary:</th>
+      <td>
+        <span class="trac-field-old">A heap-buffer-overflow in FFmpeg JIT code</span> → <span class="trac-field-new">A heap-buffer-overflow in aacdec_template.c:543:15</span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+          </div>
+          <div class="change" id="trac-change-6-1598304830236047">
+
+
+
+
+
+
+<h3 class="change" id="comment:6">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:6" class="">comment:6</a>
+</span>
+  by <span class="trac-author">Carl Eugen Hoyos</span>, <a class="timeline" href="/timeline?from=2020-08-24T21%3A33%3A50Z&amp;precision=second" title="See timeline at Aug 24, 2020, 9:33:50 PM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+  <table class="changes">
+
+
+    <tr class="trac-field-resolution">
+      <th class="trac-field-resolution">Resolution:</th>
+      <td>
+        → <span class="trac-field-new">duplicate</span>
+      </td>
+    </tr>
+
+    <tr class="trac-field-status">
+      <th class="trac-field-status">Status:</th>
+      <td>
+        <span class="trac-field-old">new</span> → <span class="trac-field-new">closed</span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+Fixed by Jan Ekström in <a class="changeset" href="/changeset/d6f293353c94c7ce200f6e0975ae3de49787f91f/ffmpeg" title="avcodec/aacdec_template: add more checks to make sure only 22.2 gets ...">d6f293353c94c7ce200f6e0975ae3de49787f91f</a><br />
+</p>
+
+</div>
+          </div>
+          <script>
+            // inlinebuttons in ticket change are presented in
+            // left-to-right order, i.e. those added before
+            // #reply-to-comment-n will be on its left, those added
+            // after will be on its right
+            function insertNearReplyToComment(num, content, side) {
+              var $replyto = $("#reply-to-comment-" + num);
+              if (side === 'right') {
+                $replyto.after(content);
+              } else if (side === 'rightmost') {
+                $replyto.parent().append(content);
+              } else if (side === 'leftmost') {
+                $replyto.parent().prepend(content);
+              } else { // 'left'
+                $replyto.before(content);
+              }
+            }
+          </script>
+
+        </div>
+      </div>
+
+
+<div class="trac-help">
+  <strong>Note:</strong>
+ See   <a href="/wiki/TracTickets">TracTickets</a>
+ for help on using tickets.
+</div>
+    </div>
+        <!-- # block content (content inherited from layout.html) -->
+    <script type="text/javascript">
+      jQuery("body").addClass("trac-has-js");
+    </script>
+    <div id="altlinks">
+      <h3>Download in other formats:</h3>
+      <ul>
+        <li class="first">
+          <a rel="nofollow" href="/ticket/8859?format=rss"
+              class="rss">
+            RSS Feed</a>
+        </li>
+        <li class="">
+          <a rel="nofollow" href="/ticket/8859?format=csv"
+              class="csv">
+            Comma-delimited Text</a>
+        </li>
+        <li class="last">
+          <a rel="nofollow" href="/ticket/8859?format=tab"
+              class="tab">
+            Tab-delimited Text</a>
+        </li>
+      </ul>
+    </div>
+    <!-- # endblock content (content inherited from layout.html) -->
+
+      <!-- # endblock content (placeholder in theme.html) -->
+    </div>
+
+    <div id="footer"><hr/>
+      <a id="tracpowered" href="https://trac.edgewall.org/"
+         ><img src="/chrome/common/trac_logo_mini.png" height="30"
+               width="107" alt="Trac Powered"/></a>
+      <p class="left">
+Powered by         <a href="/about"><strong>Trac 1.6</strong></a>
+        <br />
+ By         <a href="http://www.edgewall.org/">Edgewall Software</a>
+.      </p>
+      <p class="right">Visit the Trac open source project at<br /><a href="http://trac.edgewall.org/">http://trac.edgewall.org/</a></p>
+    </div>
+    <!--   # include 'site_footer.html' (theme.html) -->
+    <!--   end of site_footer.html -->
+    <!-- # endblock body (content inherited from theme.html) -->
+  </body> </html>

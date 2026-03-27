@@ -1,0 +1,135 @@
+<!-- MHonArc v2.6.19+ -->
+<!--X-Subject: A memory leak in -->
+<!--X-From-R13: Oafuhaxnat Lubh &#60;frivrmubhNtznvy.pbz> -->
+<!--X-Date: Tue, 04 Aug 2020 09:34:32 &#45;0400 -->
+<!--X-Message-Id: CABzVOjBmbx5U1upEP7dsjH4QxSm+bGxzyUch4nY7a4+9_ABfhg@mail.gmail.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Derived: zip3phJ3G7vCD.zip -->
+<!--X-Head-End-->
+<!doctype html public "-//W3C//DTD HTML//EN">
+<html>
+<head>
+<title>A memory leak in</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<center>
+<table border=0 cellspacing=2 cellpadding=0 bgcolor="#000000">
+<tr><td><table border=0 bgcolor="#FFFFCC">
+<tr><td><big><b>bug-ncurses</b></big></td></tr></table></tr></table>
+<div class="nowrap">
+<small>[<a href="../"
+>Top</a>][<a href="/archive/html">All Lists</a>]</small>
+</div>
+<form method="get" action="/archive/cgi-bin/namazu.cgi">
+<input type="text" name="query" size="30">
+<input type="submit" name="submit" value="Search">
+<input type="hidden" name="idxname" value="bug-ncurses">
+<a href="/archive/cgi-bin/namazu.cgi?idxname=bug-ncurses">Advanced</a>
+</form>
+
+</center>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00006.html">Date Prev</a>][<a href="msg00008.html">Date Next</a>][<a href="msg00006.html">Thread Prev</a>][<a href="msg00010.html">Thread Next</a>][<a
+href="index.html#00007">Date Index</a>][<a
+href="threads.html#00007">Thread Index</a>]
+
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h2>A memory leak in</h2>
+<hr>
+<table border=0>
+<tbody>
+<tr>
+<td align="right" valign="top">
+<b>From</b>: </td>
+<td align="left">
+Anshunkang Zhou</td>
+</tr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+
+<tr>
+<td align="right" valign="top">
+<b>Subject</b>: </td>
+<td align="left">
+A memory leak in</td>
+</tr>
+
+<tr>
+<td align="right" valign="top">
+<b>Date</b>: </td>
+<td align="left">
+Tue, 4 Aug 2020 21:33:56 +0800</td>
+</tr>
+
+</tbody>
+</table>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<div dir="ltr">Dear Developers,<br>I found a memory leak, detailed system information and build configuration is asÂ follows, the poc is in the mail attachment.<br><div><br>## System info<br><br>Ubuntu X64, gcc (Ubuntu 5.5.0-12ubuntu1), ncurses (latest master label v6_2_20200801)<br><br>## Configure<br><br>CFLAGS=&quot;-g -fsanitize=address&quot; LDFLAGS=&quot;-fsanitize=address&quot; ./configure --enable-static<br><br>## Command line<br><br>./progs/tic -o /tmp @@<br><br>## AddressSanitizer output<br><br>```<br>=================================================================<br>==32479==ERROR: LeakSanitizer: detected memory leaks<br><br>Direct leak of 1024 byte(s) in 1 object(s) allocated from:<br>Â  Â  #0 0x4dec48 in __interceptor_malloc /home/seviezhou/llvm-6.0.0/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:88<br>Â  Â  #1 0x57eaee in _nc_resolve_uses2 /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/comp_parse.c:470:7<br>Â  Â  #2 0x517aed in main /home/seviezhou/ncurses-snapshots/progs/../progs/tic.c:971:7<br>Â  Â  #3 0x7f50aef8383f in __libc_start_main /build/glibc-e6zv40/glibc-2.23/csu/../csu/libc-start.c:291<br><br>Indirect leak of 3312 byte(s) in 1 object(s) allocated from:<br>Â  Â  #0 0x4dee60 in calloc /home/seviezhou/llvm-6.0.0/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:97<br>Â  Â  #1 0x566fae in _nc_read_termtype /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:358:25<br>Â  Â  #2 0x56ab65 in _nc_read_file_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:567:18<br>Â  Â  #3 0x56c7f7 in _nc_read_tic_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:822:9<br>Â  Â  #4 0x56b20f in _nc_read_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:866:13<br>Â  Â  #5 0x57eab7 in _nc_resolve_uses2 /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/comp_parse.c:466:7<br>Â  Â  #6 0x517aed in main /home/seviezhou/ncurses-snapshots/progs/../progs/tic.c:971:7<br>Â  Â  #7 0x7f50aef8383f in __libc_start_main /build/glibc-e6zv40/glibc-2.23/csu/../csu/libc-start.c:291<br><br>Indirect leak of 392 byte(s) in 1 object(s) allocated from:<br>Â  Â  #0 0x4dec48 in __interceptor_malloc /home/seviezhou/llvm-6.0.0/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:88<br>Â  Â  #1 0x566632 in _nc_read_termtype /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:319:21<br>Â  Â  #2 0x56ab65 in _nc_read_file_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:567:18<br>Â  Â  #3 0x56c7f7 in _nc_read_tic_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:822:9<br>Â  Â  #4 0x56b20f in _nc_read_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:866:13<br>Â  Â  #5 0x57eab7 in _nc_resolve_uses2 /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/comp_parse.c:466:7<br>Â  Â  #6 0x517aed in main /home/seviezhou/ncurses-snapshots/progs/../progs/tic.c:971:7<br>Â  Â  #7 0x7f50aef8383f in __libc_start_main /build/glibc-e6zv40/glibc-2.23/csu/../csu/libc-start.c:291<br><br>Indirect leak of 78 byte(s) in 1 object(s) allocated from:<br>Â  Â  #0 0x4dee60 in calloc /home/seviezhou/llvm-6.0.0/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:97<br>Â  Â  #1 0x566d83 in _nc_read_termtype /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:352:26<br>Â  Â  #2 0x56ab65 in _nc_read_file_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:567:18<br>Â  Â  #3 0x56c7f7 in _nc_read_tic_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:822:9<br>Â  Â  #4 0x56b20f in _nc_read_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:866:13<br>Â  Â  #5 0x57eab7 in _nc_resolve_uses2 /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/comp_parse.c:466:7<br>Â  Â  #6 0x517aed in main /home/seviezhou/ncurses-snapshots/progs/../progs/tic.c:971:7<br>Â  Â  #7 0x7f50aef8383f in __libc_start_main /build/glibc-e6zv40/glibc-2.23/csu/../csu/libc-start.c:291<br><br>Indirect leak of 44 byte(s) in 1 object(s) allocated from:<br>Â  Â  #0 0x4dee60 in calloc /home/seviezhou/llvm-6.0.0/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:97<br>Â  Â  #1 0x566a6f in _nc_read_termtype /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:337:26<br>Â  Â  #2 0x56ab65 in _nc_read_file_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:567:18<br>Â  Â  #3 0x56c7f7 in _nc_read_tic_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:822:9<br>Â  Â  #4 0x56b20f in _nc_read_entry /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/read_entry.c:866:13<br>Â  Â  #5 0x57eab7 in _nc_resolve_uses2 /home/seviezhou/ncurses-snapshots/ncurses/../ncurses/./tinfo/comp_parse.c:466:7<br>Â  Â  #6 0x517aed in main /home/seviezhou/ncurses-snapshots/progs/../progs/tic.c:971:7<br>Â  Â  #7 0x7f50aef8383f in __libc_start_main /build/glibc-e6zv40/glibc-2.23/csu/../csu/libc-start.c:291<br><br>SUMMARY: AddressSanitizer: 4850 byte(s) leaked in 5 allocation(s).<br>```<br></div></div>
+
+<p><strong><a href="zip3phJ3G7vCD.zip" ><img src="/icons/compressed.png" align="left" border=0 alt="Attachment:" width="20" height="22"></a>
+<a href="zip3phJ3G7vCD.zip" ><tt>memory-leak-tic-971.zip</tt></a></strong><br>
+<em>Description:</em> Zip archive</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<form method="post" action="/mp/yyz.py" enctype="multipart/form-data">
+<input type="hidden" name="a" value="seviezhou">
+<input type="hidden" name="b" value="A memory leak in">
+<input type="hidden" name="d" value="CABzVOjBmbx5U1upEP7dsjH4QxSm+bGxzyUch4nY7a4+9_ABfhg@mail.gmail.com">
+<input type="hidden" name="c" value="gmail.com">
+<center>reply via email to<br><input type="submit" value=" Anshunkang Zhou "></center>
+</form>
+<hr>
+<table width="100%">
+<tr><td align="left">[Prev in Thread]</td>
+<td align="center"><b>Current Thread</b></td>
+<td align="right">[Next in Thread]</td></tr></table>
+<ul>
+<li><font color="#666666"><strong>A memory leak in</strong>,
+<em>Anshunkang Zhou</em></font>&nbsp;<b>&lt;=</b>
+</ul>
+
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00006.html">A heap-buffer-overflow in captoinfo.c:321:12</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00008.html">Re: A heap-buffer-overflow in captoinfo.c:321:12</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00006.html">A heap-buffer-overflow in captoinfo.c:321:12</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00010.html">Off-screen panels/windows</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="index.html#00007"><strong>Date</strong></a></li>
+<li><a href="threads.html#00007"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<!--X-User-Footer-End-->
+</body>
+</html>

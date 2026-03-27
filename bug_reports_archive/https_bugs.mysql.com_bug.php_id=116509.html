@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>MySQL Bugs: #116509: Temporary error, restart node in NDB cluster</title>
+ <link rel="shortcut icon" href="/favicon.ico" />
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/screen.css" />
+ <link rel="stylesheet" type="text/css" href="/static/chosen/chosen.css" />
+ <script type="text/javascript" src="/static/prototype.js"></script>
+ <!-- script type="text/javascript" src="/static/chosen/event.simulate.js"></script -->
+ <script type="text/javascript" src="/static/scriptaculous.js?load=builder,effects,dragdrop,controls,slider"></script>
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/calendar-blue.css" />
+ <script type="text/javascript" src="/static/calendar.js"></script>
+ <script type="text/javascript" src="/static/calendar-en.js"></script>
+ <script type="text/javascript" src="/static/calendar-setup.js"></script>
+
+                              <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="E6BB6-B37B4-898B7-F97BA-BBCDB",function(){function e(){if(!o){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,i.parentNode.appendChild(e),o=!0}}function t(e){o=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(i.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",i.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"E6BB6-B37B4-898B7-F97BA-BBCDB";var i=document.currentScript||document.getElementsByTagName("script")[0],o=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!o)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),i.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="yuva3zqxgk2m42odsv6q-f-e03db42ed-clientnsv4-s.akamaihd.net",i="false"=="true"?2:1,o={"ak.v":"39","ak.cp":"1983232","ak.ai":parseInt("802521",10),"ak.ol":"0","ak.cr":80,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"22cf5478","ak.r":50152,"ak.a2":n,"ak.m":"dscx","ak.n":"essl","ak.bpcip":"197.42.13.0","ak.cport":8666,"ak.gh":"2.20.109.4","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1774425469","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==Y+1pS/YbzD3muNRvMOM+QQ2xSK1fovAgH0e/GO11BWjkuxvAyAtzVUfeW9zl0u83lSznmYbEpB1nxM6aJYEiuz4vbQ+qwf59XXqyEmu/JPy9pgL8p2+F3FOZegUV9a/FGL5FQ350WDou7fGRJX21iCAozvUssXTfh5wqGGpGKWZaaRDA2Dw5VzZNss/T4hUqatAtuV5LndaEWUnHnM56MCM3IlzMfd7A5suRc6VoogVMNAYFcHHeZevfF96UnUeJD3Ry7L8YJuroTzGVUvu6Z4bNHt85wiBdPOZXWoalqmcgORWiTsLvooTqjJavbTE1xymtbQY5zPMCe9GkoZsXP+9UpgS6Mc1OBNvGe8giHII1REhClojBgX+G/ei04/RK/NM615++riz2D+Lr/oJCjwKuXXanzPO1nOKPs9ClYmw=","ak.pv":"20","ak.dpoabenc":"","ak.tf":i};if(""!==t)o["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))o["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(o)},rv:function(){var e=["ak.bpcip","ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:o,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+
+<body class="dev bugs">
+<div id="header">
+ <div id="logo"><a href="http://dev.mysql.com/"><img src="/images/mysql_100x52-64.gif" width="100" height="52" border="0" alt="MySQL" /></a></div>
+ <div id="searchandlogin">
+  <div id="searchbox">
+   <form action="/search.php" method="get">
+    <input class="frm" type="text" name="search_for" size="20" maxlength="255" />
+    <input class="submit2" type="submit" value="Search" />
+   </form>
+  </div>
+  <div id="login">
+
+   <p class="s"><a href="https://dev.mysql.com/auth/login/?dest=http%3A%2F%2Fbugs.mysql.com%2Fbug.php%3Fid%3D116509">Login</a> /
+   <a href="https://dev.mysql.com/auth/register/">Register</a></p>
+  </div>
+ </div>
+</div>
+<div id="nav">
+ <ul>
+  <li><a href="http://dev.mysql.com/">Developer Zone</a></li>
+  <li><a href="/">Bugs Home</a></li>
+   <li><a href="/report.php">Report a bug</a></li>
+  <li><a href="/search.php">Advanced search</a></li>
+  <li><a href="/search-saved.php">Saved searches</a></li>
+  <li><a href="/tags.php">Tags</a></li>
+ </ul>
+</div>
+
+<br clear="both" />
+
+<div id="content">
+<table id="bugheader" style="width: 100%">
+ <tr id="title">
+  <th>Bug&nbsp;#116509</th>
+  <td colspan="3">Temporary error, restart node in NDB cluster</td>
+ </tr>
+ <tr>
+  <th>Submitted:</th> <td>30 Oct 2024 16:00</td>
+  <th>Modified:</th> <td>28 Nov 2024 13:31</td>
+ </tr>
+ <tr>
+  <th>Reporter:</th>
+  <td>
+<a href="/search.php?cmd=display&status=All&severity=all&reporter=17732354">CunDi Fang</a>
+  </td>
+  <th>Email Updates:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/sub.php?action=Subscribe&id=116509" />
+    <input type="submit" name="action" value="Subscribe" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Status:</th>
+  <td>
+  Verified  </td>
+  <th>Impact on me:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/impact.php?action=&id=116509" />
+    None&nbsp;<input type="submit" name="action" value="Affects Me" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Category:</th><td>MySQL Cluster: Cluster (NDB) storage engine</td>
+  <th>Severity:</th><td>S3 (Non-critical)</td>
+ </tr>
+ <tr>
+  <th>Version:</th><td>8.0.40-cluster MySQL Cluster Community S</td>
+  <th>OS:</th><td>Any</td>
+ </tr>
+ <tr>
+  <th>Assigned to:</th>
+  <td>
+  </td>
+  <th>CPU Architecture:</th><td>Any</td>
+ </tr>
+</table>
+
+<ul id="controls">
+<li class=" active">View</li>
+<li class=""><a href="/bug.php?id=116509&amp;edit=3">Add Comment</a></li>
+<li class=""><a href="/bug.php?id=116509&amp;files=1">Files</a></li>
+<li class=""><a href="/bug.php?id=116509&amp;edit=1">Developer</a></li>
+<li class=""><a href="/bug.php?id=116509&amp;edit=2">Edit Submission</a></li>
+<li class=""><a href="/bug.php?id=116509&amp;log=1">View Progress Log</a></li>
+<li class=""><a href="/bug.php?id=116509&amp;contribs=1">Contributions</a></li>
+</ul>
+<br clear="all" />
+ <div id="cmain"
+      class="comment">
+  <div class="header">
+   [30 Oct 2024 16:00]
+   CunDi Fang        </div>
+  <pre class="note"><strong>Description:</strong>
+In a 1 manager(node 1), 4 ndbd(node 2-5), 2 sql(node 6,7) cluster, 
+
+Time: Saturday 26 October 2024 - 01:58:21
+Status: Temporary error, restart node
+Message: Send signal error (Internal error, programming error or missing error message, please report a bug)
+Error: 2339
+Error data: Signal (GSN: 12, Length: 1, Rec Block No: 0)
+Error object: /home/mysql-cluster-gpl-8.0.40/storage/ndb/src/kernel/vm/SimulatedBlock.cpp:809
+Program: ndbd
+Pid: 4383
+Version: mysql-8.0.40 ndb-8.0.40
+Trace file name: ndb_5_trace.log.2
+Trace file path: /usr/local/mysql-cluster/data/ndb_5_trace.log.2 [t1..t1]
+***EOM***
+
+<strong>How to repeat:</strong>
+A signaling error occurred at line 809 of the SimulatedBlock.cpp file. The error message indicates a failure in sending a signal to a module (GSN: 12, signal length 1). The specific error occurred during the first stage of the startup process, resulting in a forced shutdown of the node and triggering a reboot operation.
+
+Here is the log:
+```
+2024-10-26 01:58:20 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 26, name = QBACKUP
+2024-10-26 01:58:20 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 27, name = DBQTUX
+2024-10-26 01:58:20 [ndbd] INFO     -- Sending READ_CONFIG_REQ to index = 28, name = QRESTORE
+2024-10-26 01:58:20 [ndbd] INFO     -- READ_CONFIG_REQ phase completed, this phase is used to read configuration and to calcu
+late various sizes and allocate almost all memory needed by the data node in its lifetime
+2024-10-26 01:58:20 [ndbd] INFO     -- Not initial start
+2024-10-26 01:58:20 [ndbd] INFO     -- Local sysfile: Node restorable on its own, gci: 0, version: 70603
+2024-10-26 01:58:20 [ndbd] INFO     -- Start phase 0 completed
+2024-10-26 01:58:20 [ndbd] INFO     -- Phase 0 has made some file system initialisations
+2024-10-26 01:58:20 [ndbd] INFO     -- We are running with 0 LDM workers and 4 REDO log parts. This means that we can avoid u
+sing a mutex to access REDO log parts
+2024-10-26 01:58:20 [ndbd] INFO     -- Watchdog KillSwitch off.
+2024-10-26 01:58:20 [ndbd] INFO     -- Starting QMGR phase 1
+2024-10-26 01:58:20 [ndbd] INFO     -- Starting with m_restart_seq set to 26
+2024-10-26 01:58:20 [ndbd] INFO     -- DIH reported normal start, now starting the Node Inclusion Protocol
+For help with below stacktrace consult:
+<a href="https://dev.mysql.com/doc/refman/en/using-stack-trace.html">https://dev.mysql.com/doc/refman/en/using-stack-trace.html</a>
+Also note that stack_bottom and thread_stack will always show up as zero.
+Base address/slide: 0x6322fd065000
+With use of addr2line, llvm-symbolizer, or, atos, subtract the addresses in
+stacktrace with the base address before passing them to tool.
+For tools that have options for slide use that, e.g.:
+llvm-symbolizer --adjust-vma=0x6322fd065000 ...
+atos -s 0x6322fd065000 ...
+stack_bottom = 0 thread_stack 0x0
+ndbd(my_print_stacktrace(unsigned char const*, unsigned long)+0x41) [0x6322fd5f2bd1]
+ndbd(ErrorReporter::handleError(int, char const*, char const*, NdbShutdownType)+0x53) [0x6322fd54b773]
+ndbd(+0x578b5b) [0x6322fd5ddb5b]
+ndbd(SimulatedBlock::sendSignal(unsigned int, unsigned short, SignalT&lt;25u&gt;*, unsigned int, JobBufferLevel) const+0xa4) [0x6322fd5ddf34]
+ndbd(DbUtil::runOperation(Signal*, Ptr&lt;DbUtil::Transaction&gt;&amp;, Ptr&lt;DbUtil::Operation&gt;&amp;, unsigned int)+0x276) [0x6322fd41c166]
+ndbd(DbUtil::runTransaction(Signal*, Ptr&lt;DbUtil::Transaction&gt;)+0x114) [0x6322fd41c524]
+ndbd(+0x5f4680) [0x6322fd659680]
+ndbd(FastScheduler::doJob(unsigned int)+0x115) [0x6322fd5dd825]
+ndbd(ThreadConfig::ipControlLoop(NdbThread*)+0x787) [0x6322fd5f4627]
+ndbd(ndbd_run(bool, int, char const*, int, char const*, bool, bool, bool, unsigned int, int, int, unsigned long)+0x7e1) [0x6322fd1a4361]
+ndbd(real_main(int, char**)+0x4f5) [0x6322fd1a49c5]
+ndbd(angel_run(char const*, Vector&lt;BaseString&gt; const&amp;, char const*, int, char const*, bool, bool, bool, int, int)+0x11c5) [0x6322fd1a6055]
+ndbd(real_main(int, char**)+0x87e) [0x6322fd1a4d4e]
+ndbd(+0x129982) [0x6322fd18e982]
+/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x7d1d779dfd90]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7d1d779dfe40]
+ndbd(_start+0x25) [0x6322fd197ff5]
+2024-10-26 01:58:21 [ndbd] INFO     -- Signal (GSN: 12, Length: 1, Rec Block No: 0)
+2024-10-26 01:58:21 [ndbd] INFO     -- /home/mysql-cluster-gpl-8.0.40/storage/ndb/src/kernel/vm/SimulatedBlock.cpp:809
+2024-10-26 01:58:21 [ndbd] INFO     -- Error handler shutting down system
+2024-10-26 01:58:21 [ndbd] INFO     -- Error handler shutdown completed - exiting
+2024-10-26 01:58:21 [ndbd] ALERT    -- Node 5: Forced node shutdown completed. Occurred during startphase 1. Caused by error 2339: &#039;Send signal error(Internal error, programming error or missing error message, please report a bug). Temporary error, restart node&#039;.
+2024-10-26 01:58:24 [ndbd] INFO     -- Angel pid: 4456 started child: 4457
+2024-10-26 01:58:24 [ndbd] INFO     -- Normal start of data node using checkpoint and log info if existing
+2024-10-26 01:58:24 [ndbd] INFO     -- Configuration fetched from &#039;192.168.10.8:1186&#039;, generation: 1
+2024-10-26 01:58:24 [ndbd] INFO     -- Changing directory to &#039;/usr/local/mysql-cluster/data&#039;
+```
+
+<strong>Suggested fix:</strong>
+As can be seen from the stack information, the error occurs in the SimulatedBlock::sendSignal function, which indicates that when communicating between cluster nodes, the system attempts to send a signal (Signal) to a module (usually the process of allocating resources for data or metadata) and the operation fails. The reason for this failure may be that the target module is not ready to receive the signal, or there is an inconsistency in resource allocation. This issue occurs during a READ_CONFIG_REQ configuration read of MySQL Cluster. The logs indicate that as the node enters QMGR phase 1 (denoting the cluster manager), the node&#039;s initialization process performs a read configuration request that appears to read some incorrect or incompatible configuration, which triggers the signaling issue.</pre>
+ </div>
+ <div id="c548186"
+      class="comment">
+  <div class="header">
+   [31 Oct 2024 10:39]
+   MySQL Verification Team        </div>
+  <pre class="note">Hi,
+
+Can you please share full logs from all nodes and if you did anything before this happened. Also is this bare metal or docker?
+
+Thanks</pre>
+ </div>
+ <div id="c548267"
+      class="comment">
+  <div class="header">
+   [5 Nov 2024 2:49]
+   CunDi Fang        </div>
+  <pre class="note">I run these on docker, 5 container with in one docker network</pre>
+ </div>
+</div>
+<script src="/static/chosen/chosen.proto.js" type="text/javascript"></script>
+<script src="/static/misc.js" type="text/javascript"></script>
+<script type="text/javascript">
+  document.observe('dom:loaded', function(evt) {
+    var config = {
+      '.chzn-select'           : {},
+      '.chzn-select-excl'      : {},
+      '.chzn-select-max1'      : {max_selected_options:1},
+      '.chzn-select-deselect'  : {allow_single_deselect:true},
+      '.chzn-select-no-single' : {disable_search_threshold:10},
+      '.chzn-select-no-results': {no_results_text: "Oops, nothing found!"},
+      '.chzn-select-width'     : {width: "95%"}
+    }
+    var results = [];
+    for (var selector in config) {
+      var elements = $$(selector);
+      for (var i = 0; i < elements.length; i++) {
+        results.push(new Chosen(elements[i],config[selector]));
+      }
+    }
+
+    // initialize (store initial state) selects with exclusive options
+    var elements = $$('.chzn-select-excl');
+    for (var i = 0; i < elements.length; i++) {
+      my_init_select(elements[i]);
+    }
+
+    return results;
+  });
+</script>
+<div id="footer">
+ <ul style="float: right; list-style: none">
+  <li><a href="http://www.mysql.com/about/legal/">Legal Policies</a></li>
+  <li><a href="http://www.oracle.com/us/legal/privacy/index.htm">Your Privacy Rights</a></li>
+  <li><a href="http://www.oracle.com/html/terms.html">Terms of Use</a></li>
+  <li><a href="https://www.mysql.com/about/contact/">Contact Us</a></li>
+ </ul>
+ <br class="clear" />
+ <p>Portions of this website are <a href="http://www.php.net/copyright.php">copyright &copy; 2001, 2002 The PHP Group</a></p>
+ <p style="float: right">
+Page generated in 0.188 sec. using MySQL 8.4.5-u11-cloud </p>
+ <br class="clear" />
+ <br style="line-height: 8px;" />
+ <p style="float: left">Timestamp references displayed by the system are UTC.<br/>
+  Content reproduced on this site is the property of the
+  respective copyright holders.<br />It is not reviewed in advance
+  by Oracle and does not necessarily represent the opinion of
+  Oracle or any other party.</p>
+ <p style="float: right"><a href="http://www.oracle.com/"><img src="/images/logo-oracle-red-91x22.gif" alt="Oracle" width="91" height="22" /></a>&nbsp;&nbsp;&copy; 2026, Oracle Corporation and/or its affiliates</p>
+</div>
+<!-- script type="text/javascript" src="http://www.mysql.com/common/js/s_code_remote.js"></script -->
+</body>
+</html>

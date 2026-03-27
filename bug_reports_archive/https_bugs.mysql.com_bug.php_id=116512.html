@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>MySQL Bugs: #116512: Force quit in innodb cluster</title>
+ <link rel="shortcut icon" href="/favicon.ico" />
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/screen.css" />
+ <link rel="stylesheet" type="text/css" href="/static/chosen/chosen.css" />
+ <script type="text/javascript" src="/static/prototype.js"></script>
+ <!-- script type="text/javascript" src="/static/chosen/event.simulate.js"></script -->
+ <script type="text/javascript" src="/static/scriptaculous.js?load=builder,effects,dragdrop,controls,slider"></script>
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/calendar-blue.css" />
+ <script type="text/javascript" src="/static/calendar.js"></script>
+ <script type="text/javascript" src="/static/calendar-en.js"></script>
+ <script type="text/javascript" src="/static/calendar-setup.js"></script>
+
+                              <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="E6BB6-B37B4-898B7-F97BA-BBCDB",function(){function e(){if(!o){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,i.parentNode.appendChild(e),o=!0}}function t(e){o=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(i.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",i.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"E6BB6-B37B4-898B7-F97BA-BBCDB";var i=document.currentScript||document.getElementsByTagName("script")[0],o=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!o)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),i.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="yuva3zqxgk2m42odrdgq-f-40fcfcba5-clientnsv4-s.akamaihd.net",i="false"=="true"?2:1,o={"ak.v":"39","ak.cp":"1983232","ak.ai":parseInt("802521",10),"ak.ol":"0","ak.cr":72,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"22b9f760","ak.r":50152,"ak.a2":n,"ak.m":"dscx","ak.n":"essl","ak.bpcip":"197.42.13.0","ak.cport":13769,"ak.gh":"2.20.109.4","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1774422221","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==7WfZVByP+EPsW6CY3QvtG18N9UJgSYWYudMuNWXg9g95Yq5cjLH52HrilI8iHeSYOJQgGOj30fdr5OFljWZ0JckmdY4YynRPAEqQdE1IelbmZIUpXfSPA3rNNH1KQckG3QsiS2PM3CfhiNvh5Ba1XaPmV0XkBjwkIGZPT87gHOOnNCbYAKKjAYwFVM+CY9TVVOKaVKjSRwyqWtTSUakqmkp+OoL1ueAwYVaIIg5JrYIuQMLod7xehv0C1n2KDs/ykEoWIBStbhLvr8jDnMjfMTBf+nlpuGHzgV7ONKmJ8sLQQC1/dLo7q9Hqv49FevT6dGTLDs8uGubpnWIGFTOyt1vMffXzZFuau0vvyuf/5Dqc7hltm8rJAUOlwLwebi2uCUMHWueg8XJQsIUf5SQDHqA2kSaPLP+38UH7VP9+zPU=","ak.pv":"20","ak.dpoabenc":"","ak.tf":i};if(""!==t)o["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))o["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(o)},rv:function(){var e=["ak.bpcip","ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:o,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+
+<body class="dev bugs">
+<div id="header">
+ <div id="logo"><a href="http://dev.mysql.com/"><img src="/images/mysql_100x52-64.gif" width="100" height="52" border="0" alt="MySQL" /></a></div>
+ <div id="searchandlogin">
+  <div id="searchbox">
+   <form action="/search.php" method="get">
+    <input class="frm" type="text" name="search_for" size="20" maxlength="255" />
+    <input class="submit2" type="submit" value="Search" />
+   </form>
+  </div>
+  <div id="login">
+
+   <p class="s"><a href="https://dev.mysql.com/auth/login/?dest=http%3A%2F%2Fbugs.mysql.com%2Fbug.php%3Fid%3D116512">Login</a> /
+   <a href="https://dev.mysql.com/auth/register/">Register</a></p>
+  </div>
+ </div>
+</div>
+<div id="nav">
+ <ul>
+  <li><a href="http://dev.mysql.com/">Developer Zone</a></li>
+  <li><a href="/">Bugs Home</a></li>
+   <li><a href="/report.php">Report a bug</a></li>
+  <li><a href="/search.php">Advanced search</a></li>
+  <li><a href="/search-saved.php">Saved searches</a></li>
+  <li><a href="/tags.php">Tags</a></li>
+ </ul>
+</div>
+
+<br clear="both" />
+
+<div id="content">
+<table id="bugheader" style="width: 100%">
+ <tr id="title">
+  <th>Bug&nbsp;#116512</th>
+  <td colspan="3">Force quit in innodb cluster</td>
+ </tr>
+ <tr>
+  <th>Submitted:</th> <td>30 Oct 2024 20:15</td>
+  <th>Modified:</th> <td>28 Nov 2024 13:29</td>
+ </tr>
+ <tr>
+  <th>Reporter:</th>
+  <td>
+<a href="/search.php?cmd=display&status=All&severity=all&reporter=17732354">CunDi Fang</a>
+  </td>
+  <th>Email Updates:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/sub.php?action=Subscribe&id=116512" />
+    <input type="submit" name="action" value="Subscribe" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Status:</th>
+  <td>
+  Can&#039;t repeat  </td>
+  <th>Impact on me:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/impact.php?action=&id=116512" />
+    None&nbsp;<input type="submit" name="action" value="Affects Me" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Category:</th><td>Shell AdminAPI InnoDB Cluster / ReplicaSet</td>
+  <th>Severity:</th><td>S2 (Serious)</td>
+ </tr>
+ <tr>
+  <th>Version:</th><td>8.0.35-innodb cluster</td>
+  <th>OS:</th><td>Any</td>
+ </tr>
+ <tr>
+  <th>Assigned to:</th>
+  <td>
+<a href="/search.php?cmd=display&status=Under+Development&assign=6685690">MySQL Verification Team</a>
+  </td>
+  <th>CPU Architecture:</th><td>Any</td>
+ </tr>
+</table>
+
+<ul id="controls">
+<li class=" active">View</li>
+<li class=""><a href="/bug.php?id=116512&amp;edit=3">Add Comment</a></li>
+<li class=""><a href="/bug.php?id=116512&amp;files=1">Files</a></li>
+<li class=""><a href="/bug.php?id=116512&amp;edit=1">Developer</a></li>
+<li class=""><a href="/bug.php?id=116512&amp;edit=2">Edit Submission</a></li>
+<li class=""><a href="/bug.php?id=116512&amp;log=1">View Progress Log</a></li>
+<li class=""><a href="/bug.php?id=116512&amp;contribs=1">Contributions</a></li>
+</ul>
+<br clear="all" />
+ <div id="cmain"
+      class="comment">
+  <div class="header">
+   [30 Oct 2024 20:15]
+   CunDi Fang        </div>
+  <pre class="note"><strong>Description:</strong>
+In a MySQL Group Replication cluster, a node attempting to join the cluster fails to connect to a peer node and subsequently encounters a data type conversion error while executing a transaction, causing the node to forcefully exit the cluster.
+
+<strong>How to repeat:</strong>
+Here is the log:
+```
+2024-10-30T07:21:26.634540Z 15 [ERROR] [MY-013146] [Repl] Replica SQL for channel &#039;group_replication_applier&#039;: Worker 1 failed executing transaction &#039;e6387c80-95c4-11ef-ac8b-0242c0050a08:7851&#039;; Column 2 of table &#039;mytest103.test1&#039; cannot be converted from type &#039;float&#039; to type &#039;tinyint(1)&#039;, Error_code: MY-013146
+2024-10-30T07:21:26.634920Z 14 [Warning] [MY-010584] [Repl] Replica SQL for channel &#039;group_replication_applier&#039;: ... The replica coordinator and worker threads are stopped, possibly leaving data in inconsistent state. A restart should restore consistency automatically, although using non-transactional storage for data or info tables or DDL queries could lead to problems. In such cases you have to examine your data (see documentation for details). Error_code: MY-001756
+2024-10-30T07:21:26.634975Z 14 [ERROR] [MY-011451] [Repl] Plugin group_replication reported: &#039;The applier thread execution was aborted. Unable to process more transactions, this member will now leave the group.&#039;
+2024-10-30T07:21:26.635126Z 12 [ERROR] [MY-011452] [Repl] Plugin group_replication reported: &#039;Fatal error during execution on the Applier process of Group Replication. The server will now leave the group.&#039;
+```
+
+After the connection issue, the system reported a data type incompatibility error (Error_code: MY-013146) encountered during the execution of transaction e6387c80-95c4-11ef-ac8b-0242c0050a08:7851, which means that the type of float in column 2 of table mytest103.test1 could not be converted to tinyint(1). This conversion error caused the transaction to not be applied to the node correctly. This error triggered a halt of the coordinator and worker threads (Replica SQL for channel &#039;group_replication_applier&#039;: ... The replica coordinator and worker threads are stopped) and poses a potential risk of data inconsistency.
+
+The applier thread execution was aborted. Unable to process more transactions, this member will now leave the group). member will now leave the group). Subsequently, the logs show a Fatal error during execution on the Applier process of Group Replication and the system is forced to exit the group.
+
+<strong>Suggested fix:</strong>
+This issue causes the node to exit the cluster and enter a read-only state, which affects the high availability and consistency of the Group Replication. It is recommended to check the network configuration of the Group Replication and make sure that the field types of the data tables match to avoid replication failures caused by similar conversion errors.</pre>
+ </div>
+ <div id="c548183"
+      class="comment">
+  <div class="header">
+   [31 Oct 2024 10:29]
+   MySQL Verification Team        </div>
+  <pre class="note">Hi,
+
+&gt; which means that the type of float in column 2 of table mytest103.test1 could not be converted to tinyint(1).
+
+How did this happen? MySQL did not alter mytest103.test1 table on it&#039;s own. What exactly did you do for this fail to occur.
+
+Thanks</pre>
+ </div>
+ <div id="c548185"
+      class="comment">
+  <div class="header">
+   [31 Oct 2024 10:31]
+   MySQL Verification Team        </div>
+  <pre class="note"><a href="https://bugs.mysql.com/bug.php?id=116511" style="text-decoration: line-through">Bug #116511</a> marked as duplicate of this one</pre>
+ </div>
+ <div id="c548310"
+      class="comment">
+  <div class="header">
+   [5 Nov 2024 16:26]
+   CunDi Fang        </div>
+  <pre class="note">Sorry, I lost the record of this test, I can describe the test scenario, I hope it can help you: 
+
+I was in this 5 nodes multi-master innodb cluster, in two of the nodes constantly perform sql execution operations, including ddl statements. Then on the master node, I was performing cluster state modification operations, such as restarting nodes. 
+
+While constantly performing such operations, I ran into this problem. I will continue to test this and will continue to escalate if I find a similar situation in the future.</pre>
+ </div>
+ <div id="c548312"
+      class="comment">
+  <div class="header">
+   [5 Nov 2024 16:44]
+   CunDi Fang        </div>
+  <pre class="note">Sorry, I lost the record of this test, I can describe the test scenario, I hope it can help you: 
+
+I was in this 5 nodes multi-master innodb cluster, in two of the nodes constantly perform sql execution operations, including ddl statements. Then on the master node, I was performing cluster state modification operations, such as restarting nodes. 
+
+While constantly performing such operations, I ran into this problem. I will continue to test this and will continue to escalate if I find a similar situation in the future.</pre>
+ </div>
+ <div id="c549007"
+      class="comment">
+  <div class="header">
+   [28 Nov 2024 13:29]
+   MySQL Verification Team        </div>
+  <pre class="note">Hi,
+
+I am not able to reproduce this with 8.0.40 and without full logs I can&#039;t do much with it. Please reopen if you manage to reproduce this with latest MySQL</pre>
+ </div>
+</div>
+<script src="/static/chosen/chosen.proto.js" type="text/javascript"></script>
+<script src="/static/misc.js" type="text/javascript"></script>
+<script type="text/javascript">
+  document.observe('dom:loaded', function(evt) {
+    var config = {
+      '.chzn-select'           : {},
+      '.chzn-select-excl'      : {},
+      '.chzn-select-max1'      : {max_selected_options:1},
+      '.chzn-select-deselect'  : {allow_single_deselect:true},
+      '.chzn-select-no-single' : {disable_search_threshold:10},
+      '.chzn-select-no-results': {no_results_text: "Oops, nothing found!"},
+      '.chzn-select-width'     : {width: "95%"}
+    }
+    var results = [];
+    for (var selector in config) {
+      var elements = $$(selector);
+      for (var i = 0; i < elements.length; i++) {
+        results.push(new Chosen(elements[i],config[selector]));
+      }
+    }
+
+    // initialize (store initial state) selects with exclusive options
+    var elements = $$('.chzn-select-excl');
+    for (var i = 0; i < elements.length; i++) {
+      my_init_select(elements[i]);
+    }
+
+    return results;
+  });
+</script>
+<div id="footer">
+ <ul style="float: right; list-style: none">
+  <li><a href="http://www.mysql.com/about/legal/">Legal Policies</a></li>
+  <li><a href="http://www.oracle.com/us/legal/privacy/index.htm">Your Privacy Rights</a></li>
+  <li><a href="http://www.oracle.com/html/terms.html">Terms of Use</a></li>
+  <li><a href="https://www.mysql.com/about/contact/">Contact Us</a></li>
+ </ul>
+ <br class="clear" />
+ <p>Portions of this website are <a href="http://www.php.net/copyright.php">copyright &copy; 2001, 2002 The PHP Group</a></p>
+ <p style="float: right">
+Page generated in 0.042 sec. using MySQL 8.4.5-u11-cloud </p>
+ <br class="clear" />
+ <br style="line-height: 8px;" />
+ <p style="float: left">Timestamp references displayed by the system are UTC.<br/>
+  Content reproduced on this site is the property of the
+  respective copyright holders.<br />It is not reviewed in advance
+  by Oracle and does not necessarily represent the opinion of
+  Oracle or any other party.</p>
+ <p style="float: right"><a href="http://www.oracle.com/"><img src="/images/logo-oracle-red-91x22.gif" alt="Oracle" width="91" height="22" /></a>&nbsp;&nbsp;&copy; 2026, Oracle Corporation and/or its affiliates</p>
+</div>
+<!-- script type="text/javascript" src="http://www.mysql.com/common/js/s_code_remote.js"></script -->
+</body>
+</html>

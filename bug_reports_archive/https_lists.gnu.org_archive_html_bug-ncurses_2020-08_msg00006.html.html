@@ -1,0 +1,144 @@
+<!-- MHonArc v2.6.19+ -->
+<!--X-Subject: A heap&#45;buffer&#45;overflow in captoinfo.c:321:12 -->
+<!--X-From-R13: Oafuhaxnat Lubh &#60;frivrmubhNtznvy.pbz> -->
+<!--X-Date: Tue, 04 Aug 2020 09:34:32 &#45;0400 -->
+<!--X-Message-Id: CABzVOjBUkxMqu9xhrx&#45;6DuGzQECPsZdYK7R22WNNb4NfnD0SqQ@mail.gmail.com -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Derived: zipiMx62TPZuU.zip -->
+<!--X-Head-End-->
+<!doctype html public "-//W3C//DTD HTML//EN">
+<html>
+<head>
+<title>A heap-buffer-overflow in captoinfo.c:321:12</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<center>
+<table border=0 cellspacing=2 cellpadding=0 bgcolor="#000000">
+<tr><td><table border=0 bgcolor="#FFFFCC">
+<tr><td><big><b>bug-ncurses</b></big></td></tr></table></tr></table>
+<div class="nowrap">
+<small>[<a href="../"
+>Top</a>][<a href="/archive/html">All Lists</a>]</small>
+</div>
+<form method="get" action="/archive/cgi-bin/namazu.cgi">
+<input type="text" name="query" size="30">
+<input type="submit" name="submit" value="Search">
+<input type="hidden" name="idxname" value="bug-ncurses">
+<a href="/archive/cgi-bin/namazu.cgi?idxname=bug-ncurses">Advanced</a>
+</form>
+
+</center>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<hr>
+[<a href="msg00005.html">Date Prev</a>][<a href="msg00007.html">Date Next</a>][<a href="msg00005.html">Thread Prev</a>][<a href="msg00008.html">Thread Next</a>][<a
+href="index.html#00006">Date Index</a>][<a
+href="threads.html#00006">Thread Index</a>]
+
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<h2>A heap-buffer-overflow in captoinfo.c:321:12</h2>
+<hr>
+<table border=0>
+<tbody>
+<tr>
+<td align="right" valign="top">
+<b>From</b>: </td>
+<td align="left">
+Anshunkang Zhou</td>
+</tr>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+
+<tr>
+<td align="right" valign="top">
+<b>Subject</b>: </td>
+<td align="left">
+A heap-buffer-overflow in captoinfo.c:321:12</td>
+</tr>
+
+<tr>
+<td align="right" valign="top">
+<b>Date</b>: </td>
+<td align="left">
+Tue, 4 Aug 2020 21:26:04 +0800</td>
+</tr>
+
+</tbody>
+</table>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<hr>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<div dir="ltr">Dear Developers,<br>	I found a heap-buffer-overflow in captoinfo.c:321:12, detailed system information and build configuration is asÂ follows, the poc is in the mail attachment.<br><br>## System info<br><br>Ubuntu X64, gcc (Ubuntu 5.5.0-12ubuntu1), ncurses (latest master label v6_2_20200801)<br><br>## Configure<br><br>CFLAGS=&quot;-g -fsanitize=address&quot; LDFLAGS=&quot;-fsanitize=address&quot; ./configure --enable-static<br><br>## Command line<br><br>./progs/tic -o /tmp @@<br><br>## AddressSanitizer output<br><br>```<br>=================================================================<br>==18977==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x621000002500 at pc 0x000000570883 bp 0x7ffd25a79bd0 sp 0x7ffd25a79bc8<br>READ of size 1 at 0x621000002500 thread T0<br>Â  Â  #0 0x570882 in _nc_captoinfo /home/seviezhou/ncurses/ncurses/../ncurses/./tinfo/captoinfo.c:321:12<br>Â  Â  #1 0x588e16 in _nc_parse_entry /home/seviezhou/ncurses/ncurses/../ncurses/./tinfo/parse_entry.c:548:13<br>Â  Â  #2 0x57c076 in _nc_read_entry_source /home/seviezhou/ncurses/ncurses/../ncurses/./tinfo/comp_parse.c:226:6<br>Â  Â  #3 0x517a0d in main /home/seviezhou/ncurses/progs/../progs/tic.c:963:5<br>Â  Â  #4 0x7f424829183f in __libc_start_main /build/glibc-e6zv40/glibc-2.23/csu/../csu/libc-start.c:291<br>Â  Â  #5 0x41a9f8 in _start (/home/seviezhou/ncurses/progs/tic+0x41a9f8)<br><br>0x621000002500 is located 0 bytes to the right of 4096-byte region [0x621000001500,0x621000002500)<br>allocated by thread T0 here:<br>Â  Â  #0 0x4dec08 in __interceptor_malloc /home/seviezhou/llvm-6.0.0/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:88<br>Â  Â  #1 0x580f32 in _nc_get_token /home/seviezhou/ncurses/ncurses/../ncurses/./tinfo/comp_scan.c:448:16<br>Â  Â  #2 0x586031 in _nc_parse_entry /home/seviezhou/ncurses/ncurses/../ncurses/./tinfo/parse_entry.c:265:18<br>Â  Â  #3 0x57c076 in _nc_read_entry_source /home/seviezhou/ncurses/ncurses/../ncurses/./tinfo/comp_parse.c:226:6<br>Â  Â  #4 0x517a0d in main /home/seviezhou/ncurses/progs/../progs/tic.c:963:5<br>Â  Â  #5 0x7f424829183f in __libc_start_main /build/glibc-e6zv40/glibc-2.23/csu/../csu/libc-start.c:291<br><br>SUMMARY: AddressSanitizer: heap-buffer-overflow /home/seviezhou/ncurses/ncurses/../ncurses/./tinfo/captoinfo.c:321:12 in _nc_captoinfo<br>Shadow bytes around the buggy address:<br>Â  0x0c427fff8450: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00<br>Â  0x0c427fff8460: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00<br>Â  0x0c427fff8470: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00<br>Â  0x0c427fff8480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00<br>Â  0x0c427fff8490: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00<br>=&gt;0x0c427fff84a0:[fa]fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa<br>Â  0x0c427fff84b0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa<br>Â  0x0c427fff84c0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa<br>Â  0x0c427fff84d0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa<br>Â  0x0c427fff84e0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa<br>Â  0x0c427fff84f0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa<br>Shadow byte legend (one shadow byte represents 8 application bytes):<br>Â  Addressable: Â  Â  Â  Â  Â  00<br>Â  Partially addressable: 01 02 03 04 05 06 07<br>Â  Heap left redzone: Â  Â  Â  fa<br>Â  Freed heap region: Â  Â  Â  fd<br>Â  Stack left redzone: Â  Â  Â f1<br>Â  Stack mid redzone: Â  Â  Â  f2<br>Â  Stack right redzone: Â  Â  f3<br>Â  Stack after return: Â  Â  Â f5<br>Â  Stack use after scope: Â  f8<br>Â  Global redzone: Â  Â  Â  Â  Â f9<br>Â  Global init order: Â  Â  Â  f6<br>Â  Poisoned by user: Â  Â  Â  Â f7<br>Â  Container overflow: Â  Â  Â fc<br>Â  Array cookie: Â  Â  Â  Â  Â  Â ac<br>Â  Intra object redzone: Â  Â bb<br>Â  ASan internal: Â  Â  Â  Â  Â  fe<br>Â  Left alloca redzone: Â  Â  ca<br>Â  Right alloca redzone: Â  Â cb<br>==18977==ABORTING<br>```<br></div>
+
+<p><strong><a href="zipiMx62TPZuU.zip" ><img src="/icons/compressed.png" align="left" border=0 alt="Attachment:" width="20" height="22"></a>
+<a href="zipiMx62TPZuU.zip" ><tt>heap-overflow-_nc_captoinfo-captoinfo-321.zip</tt></a></strong><br>
+<em>Description:</em> Zip archive</p>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<hr>
+<form method="post" action="/mp/yyz.py" enctype="multipart/form-data">
+<input type="hidden" name="a" value="seviezhou">
+<input type="hidden" name="b" value="A heap-buffer-overflow in captoinfo.c:321:12">
+<input type="hidden" name="d" value="CABzVOjBUkxMqu9xhrx-6DuGzQECPsZdYK7R22WNNb4NfnD0SqQ@mail.gmail.com">
+<input type="hidden" name="c" value="gmail.com">
+<center>reply via email to<br><input type="submit" value=" Anshunkang Zhou "></center>
+</form>
+<hr>
+<table width="100%">
+<tr><td align="left">[Prev in Thread]</td>
+<td align="center"><b>Current Thread</b></td>
+<td align="right">[<a href="msg00008.html">Next in Thread</a>]</td></tr></table>
+<ul>
+<li><font color="#666666"><strong>A heap-buffer-overflow in captoinfo.c:321:12</strong>,
+<em>Anshunkang Zhou</em></font>&nbsp;<b>&lt;=</b>
+<ul>
+<li><b><a name="00008" href="msg00008.html">Re: A heap-buffer-overflow in captoinfo.c:321:12</a></b>, <i>Thomas Dickey</i>, <tt>2020/08/04</tt>
+<ul>
+<li><b><a name="00009" href="msg00009.html">Re: A heap-buffer-overflow in captoinfo.c:321:12</a></b>, <i>Anshunkang Zhou</i>, <tt>2020/08/04</tt>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<hr>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<ul>
+<li>Prev by Date:
+<strong><a href="msg00005.html">ANN: ncurses-6.2-20200801</a></strong>
+</li>
+<li>Next by Date:
+<strong><a href="msg00007.html">A memory leak in</a></strong>
+</li>
+<li>Previous by thread:
+<strong><a href="msg00005.html">ANN: ncurses-6.2-20200801</a></strong>
+</li>
+<li>Next by thread:
+<strong><a href="msg00008.html">Re: A heap-buffer-overflow in captoinfo.c:321:12</a></strong>
+</li>
+<li>Index(es):
+<ul>
+<li><a href="index.html#00006"><strong>Date</strong></a></li>
+<li><a href="threads.html#00006"><strong>Thread</strong></a></li>
+</ul>
+</li>
+</ul>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<!--X-User-Footer-End-->
+</body>
+</html>

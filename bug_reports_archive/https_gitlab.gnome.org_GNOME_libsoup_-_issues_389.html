@@ -1,0 +1,402 @@
+
+
+
+<!DOCTYPE html>
+<html class="gl-system ui-gray with-top-bar with-header application-chrome page-with-panels with-gl-container-queries " lang="en">
+<head prefix="og: http://ogp.me/ns#">
+<meta charset="utf-8">
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<title>Fuzzing crash on soup_message_headers_get_content_type (#389) · Issues · GNOME / libsoup · GitLab</title>
+<script>
+//<![CDATA[
+window.gon={};gon.math_rendering_limits_enabled=true;gon.features={"allowIframesInMarkdown":false,"notificationsTodosButtons":false,"workItemPlanningView":false,"glqlLoadOnClick":false,"hideIncidentManagementFeatures":false,"workItemFeaturesField":false};
+//]]>
+</script>
+
+<script>
+//<![CDATA[
+const root = document.documentElement;
+if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  root.classList.add('gl-dark');
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  if (e.matches) {
+    root.classList.add('gl-dark');
+  } else {
+    root.classList.remove('gl-dark');
+  }
+});
+
+//]]>
+</script>
+<script>
+//<![CDATA[
+var gl = window.gl || {};
+gl.startup_calls = {"/GNOME/libsoup/-/issues/389/related_branches":{},"/GNOME/libsoup/-/issues/389/discussions.json?per_page=20":{},"/GNOME/libsoup/-/issues/389.json?serializer=sidebar_extras":{}};
+gl.startup_graphql_calls = null;
+
+if (gl.startup_calls && window.fetch) {
+  Object.keys(gl.startup_calls).forEach(apiCall => {
+   gl.startup_calls[apiCall] = {
+      fetchCall: fetch(apiCall, {
+        // Emulate XHR for Rails AJAX request checks
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        // fetch won’t send cookies in older browsers, unless you set the credentials init option.
+        // We set to `same-origin` which is default value in modern browsers.
+        // See https://github.com/whatwg/fetch/pull/585 for more information.
+        credentials: 'same-origin'
+      })
+    };
+  });
+}
+if (gl.startup_graphql_calls && window.fetch) {
+  const headers = {"X-CSRF-Token":"PqnfHrci16rY4Eg_v_fCFLjKKJYcAMIH7dic4jNXoJLlMAvcS_hrGovak6Rqx1dUB1O1OmtmYEAQvorFIF8zVA","x-gitlab-feature-category":"team_planning"};
+  const url = `https://gitlab.gnome.org/api/graphql`
+
+  const opts = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...headers,
+    }
+  };
+
+  gl.startup_graphql_calls = gl.startup_graphql_calls.map(call => ({
+    ...call,
+    fetchCall: fetch(url, {
+      ...opts,
+      credentials: 'same-origin',
+      body: JSON.stringify(call)
+    })
+  }))
+}
+
+
+//]]>
+</script>
+
+
+
+<meta content="light dark" name="color-scheme">
+<link rel="stylesheet" href="/assets/application-a525a9c3daa1038938085abda446450bfe2d6baa47f15350d586ae0f5adb0c07.css" media="(prefers-color-scheme: light)" />
+<link rel="stylesheet" href="/assets/application_dark-42668a4432435baac4d8f78933673d975b723cd8b6d5282a6069d14b109b115f.css" media="(prefers-color-scheme: dark)" />
+<link rel="stylesheet" href="/assets/page_bundles/design_management-714c36aa7869317006d0fdf3fa26fe925dcbcda6a0c71a93a3e54f3fc27ca849.css" /><link rel="stylesheet" href="/assets/page_bundles/incidents-70919d2acabcc4d627e9cd7adf1754065bca7e5c859a5be0b6925c8298646821.css" /><link rel="stylesheet" href="/assets/page_bundles/issuable-a1426ec32621b16dfde0bb759644dde9c2420a266b82578555e8cf4478d95dca.css" /><link rel="stylesheet" href="/assets/page_bundles/notes_shared-8f7a9513332533cc4a53b3be3d16e69570e82bc87b3f8913578eaeb0dce57e21.css" /><link rel="stylesheet" href="/assets/page_bundles/issues_show-772d033f6edeb2b0194d5d8e7a458874b0c6ccd961b76643df7be26ef78eccc2.css" /><link rel="stylesheet" href="/assets/page_bundles/work_items-af321897c3b1ae7c1f6f0cb993681211b837df7ec8e5ff59e3795fd08ab83a13.css" /><link rel="stylesheet" href="/assets/page_bundles/labels-b23cc06813aa6fbbc608e40531a9a2c605d4b464b1a2b1bd22360ba37986127f.css" /><link rel="stylesheet" href="/assets/page_bundles/commit_description-9e7efe20f0cef17d0606edabfad0418e9eb224aaeaa2dae32c817060fa60abcc.css" />
+<link rel="stylesheet" href="/assets/tailwind_cqs-15f40f04ff54d50d70cce143d1d2fe1fc5c721ac1c17ab7fb3f04b23f468a9b2.css" />
+
+
+<link rel="stylesheet" href="/assets/fonts-deb7ad1d55ca77c0172d8538d53442af63604ff490c74acc2859db295c125bdb.css" />
+<link rel="stylesheet" href="/assets/highlight/themes/white-9c3096bebbc271536c91d4e96afdef34cf54f198accca96d32008405a3a398da.css" media="(prefers-color-scheme: light)" />
+<link rel="stylesheet" href="/assets/highlight/themes/dark-bab508e186c8119f0cfb965d3a8a74c6ee2b10c5d2cf129a41c0bc522b98655d.css" media="(prefers-color-scheme: dark)" />
+
+<script src="/assets/webpack/runtime.b7b96ebd.bundle.js" defer="defer"></script>
+<script src="/assets/webpack/main.10fef0ae.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/tracker.f99708a3.chunk.js" defer="defer"></script>
+<script>
+//<![CDATA[
+window.snowplowOptions = {"namespace":"gl","hostname":"gitlab.gnome.org:443","postPath":"/-/collect_events","forceSecureTracker":true,"appId":"gitlab_sm"};
+gl = window.gl || {};
+gl.snowplowStandardContext = {"schema":"iglu:com.gitlab/gitlab_standard/jsonschema/1-1-7","data":{"environment":"self-managed","source":"gitlab-rails","correlation_id":"01KMHXJ0Y7HCD8VQNYNRX1D1SH","extra":{},"user_id":null,"global_user_id":null,"user_type":null,"is_gitlab_team_member":null,"namespace_id":8,"ultimate_parent_namespace_id":8,"project_id":1630,"feature_enabled_by_namespace_ids":null,"realm":"self-managed","deployment_type":"self-managed","context_generated_at":"2026-03-25T07:15:18.206Z"}};
+gl.snowplowPseudonymizedPageUrl = "https://gitlab.gnome.org/namespace8/project1630/-/issues/389";
+gl.maskedDefaultReferrerUrl = null;
+gl.ga4MeasurementId = 'G-ENFH3X7M5Y';
+gl.duoEvents = [];
+gl.onlySendDuoEvents = false;
+
+
+//]]>
+</script>
+<link rel="preload" href="/assets/application-a525a9c3daa1038938085abda446450bfe2d6baa47f15350d586ae0f5adb0c07.css" as="style" type="text/css">
+<link rel="preload" href="/assets/highlight/themes/white-9c3096bebbc271536c91d4e96afdef34cf54f198accca96d32008405a3a398da.css" as="style" type="text/css">
+
+
+
+
+<script src="/assets/webpack/commons-pages.explore.catalog-pages.groups.harbor.repositories-pages.groups.issues-pages.groups.new--aa29c505.2054bcd5.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/commons-pages.search.show-super_sidebar.74556b00.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/super_sidebar.9c81a1ad.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/commons-pages.projects-pages.projects.activity-pages.projects.alert_management.details-pages.project-2589d178.82193faf.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/pages.projects.issues.show.e2e01ce1.chunk.js" defer="defer"></script>
+
+<meta content="object" property="og:type">
+<meta content="GitLab" property="og:site_name">
+<meta content="Fuzzing crash on soup_message_headers_get_content_type (#389) · Issues · GNOME / libsoup · GitLab" property="og:title">
+<meta content="Hi libsoup team, I edited the existing fuzzing harness fuzzing/fuzz_content_sniffer.c as below to test additional functions. The program crashed with the attached input. Is it..." property="og:description">
+<meta content="https://gitlab.gnome.org/uploads/-/system/project/avatar/1630/logo.png" property="og:image">
+<meta content="64" property="og:image:width">
+<meta content="64" property="og:image:height">
+<meta content="https://gitlab.gnome.org/GNOME/libsoup/-/issues/389" property="og:url">
+<meta content="summary" property="twitter:card">
+<meta content="Fuzzing crash on soup_message_headers_get_content_type (#389) · Issues · GNOME / libsoup · GitLab" property="twitter:title">
+<meta content="Hi libsoup team, I edited the existing fuzzing harness fuzzing/fuzz_content_sniffer.c as below to test additional functions. The program crashed with the attached input. Is it..." property="twitter:description">
+<meta content="https://gitlab.gnome.org/uploads/-/system/project/avatar/1630/logo.png" property="twitter:image">
+<meta property="twitter:label1" content="Author"><meta property="twitter:data1" content="Spencer Wu">
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="PD_xKZkAQsI57Fepg89eQsCSJVhzmF6udGvXBXPkHlfnpiXrZdr-cmrWjDJW_8sCfwu49AT-_OmJDcEiYOyNkQ" />
+<meta name="csp-nonce" />
+<meta name="action-cable-url" content="/-/cable" />
+<link href="/-/manifest.json" rel="manifest">
+<link rel="icon" type="image/png" href="/uploads/-/system/appearance/favicon/1/GnomeLogoVertical.svg.png" id="favicon" data-original-href="/uploads/-/system/appearance/favicon/1/GnomeLogoVertical.svg.png" />
+<link rel="apple-touch-icon" type="image/x-icon" href="/assets/apple-touch-icon-b049d4bc0dd9626f31db825d61880737befc7835982586d015bded10b4435460.png" />
+<link href="/search/opensearch.xml" rel="search" title="Search GitLab" type="application/opensearchdescription+xml">
+
+
+
+
+<meta content="Hi libsoup team, I edited the existing fuzzing harness fuzzing/fuzz_content_sniffer.c as below to test additional functions. The program crashed with the attached input. Is it..." name="description">
+<meta content="#ECECEF" media="(prefers-color-scheme: light)" name="theme-color">
+<meta content="#232227" media="(prefers-color-scheme: dark)" name="theme-color">
+</head>
+
+<body class="tab-width-8 gl-browser-generic gl-platform-other" data-group="GNOME" data-group-full-path="GNOME" data-namespace-id="8" data-page="projects:issues:show" data-page-type-id="389" data-project="libsoup" data-project-full-path="GNOME/libsoup" data-project-id="1630" data-project-studio-enabled="true">
+<div id="js-tooltips-container"></div>
+<script>
+//<![CDATA[
+gl = window.gl || {};
+gl.GfmAutoComplete = gl.GfmAutoComplete || {};
+gl.GfmAutoComplete.dataSources = {"members":"/GNOME/libsoup/-/autocomplete_sources/members?type=Issue\u0026type_id=389","issues":"/GNOME/libsoup/-/autocomplete_sources/issues","mergeRequests":"/GNOME/libsoup/-/autocomplete_sources/merge_requests","labels":"/GNOME/libsoup/-/autocomplete_sources/labels?type=Issue\u0026type_id=389","milestones":"/GNOME/libsoup/-/autocomplete_sources/milestones","commands":"/GNOME/libsoup/-/autocomplete_sources/commands?type=Issue\u0026type_id=389","snippets":"/GNOME/libsoup/-/autocomplete_sources/snippets","contacts":"/GNOME/libsoup/-/autocomplete_sources/contacts?type=Issue\u0026type_id=389","wikis":"/GNOME/libsoup/-/autocomplete_sources/wikis"};
+
+
+//]]>
+</script>
+<script>
+//<![CDATA[
+gl = window.gl || {};
+gl.client = {"isGeneric":true,"isOther":true};
+
+
+//]]>
+</script>
+
+
+<header class="super-topbar js-super-topbar"></header>
+<div class="layout-page js-page-layout page-gutter right-sidebar-expanded page-with-super-sidebar">
+<script>
+//<![CDATA[
+const outer = document.createElement('div');
+outer.style.visibility = 'hidden';
+outer.style.overflow = 'scroll';
+document.body.appendChild(outer);
+const inner = document.createElement('div');
+outer.appendChild(inner);
+const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+outer.parentNode.removeChild(outer);
+document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`);
+
+//]]>
+</script><aside class="js-super-sidebar super-sidebar super-sidebar-loading" data-command-palette="{&quot;project_files_url&quot;:&quot;/GNOME/libsoup/-/files/master?format=json&quot;,&quot;project_blob_url&quot;:&quot;/GNOME/libsoup/-/blob/master&quot;}" data-is-saas="false" data-root-path="/" data-sidebar="{&quot;is_logged_in&quot;:false,&quot;compare_plans_url&quot;:&quot;https://about.gitlab.com/pricing&quot;,&quot;context_switcher_links&quot;:[{&quot;title&quot;:&quot;Explore&quot;,&quot;link&quot;:&quot;/explore&quot;,&quot;icon&quot;:&quot;compass&quot;}],&quot;current_menu_items&quot;:[{&quot;id&quot;:&quot;project_overview&quot;,&quot;title&quot;:&quot;libsoup&quot;,&quot;avatar&quot;:&quot;/uploads/-/system/project/avatar/1630/logo.png&quot;,&quot;entity_id&quot;:1630,&quot;link&quot;:&quot;/GNOME/libsoup&quot;,&quot;link_classes&quot;:&quot;shortcuts-project&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;manage_menu&quot;,&quot;title&quot;:&quot;Manage&quot;,&quot;icon&quot;:&quot;users&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/activity&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;activity&quot;,&quot;title&quot;:&quot;Activity&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/activity&quot;,&quot;link_classes&quot;:&quot;shortcuts-project-activity&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;members&quot;,&quot;title&quot;:&quot;Members&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/project_members&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;labels&quot;,&quot;title&quot;:&quot;Labels&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/labels&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;plan_menu&quot;,&quot;title&quot;:&quot;Plan&quot;,&quot;icon&quot;:&quot;planning&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/issues&quot;,&quot;is_active&quot;:true,&quot;items&quot;:[{&quot;id&quot;:&quot;project_issue_list&quot;,&quot;title&quot;:&quot;Issues&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/issues&quot;,&quot;link_classes&quot;:&quot;shortcuts-issues has-sub-items&quot;,&quot;pill_count_field&quot;:&quot;openIssuesCount&quot;,&quot;pill_count_dynamic&quot;:false,&quot;is_active&quot;:true},{&quot;id&quot;:&quot;boards&quot;,&quot;title&quot;:&quot;Issue boards&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/boards&quot;,&quot;link_classes&quot;:&quot;shortcuts-issue-boards&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;milestones&quot;,&quot;title&quot;:&quot;Milestones&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/milestones&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;project_wiki&quot;,&quot;title&quot;:&quot;Wiki&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/wikis/home&quot;,&quot;link_classes&quot;:&quot;shortcuts-wiki&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;code_menu&quot;,&quot;title&quot;:&quot;Code&quot;,&quot;icon&quot;:&quot;code&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/merge_requests&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;project_merge_request_list&quot;,&quot;title&quot;:&quot;Merge requests&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/merge_requests&quot;,&quot;link_classes&quot;:&quot;shortcuts-merge_requests&quot;,&quot;pill_count_field&quot;:&quot;openMergeRequestsCount&quot;,&quot;pill_count_dynamic&quot;:false,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;files&quot;,&quot;title&quot;:&quot;Repository&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/tree/master&quot;,&quot;link_classes&quot;:&quot;shortcuts-tree&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;branches&quot;,&quot;title&quot;:&quot;Branches&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/branches&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;commits&quot;,&quot;title&quot;:&quot;Commits&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/commits/master?ref_type=heads&quot;,&quot;link_classes&quot;:&quot;shortcuts-commits&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;tags&quot;,&quot;title&quot;:&quot;Tags&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/tags&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;graphs&quot;,&quot;title&quot;:&quot;Repository graph&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/network/master?ref_type=heads&quot;,&quot;link_classes&quot;:&quot;shortcuts-network&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;compare&quot;,&quot;title&quot;:&quot;Compare revisions&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/compare?from=master\u0026to=master&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;build_menu&quot;,&quot;title&quot;:&quot;Build&quot;,&quot;icon&quot;:&quot;rocket&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/pipelines&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;pipelines&quot;,&quot;title&quot;:&quot;Pipelines&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/pipelines&quot;,&quot;link_classes&quot;:&quot;shortcuts-pipelines&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;jobs&quot;,&quot;title&quot;:&quot;Jobs&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/jobs&quot;,&quot;link_classes&quot;:&quot;shortcuts-builds&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;pipeline_schedules&quot;,&quot;title&quot;:&quot;Pipeline schedules&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/pipeline_schedules&quot;,&quot;link_classes&quot;:&quot;shortcuts-builds&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;artifacts&quot;,&quot;title&quot;:&quot;Artifacts&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/artifacts&quot;,&quot;link_classes&quot;:&quot;shortcuts-builds&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;deploy_menu&quot;,&quot;title&quot;:&quot;Deploy&quot;,&quot;icon&quot;:&quot;deployments&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/releases&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;releases&quot;,&quot;title&quot;:&quot;Releases&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/releases&quot;,&quot;link_classes&quot;:&quot;shortcuts-deployments-releases&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;container_registry&quot;,&quot;title&quot;:&quot;Container registry&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/container_registry&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;model_registry&quot;,&quot;title&quot;:&quot;Model registry&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/ml/models&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;operations_menu&quot;,&quot;title&quot;:&quot;Operate&quot;,&quot;icon&quot;:&quot;cloud-pod&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/environments&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;environments&quot;,&quot;title&quot;:&quot;Environments&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/environments&quot;,&quot;link_classes&quot;:&quot;shortcuts-environments&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;monitor_menu&quot;,&quot;title&quot;:&quot;Monitor&quot;,&quot;icon&quot;:&quot;monitor&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/incidents&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;incidents&quot;,&quot;title&quot;:&quot;Incidents&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/incidents&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;service_desk&quot;,&quot;title&quot;:&quot;Service Desk&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/issues/service_desk&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;analyze_menu&quot;,&quot;title&quot;:&quot;Analyze&quot;,&quot;icon&quot;:&quot;chart&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/value_stream_analytics&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;cycle_analytics&quot;,&quot;title&quot;:&quot;Value stream analytics&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/value_stream_analytics&quot;,&quot;link_classes&quot;:&quot;shortcuts-project-cycle-analytics&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;contributors&quot;,&quot;title&quot;:&quot;Contributor analytics&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/graphs/master?ref_type=heads&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;ci_cd_analytics&quot;,&quot;title&quot;:&quot;CI/CD analytics&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/pipelines/charts&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;repository_analytics&quot;,&quot;title&quot;:&quot;Repository analytics&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/graphs/master/charts&quot;,&quot;link_classes&quot;:&quot;shortcuts-repository-charts&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;model_experiments&quot;,&quot;title&quot;:&quot;Model experiments&quot;,&quot;link&quot;:&quot;/GNOME/libsoup/-/ml/experiments&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false}],&quot;current_context_header&quot;:&quot;Project&quot;,&quot;university_path&quot;:&quot;https://university.gitlab.com&quot;,&quot;support_path&quot;:&quot;https://support.gitlab.com&quot;,&quot;docs_path&quot;:&quot;/help/docs&quot;,&quot;display_whats_new&quot;:false,&quot;show_version_check&quot;:null,&quot;search&quot;:{&quot;search_path&quot;:&quot;/search&quot;,&quot;issues_path&quot;:&quot;/dashboard/issues&quot;,&quot;mr_path&quot;:&quot;/dashboard/merge_requests&quot;,&quot;autocomplete_path&quot;:&quot;/search/autocomplete&quot;,&quot;settings_path&quot;:&quot;/search/settings&quot;,&quot;search_context&quot;:{&quot;group&quot;:{&quot;id&quot;:8,&quot;name&quot;:&quot;GNOME&quot;,&quot;full_name&quot;:&quot;GNOME&quot;},&quot;group_metadata&quot;:{&quot;issues_path&quot;:&quot;/groups/GNOME/-/issues&quot;,&quot;mr_path&quot;:&quot;/groups/GNOME/-/merge_requests&quot;},&quot;project&quot;:{&quot;id&quot;:1630,&quot;name&quot;:&quot;libsoup&quot;},&quot;project_metadata&quot;:{&quot;mr_path&quot;:&quot;/GNOME/libsoup/-/merge_requests&quot;,&quot;issues_path&quot;:&quot;/GNOME/libsoup/-/issues&quot;},&quot;code_search&quot;:false,&quot;scope&quot;:&quot;issues&quot;,&quot;for_snippets&quot;:null}},&quot;panel_type&quot;:&quot;project&quot;,&quot;shortcut_links&quot;:[{&quot;title&quot;:&quot;Snippets&quot;,&quot;href&quot;:&quot;/explore/snippets&quot;,&quot;css_class&quot;:&quot;dashboard-shortcuts-snippets&quot;},{&quot;title&quot;:&quot;Groups&quot;,&quot;href&quot;:&quot;/explore/groups&quot;,&quot;css_class&quot;:&quot;dashboard-shortcuts-groups&quot;},{&quot;title&quot;:&quot;Projects&quot;,&quot;href&quot;:&quot;/explore/projects&quot;,&quot;css_class&quot;:&quot;dashboard-shortcuts-projects&quot;}],&quot;terms&quot;:&quot;/-/users/terms&quot;,&quot;sign_in_visible&quot;:&quot;true&quot;,&quot;allow_signup&quot;:&quot;false&quot;,&quot;new_user_registration_path&quot;:&quot;/users/sign_up&quot;,&quot;sign_in_path&quot;:&quot;/users/sign_in?redirect_to_referer=yes&quot;}"></aside>
+
+<div class="panels-container gl-flex gl-gap-3">
+<div class="content-panels gl-flex-1 gl-w-full gl-flex gl-gap-3 gl-relative js-content-panels gl-@container/content-panels">
+<div class="js-static-panel static-panel content-wrapper gl-relative paneled-view gl-flex-1 gl-overflow-y-auto gl-bg-default" id="static-panel-portal">
+<div class="panel-header">
+<div class="broadcast-wrapper">
+
+
+
+</div>
+<div class="top-bar-fixed container-fluid gl-rounded-t-lg gl-sticky gl-top-0 gl-left-0 gl-mx-0 gl-w-full" data-testid="top-bar">
+<div class="top-bar-container gl-flex gl-items-center gl-gap-2">
+<div class="gl-grow gl-basis-0 gl-flex gl-items-center gl-justify-start gl-gap-3">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"GNOME","item":"https://gitlab.gnome.org/GNOME"},{"@type":"ListItem","position":2,"name":"libsoup","item":"https://gitlab.gnome.org/GNOME/libsoup"},{"@type":"ListItem","position":3,"name":"Issues","item":"https://gitlab.gnome.org/GNOME/libsoup/-/issues"},{"@type":"ListItem","position":4,"name":"#389","item":"https://gitlab.gnome.org/GNOME/libsoup/-/issues/389"}]}
+
+
+</script>
+<div data-testid="breadcrumb-links" id="js-vue-page-breadcrumbs-wrapper">
+<div data-breadcrumbs-json="[{&quot;text&quot;:&quot;GNOME&quot;,&quot;href&quot;:&quot;/GNOME&quot;,&quot;avatarPath&quot;:&quot;/uploads/-/system/group/avatar/8/gnomelogo.png&quot;},{&quot;text&quot;:&quot;libsoup&quot;,&quot;href&quot;:&quot;/GNOME/libsoup&quot;,&quot;avatarPath&quot;:&quot;/uploads/-/system/project/avatar/1630/logo.png&quot;},{&quot;text&quot;:&quot;Issues&quot;,&quot;href&quot;:&quot;/GNOME/libsoup/-/issues&quot;,&quot;avatarPath&quot;:null},{&quot;text&quot;:&quot;#389&quot;,&quot;href&quot;:&quot;/GNOME/libsoup/-/issues/389&quot;,&quot;avatarPath&quot;:null}]" id="js-vue-page-breadcrumbs"></div>
+<div id="js-injected-page-breadcrumbs"></div>
+<div id="js-page-breadcrumbs-extra"></div>
+</div>
+
+
+<div id="js-work-item-feedback"></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="panel-content">
+<div class="panel-content-inner js-static-panel-inner">
+<div class="alert-wrapper alert-wrapper-top-space gl-flex gl-flex-col gl-gap-3 container-fluid container-limited">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<div class="container-fluid container-limited limit-container-width project-highlight-puc">
+<main class="content gl-@container/panel gl-pb-3" id="content-body" itemscope itemtype="http://schema.org/SoftwareSourceCode">
+<div id="js-drawer-container"></div>
+<div class="flash-container flash-container-page sticky" data-testid="flash-container">
+<div id="js-global-alerts"></div>
+</div>
+
+
+
+
+
+
+
+
+<div class="issue-details issuable-details js-issue-details">
+<div class="detail-page-description content-block js-detail-page-description gl-pt-3 gl-pb-0 gl-border-none">
+<div data-header-actions-data="{&quot;can_create_issue&quot;:&quot;true&quot;,&quot;can_create_incident&quot;:&quot;false&quot;,&quot;can_destroy_issue&quot;:&quot;false&quot;,&quot;can_reopen_issue&quot;:&quot;false&quot;,&quot;can_report_spam&quot;:&quot;&quot;,&quot;can_update_issue&quot;:&quot;false&quot;,&quot;is_issue_author&quot;:&quot;false&quot;,&quot;issue_path&quot;:&quot;/GNOME/libsoup/-/issues/389&quot;,&quot;new_issue_path&quot;:&quot;/GNOME/libsoup/-/issues/new?add_related_issue=389&quot;,&quot;project_path&quot;:&quot;GNOME/libsoup&quot;,&quot;report_abuse_path&quot;:&quot;/-/abuse_reports/add_category&quot;,&quot;reported_user_id&quot;:143943,&quot;reported_from_url&quot;:&quot;https://gitlab.gnome.org/GNOME/libsoup/-/issues/389&quot;,&quot;submit_as_spam_path&quot;:&quot;/GNOME/libsoup/-/issues/389/mark_as_spam&quot;,&quot;issuable_email_address&quot;:null}" data-initial="{&quot;endpoint&quot;:&quot;/GNOME/libsoup/-/issues/389&quot;,&quot;updateEndpoint&quot;:&quot;/GNOME/libsoup/-/issues/389.json&quot;,&quot;canUpdate&quot;:false,&quot;canDestroy&quot;:false,&quot;issuableRef&quot;:&quot;#389&quot;,&quot;imported&quot;:false,&quot;markdownPreviewPath&quot;:&quot;/GNOME/libsoup/-/preview_markdown?target_id=389\u0026target_type=Issue&quot;,&quot;markdownDocsPath&quot;:&quot;/help/user/markdown.md&quot;,&quot;lockVersion&quot;:0,&quot;issuableTemplateNamesPath&quot;:&quot;/GNOME/libsoup/description_templates/names/issue&quot;,&quot;initialTitleHtml&quot;:&quot;Fuzzing crash on soup_message_headers_get_content_type&quot;,&quot;initialTitleText&quot;:&quot;Fuzzing crash on soup_message_headers_get_content_type&quot;,&quot;initialDescriptionHtml&quot;:&quot;\u003cp data-sourcepos=\&quot;1:1-1:16\&quot; dir=\&quot;auto\&quot;\u003eHi libsoup team,\u003c/p\u003e\u0026#x000A;\u003cp data-sourcepos=\&quot;3:1-3:313\&quot; dir=\&quot;auto\&quot;\u003eI edited the existing fuzzing harness \u003cstrong data-sourcepos=\&quot;3:39-3:72\&quot;\u003efuzzing/fuzz_content_sniffer.c\u003c/strong\u003e as below to test additional functions. The program crashed with the attached input. Is it that there should be additional checks whether the returned header is NULL, either before the function, or as a first condition check in the function?\u003c/p\u003e\u0026#x000A;\u003cp data-sourcepos=\&quot;5:1-6:98\&quot; dir=\&quot;auto\&quot;\u003eSuch directed sequential usage of the two functions is observed in a number of other open source projects.\u0026#x000A;\u003ca data-sourcepos=\&quot;6:1-6:97\&quot; href=\&quot;https://drive.google.com/file/d/1CaTLe7r7kT7vClycabHMCUSaZ5K9cf1N/view?usp=sharing\&quot; rel=\&quot;nofollow noreferrer noopener\&quot; target=\&quot;_blank\&quot;\u003eLink to poc\u003c/a\u003e.\u003c/p\u003e\u0026#x000A;\u003cdiv class=\&quot;gl-relative markdown-code-block js-markdown-code\&quot;\u003e\u0026#x000A;\u003cpre data-sourcepos=\&quot;7:1-32:3\&quot; data-canonical-lang=\&quot;c\&quot; class=\&quot;code highlight js-syntax-highlight language-c\&quot; v-pre=\&quot;true\&quot;\u003e\u003ccode\u003e\u003cspan id=\&quot;LC1\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003cspan class=\&quot;cp\&quot;\u003e#include\u003c/span\u003e \u003cspan class=\&quot;cpf\&quot;\u003e\&quot;fuzz.h\&quot;\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC2\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC3\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003cspan class=\&quot;kt\&quot;\u003eint\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC4\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003cspan class=\&quot;nf\&quot;\u003eLLVMFuzzerTestOneInput\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e\u003cspan class=\&quot;k\&quot;\u003econst\u003c/span\u003e \u003cspan class=\&quot;kt\&quot;\u003eunsigned\u003c/span\u003e \u003cspan class=\&quot;kt\&quot;\u003echar\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e*\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003edata\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e,\u003c/span\u003e \u003cspan class=\&quot;kt\&quot;\u003esize_t\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003esize\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e)\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC5\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003cspan class=\&quot;p\&quot;\u003e{\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC6\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;n\&quot;\u003efuzz_set_logging_func\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e();\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC7\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC8\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;n\&quot;\u003eGBytes\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e*\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003ebytes\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e=\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003eg_bytes_new\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003edata\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e,\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003esize\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e);\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC9\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;n\&quot;\u003eSoupContentSniffer\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e*\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003esniffer\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e=\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003esoup_content_sniffer_new\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e();\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC10\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;n\&quot;\u003eSoupMessage\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e*\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003emsg\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e=\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003esoup_message_new\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003eSOUP_METHOD_GET\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e,\u003c/span\u003e \u003cspan class=\&quot;s\&quot;\u003e\&quot;https://example.org\&quot;\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e);\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC11\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;kt\&quot;\u003echar\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e*\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003econtent_type\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e=\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003esoup_content_sniffer_sniff\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003esniffer\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e,\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003emsg\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e,\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003ebytes\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e,\u003c/span\u003e \u003cspan class=\&quot;nb\&quot;\u003eNULL\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e);\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC12\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC13\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;n\&quot;\u003eSoupMessageHeaders\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e*\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003eheaders\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e=\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003esoup_server_message_get_request_headers\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003emsg\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e);\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC14\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;k\&quot;\u003econst\u003c/span\u003e \u003cspan class=\&quot;kt\&quot;\u003echar\u003c/span\u003e\u003cspan class=\&quot;o\&quot;\u003e*\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003eheader_type\u003c/span\u003e \u003cspan class=\&quot;o\&quot;\u003e=\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003esoup_message_headers_get_content_type\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e \u003cspan class=\&quot;n\&quot;\u003eheaders\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e,\u003c/span\u003e \u003cspan class=\&quot;nb\&quot;\u003eNULL\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e);\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC15\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC16\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC17\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;n\&quot;\u003eg_bytes_unref\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003ebytes\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e);\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC18\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;n\&quot;\u003eg_object_unref\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003esniffer\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e);\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC19\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;n\&quot;\u003eg_object_unref\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003emsg\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e);\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC20\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;n\&quot;\u003eg_free\u003c/span\u003e \u003cspan class=\&quot;p\&quot;\u003e(\u003c/span\u003e\u003cspan class=\&quot;n\&quot;\u003econtent_type\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e);\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC21\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC22\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e        \u003cspan class=\&quot;k\&quot;\u003ereturn\u003c/span\u003e \u003cspan class=\&quot;mi\&quot;\u003e0\u003c/span\u003e\u003cspan class=\&quot;p\&quot;\u003e;\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC23\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003cspan class=\&quot;p\&quot;\u003e}\u003c/span\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC24\&quot; class=\&quot;line\&quot; lang=\&quot;c\&quot;\u003e\u003c/span\u003e\u003c/code\u003e\u003c/pre\u003e\u0026#x000A;\u003ccopy-code\u003e\u003c/copy-code\u003e\u003cinsert-code-snippet\u003e\u003c/insert-code-snippet\u003e\u0026#x000A;\u003c/div\u003e\u0026#x000A;\u003cdiv class=\&quot;gl-relative markdown-code-block js-markdown-code\&quot;\u003e\u0026#x000A;\u003cpre data-sourcepos=\&quot;35:1-60:3\&quot; class=\&quot;code highlight js-syntax-highlight language-plaintext\&quot; v-pre=\&quot;true\&quot;\u003e\u003ccode\u003e\u003cspan id=\&quot;LC1\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e# gdb --args $OUT/fuzz_content_sniffer /docker_shared/poc-soup_message_headers_get_content_type\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC2\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e(gdb) run\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC3\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eStarting program: /out/fuzz_content_sniffer /docker_shared/poc-soup_message_headers_get_content_type\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC4\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003ewarning: Error disabling address space randomization: Operation not permitted\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC5\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e[Thread debugging using libthread_db enabled]\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC6\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eUsing host libthread_db library \&quot;/lib/x86_64-linux-gnu/libthread_db.so.1\&quot;.\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC7\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eINFO: Running with entropic power schedule (0xFF, 100).\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC8\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eINFO: Seed: 1847391586\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC9\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eINFO: Loaded 1 modules   (4 inline 8-bit counters): 4 [0x556073c72d40, 0x556073c72d44),\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC10\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eINFO: Loaded 1 PC tables (4 PCs): 4 [0x556073c72d48,0x556073c72d88),\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC11\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e[New Thread 0x7f2dbe200700 (LWP 6227)]\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC12\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e/out/fuzz_content_sniffer: Running 1 inputs 1 time(s) each.\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC13\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eRunning: /docker_shared/soup_message_headers_get_content_type\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC14\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC15\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eThread 1 \&quot;fuzz_content_sn\&quot; received signal SIGSEGV, Segmentation fault.\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC16\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e0x00005560738bd860 in soup_message_headers_get_content_type ()\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC17\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e(gdb) bt\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC18\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e#0  0x00005560738bd860 in soup_message_headers_get_content_type ()\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC19\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e#1  0x00005560738b321d in LLVMFuzzerTestOneInput ()\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC20\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e#2  0x0000556073767e71 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) ()\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC21\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e#3  0x0000556073752605 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) ()\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC22\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e#4  0x000055607375809b in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long))\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC23\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    ()\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC24\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e#5  0x0000556073784493 in main ()\u003c/span\u003e\u003c/code\u003e\u003c/pre\u003e\u0026#x000A;\u003ccopy-code\u003e\u003c/copy-code\u003e\u003cinsert-code-snippet\u003e\u003c/insert-code-snippet\u003e\u0026#x000A;\u003c/div\u003e\u0026#x000A;\u003cp data-sourcepos=\&quot;64:1-65:7\&quot; dir=\&quot;auto\&quot;\u003eThank you,\u003cbr data-sourcepos=\&quot;64:12-64:14\&quot;\u003e\u0026#x000A;Spencer\u003c/p\u003e&quot;,&quot;initialDescriptionText&quot;:&quot;Hi libsoup team,\n\nI edited the existing fuzzing harness **fuzzing/fuzz_content_sniffer.c** as below to test additional functions. The program crashed with the attached input. Is it that there should be additional checks whether the returned header is NULL, either before the function, or as a first condition check in the function?\n\nSuch directed sequential usage of the two functions is observed in a number of other open source projects.\n[Link to poc](https://drive.google.com/file/d/1CaTLe7r7kT7vClycabHMCUSaZ5K9cf1N/view?usp=sharing).\n```c\n#include \&quot;fuzz.h\&quot;\n\nint\nLLVMFuzzerTestOneInput (const unsigned char *data, size_t size)\n{\n        fuzz_set_logging_func ();\n\n        GBytes *bytes = g_bytes_new (data, size);\n        SoupContentSniffer *sniffer = soup_content_sniffer_new ();\n        SoupMessage *msg = soup_message_new (SOUP_METHOD_GET, \&quot;https://example.org\&quot;);\n        char *content_type = soup_content_sniffer_sniff (sniffer, msg, bytes, NULL);\n\n        SoupMessageHeaders * headers = soup_server_message_get_request_headers( msg );\n        const char* header_type =soup_message_headers_get_content_type( headers, NULL);\n\n\n        g_bytes_unref (bytes);\n        g_object_unref (sniffer);\n        g_object_unref (msg);\n        g_free (content_type);\n\n        return 0;\n}\n\n```\n\n\n```\n# gdb --args $OUT/fuzz_content_sniffer /docker_shared/poc-soup_message_headers_get_content_type\n(gdb) run\nStarting program: /out/fuzz_content_sniffer /docker_shared/poc-soup_message_headers_get_content_type\nwarning: Error disabling address space randomization: Operation not permitted\n[Thread debugging using libthread_db enabled]\nUsing host libthread_db library \&quot;/lib/x86_64-linux-gnu/libthread_db.so.1\&quot;.\nINFO: Running with entropic power schedule (0xFF, 100).\nINFO: Seed: 1847391586\nINFO: Loaded 1 modules   (4 inline 8-bit counters): 4 [0x556073c72d40, 0x556073c72d44),\nINFO: Loaded 1 PC tables (4 PCs): 4 [0x556073c72d48,0x556073c72d88),\n[New Thread 0x7f2dbe200700 (LWP 6227)]\n/out/fuzz_content_sniffer: Running 1 inputs 1 time(s) each.\nRunning: /docker_shared/soup_message_headers_get_content_type\n\nThread 1 \&quot;fuzz_content_sn\&quot; received signal SIGSEGV, Segmentation fault.\n0x00005560738bd860 in soup_message_headers_get_content_type ()\n(gdb) bt\n#0  0x00005560738bd860 in soup_message_headers_get_content_type ()\n#1  0x00005560738b321d in LLVMFuzzerTestOneInput ()\n#2  0x0000556073767e71 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) ()\n#3  0x0000556073752605 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) ()\n#4  0x000055607375809b in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long))\n    ()\n#5  0x0000556073784493 in main ()\n```\n\n\n\nThank you,   \nSpencer&quot;,&quot;initialTaskCompletionStatus&quot;:{&quot;count&quot;:0,&quot;completed_count&quot;:0},&quot;canCreateIncident&quot;:false,&quot;fullPath&quot;:&quot;GNOME/libsoup&quot;,&quot;iid&quot;:389,&quot;issuableId&quot;:205422,&quot;issueType&quot;:&quot;issue&quot;,&quot;isHidden&quot;:false,&quot;zoomMeetingUrl&quot;:null,&quot;authorId&quot;:143943,&quot;authorName&quot;:&quot;Spencer Wu&quot;,&quot;authorUsername&quot;:&quot;spencerwuwu&quot;,&quot;authorWebUrl&quot;:&quot;/spencerwuwu&quot;,&quot;createdAt&quot;:&quot;2024-08-19T17:42:07+00:00&quot;,&quot;isFirstContribution&quot;:false,&quot;serviceDeskReplyTo&quot;:null,&quot;registerPath&quot;:&quot;/users/sign_up?redirect_to_referer=yes&quot;,&quot;signInPath&quot;:&quot;/users/sign_in?redirect_to_referer=yes&quot;,&quot;projectPath&quot;:&quot;libsoup&quot;,&quot;projectId&quot;:1630,&quot;projectNamespace&quot;:&quot;GNOME&quot;}" id="js-issuable-app">
+<div class="title-container">
+<h1 class="gl-heading-1 !gl-m-0">Fuzzing crash on soup_message_headers_get_content_type</h1>
+</div>
+<div class="description">
+<div class="md"><p data-sourcepos="1:1-1:16" dir="auto">Hi libsoup team,</p>&#x000A;<p data-sourcepos="3:1-3:313" dir="auto">I edited the existing fuzzing harness <strong data-sourcepos="3:39-3:72">fuzzing/fuzz_content_sniffer.c</strong> as below to test additional functions. The program crashed with the attached input. Is it that there should be additional checks whether the returned header is NULL, either before the function, or as a first condition check in the function?</p>&#x000A;<p data-sourcepos="5:1-6:98" dir="auto">Such directed sequential usage of the two functions is observed in a number of other open source projects.&#x000A;<a data-sourcepos="6:1-6:97" href="https://drive.google.com/file/d/1CaTLe7r7kT7vClycabHMCUSaZ5K9cf1N/view?usp=sharing" rel="nofollow noreferrer noopener" target="_blank">Link to poc</a>.</p>&#x000A;<div class="gl-relative markdown-code-block js-markdown-code">&#x000A;<pre data-sourcepos="7:1-32:3" data-canonical-lang="c" class="code highlight js-syntax-highlight language-c" v-pre="true"><code><span id="LC1" class="line" lang="c"><span class="cp">#include</span> <span class="cpf">"fuzz.h"</span></span>&#x000A;<span id="LC2" class="line" lang="c"></span>&#x000A;<span id="LC3" class="line" lang="c"><span class="kt">int</span></span>&#x000A;<span id="LC4" class="line" lang="c"><span class="nf">LLVMFuzzerTestOneInput</span> <span class="p">(</span><span class="k">const</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span></span>&#x000A;<span id="LC5" class="line" lang="c"><span class="p">{</span></span>&#x000A;<span id="LC6" class="line" lang="c">        <span class="n">fuzz_set_logging_func</span> <span class="p">();</span></span>&#x000A;<span id="LC7" class="line" lang="c"></span>&#x000A;<span id="LC8" class="line" lang="c">        <span class="n">GBytes</span> <span class="o">*</span><span class="n">bytes</span> <span class="o">=</span> <span class="n">g_bytes_new</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span></span>&#x000A;<span id="LC9" class="line" lang="c">        <span class="n">SoupContentSniffer</span> <span class="o">*</span><span class="n">sniffer</span> <span class="o">=</span> <span class="n">soup_content_sniffer_new</span> <span class="p">();</span></span>&#x000A;<span id="LC10" class="line" lang="c">        <span class="n">SoupMessage</span> <span class="o">*</span><span class="n">msg</span> <span class="o">=</span> <span class="n">soup_message_new</span> <span class="p">(</span><span class="n">SOUP_METHOD_GET</span><span class="p">,</span> <span class="s">"https://example.org"</span><span class="p">);</span></span>&#x000A;<span id="LC11" class="line" lang="c">        <span class="kt">char</span> <span class="o">*</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">soup_content_sniffer_sniff</span> <span class="p">(</span><span class="n">sniffer</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">bytes</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span></span>&#x000A;<span id="LC12" class="line" lang="c"></span>&#x000A;<span id="LC13" class="line" lang="c">        <span class="n">SoupMessageHeaders</span> <span class="o">*</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">soup_server_message_get_request_headers</span><span class="p">(</span> <span class="n">msg</span> <span class="p">);</span></span>&#x000A;<span id="LC14" class="line" lang="c">        <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">header_type</span> <span class="o">=</span><span class="n">soup_message_headers_get_content_type</span><span class="p">(</span> <span class="n">headers</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span></span>&#x000A;<span id="LC15" class="line" lang="c"></span>&#x000A;<span id="LC16" class="line" lang="c"></span>&#x000A;<span id="LC17" class="line" lang="c">        <span class="n">g_bytes_unref</span> <span class="p">(</span><span class="n">bytes</span><span class="p">);</span></span>&#x000A;<span id="LC18" class="line" lang="c">        <span class="n">g_object_unref</span> <span class="p">(</span><span class="n">sniffer</span><span class="p">);</span></span>&#x000A;<span id="LC19" class="line" lang="c">        <span class="n">g_object_unref</span> <span class="p">(</span><span class="n">msg</span><span class="p">);</span></span>&#x000A;<span id="LC20" class="line" lang="c">        <span class="n">g_free</span> <span class="p">(</span><span class="n">content_type</span><span class="p">);</span></span>&#x000A;<span id="LC21" class="line" lang="c"></span>&#x000A;<span id="LC22" class="line" lang="c">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span></span>&#x000A;<span id="LC23" class="line" lang="c"><span class="p">}</span></span>&#x000A;<span id="LC24" class="line" lang="c"></span></code></pre>&#x000A;<copy-code></copy-code><insert-code-snippet></insert-code-snippet>&#x000A;</div>&#x000A;<div class="gl-relative markdown-code-block js-markdown-code">&#x000A;<pre data-sourcepos="35:1-60:3" class="code highlight js-syntax-highlight language-plaintext" v-pre="true"><code><span id="LC1" class="line" lang="plaintext"># gdb --args $OUT/fuzz_content_sniffer /docker_shared/poc-soup_message_headers_get_content_type</span>&#x000A;<span id="LC2" class="line" lang="plaintext">(gdb) run</span>&#x000A;<span id="LC3" class="line" lang="plaintext">Starting program: /out/fuzz_content_sniffer /docker_shared/poc-soup_message_headers_get_content_type</span>&#x000A;<span id="LC4" class="line" lang="plaintext">warning: Error disabling address space randomization: Operation not permitted</span>&#x000A;<span id="LC5" class="line" lang="plaintext">[Thread debugging using libthread_db enabled]</span>&#x000A;<span id="LC6" class="line" lang="plaintext">Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".</span>&#x000A;<span id="LC7" class="line" lang="plaintext">INFO: Running with entropic power schedule (0xFF, 100).</span>&#x000A;<span id="LC8" class="line" lang="plaintext">INFO: Seed: 1847391586</span>&#x000A;<span id="LC9" class="line" lang="plaintext">INFO: Loaded 1 modules   (4 inline 8-bit counters): 4 [0x556073c72d40, 0x556073c72d44),</span>&#x000A;<span id="LC10" class="line" lang="plaintext">INFO: Loaded 1 PC tables (4 PCs): 4 [0x556073c72d48,0x556073c72d88),</span>&#x000A;<span id="LC11" class="line" lang="plaintext">[New Thread 0x7f2dbe200700 (LWP 6227)]</span>&#x000A;<span id="LC12" class="line" lang="plaintext">/out/fuzz_content_sniffer: Running 1 inputs 1 time(s) each.</span>&#x000A;<span id="LC13" class="line" lang="plaintext">Running: /docker_shared/soup_message_headers_get_content_type</span>&#x000A;<span id="LC14" class="line" lang="plaintext"></span>&#x000A;<span id="LC15" class="line" lang="plaintext">Thread 1 "fuzz_content_sn" received signal SIGSEGV, Segmentation fault.</span>&#x000A;<span id="LC16" class="line" lang="plaintext">0x00005560738bd860 in soup_message_headers_get_content_type ()</span>&#x000A;<span id="LC17" class="line" lang="plaintext">(gdb) bt</span>&#x000A;<span id="LC18" class="line" lang="plaintext">#0  0x00005560738bd860 in soup_message_headers_get_content_type ()</span>&#x000A;<span id="LC19" class="line" lang="plaintext">#1  0x00005560738b321d in LLVMFuzzerTestOneInput ()</span>&#x000A;<span id="LC20" class="line" lang="plaintext">#2  0x0000556073767e71 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) ()</span>&#x000A;<span id="LC21" class="line" lang="plaintext">#3  0x0000556073752605 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) ()</span>&#x000A;<span id="LC22" class="line" lang="plaintext">#4  0x000055607375809b in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long))</span>&#x000A;<span id="LC23" class="line" lang="plaintext">    ()</span>&#x000A;<span id="LC24" class="line" lang="plaintext">#5  0x0000556073784493 in main ()</span></code></pre>&#x000A;<copy-code></copy-code><insert-code-snippet></insert-code-snippet>&#x000A;</div>&#x000A;<p data-sourcepos="64:1-65:7" dir="auto">Thank you,<br data-sourcepos="64:12-64:14">&#x000A;Spencer</p></div>
+</div>
+
+</div>
+<div class="js-issue-widgets">
+<div class="emoji-block emoji-block-sticky">
+<div class="row gl-m-0 gl-justify-between">
+<div class="js-noteable-awards">
+<div class="gl-flex gl-flex-wrap gl-justify-between gl-pt-3">
+<div data-can-award-emoji="false" data-path="/api/v4/projects/1630/issues/389/award_emoji" data-show-default-award-emojis="true" id="js-vue-awards-block"></div>
+
+</div>
+
+</div>
+<div class="new-branch-col gl-font-size-0 gl-my-2">
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<div class="js-issue-widgets">
+
+<div class="js-work-item-links-root" data-full-path="GNOME/libsoup" data-issuable-id="205422" data-issuable-iid="389" data-register-path="/users/sign_up?redirect_to_referer=yes" data-sign-in-path="/users/sign_in?redirect_to_referer=yes" data-wi-autocomplete-award-emojis-path="/-/autocomplete/award_emojis" data-wi-calendar-path="/GNOME/libsoup/-/work_items.ics?due_date=next_month_and_previous_two_weeks&amp;id=389&amp;sort=closest_future_date" data-wi-can-admin-label="false" data-wi-can-bulk-update="false" data-wi-can-create-projects="false" data-wi-can-edit="false" data-wi-can-import-work-items="false" data-wi-can-read-crm-contact="false" data-wi-can-read-crm-organization="false" data-wi-default-branch="master" data-wi-export-csv-path="/GNOME/libsoup/-/issues/export_csv" data-wi-full-path="GNOME/libsoup" data-wi-group-id="8" data-wi-group-path="GNOME" data-wi-has-projects="false" data-wi-is-issue-repositioning-disabled="false" data-wi-is-signed-in="false" data-wi-issues-list-path="/GNOME/libsoup/-/issues" data-wi-labels-manage-path="/GNOME/libsoup/-/labels" data-wi-max-attachment-size="500 MiB" data-wi-new-comment-template-paths="[{&quot;text&quot;:&quot;Your comment templates&quot;,&quot;href&quot;:&quot;/-/profile/comment_templates&quot;}]" data-wi-new-issue-path="/GNOME/libsoup/-/issues/new" data-wi-new-project-path="/projects/new?namespace_id=8" data-wi-new-trial-path="https://customers.gitlab.com/trials/new?return_to=https%3A%2F%2Fgitlab.gnome.org%2Fadmin%2Fapplication_settings%2Fgeneral%23js-add-license-toggle" data-wi-project-import-jira-path="/GNOME/libsoup/-/import/jira" data-wi-project-namespace-full-path="GNOME" data-wi-register-path="/users/sign_up?redirect_to_referer=yes" data-wi-releases-path="/GNOME/libsoup/-/releases.json" data-wi-report-abuse-path="/-/abuse_reports/add_category" data-wi-rss-path="/GNOME/libsoup/-/work_items.atom?id=389" data-wi-show-new-work-item="true" data-wi-sign-in-path="/users/sign_in?redirect_to_referer=yes" data-wi-time-tracking-limit-to-hours="false" data-wi-work-item-planning-view-enabled="false" data-wi-work-items-saved-views-enabled="false"></div>
+
+
+<div class="js-related-issues-root" data-can-add-related-issues="false" data-endpoint="/GNOME/libsoup/-/issues/389/links" data-full-path="GNOME/libsoup" data-has-issue-weights-feature="false" data-has-iterations-feature="false" data-help-path="/help/user/project/issues/related_issues.md" data-is-group="false" data-issuable-type="issue" data-show-categorized-issues="false" data-wi-autocomplete-award-emojis-path="/-/autocomplete/award_emojis" data-wi-calendar-path="/GNOME/libsoup/-/work_items.ics?due_date=next_month_and_previous_two_weeks&amp;id=389&amp;sort=closest_future_date" data-wi-can-admin-label="false" data-wi-can-bulk-update="false" data-wi-can-create-projects="false" data-wi-can-edit="false" data-wi-can-import-work-items="false" data-wi-can-read-crm-contact="false" data-wi-can-read-crm-organization="false" data-wi-default-branch="master" data-wi-export-csv-path="/GNOME/libsoup/-/issues/export_csv" data-wi-full-path="GNOME/libsoup" data-wi-group-id="8" data-wi-group-path="GNOME" data-wi-has-projects="false" data-wi-is-issue-repositioning-disabled="false" data-wi-is-signed-in="false" data-wi-issues-list-path="/GNOME/libsoup/-/issues" data-wi-labels-manage-path="/GNOME/libsoup/-/labels" data-wi-max-attachment-size="500 MiB" data-wi-new-comment-template-paths="[{&quot;text&quot;:&quot;Your comment templates&quot;,&quot;href&quot;:&quot;/-/profile/comment_templates&quot;}]" data-wi-new-issue-path="/GNOME/libsoup/-/issues/new" data-wi-new-project-path="/projects/new?namespace_id=8" data-wi-new-trial-path="https://customers.gitlab.com/trials/new?return_to=https%3A%2F%2Fgitlab.gnome.org%2Fadmin%2Fapplication_settings%2Fgeneral%23js-add-license-toggle" data-wi-project-import-jira-path="/GNOME/libsoup/-/import/jira" data-wi-project-namespace-full-path="GNOME" data-wi-register-path="/users/sign_up?redirect_to_referer=yes" data-wi-releases-path="/GNOME/libsoup/-/releases.json" data-wi-report-abuse-path="/-/abuse_reports/add_category" data-wi-rss-path="/GNOME/libsoup/-/work_items.atom?id=389" data-wi-show-new-work-item="true" data-wi-sign-in-path="/users/sign_in?redirect_to_referer=yes" data-wi-time-tracking-limit-to-hours="false" data-wi-work-item-planning-view-enabled="false" data-wi-work-items-saved-views-enabled="false"></div>
+
+<div data-has-closing-merge-request="true" data-iid="389" data-project-path="GNOME/libsoup" id="js-related-merge-requests"></div>
+<div data-url="/GNOME/libsoup/-/issues/389/related_branches" id="related-branches">
+</div>
+</div>
+<div class="js-issue-widgets">
+<section class="issuable-discussion js-vue-notes-event">
+<div data-can-add-timeline-events="false" data-current-user-data="null" data-new-comment-template-paths="[{&quot;text&quot;:&quot;Your comment templates&quot;,&quot;href&quot;:&quot;/-/profile/comment_templates&quot;}]" data-noteable-data="{&quot;id&quot;:205422,&quot;iid&quot;:389,&quot;description&quot;:&quot;Hi libsoup team,\n\nI edited the existing fuzzing harness **fuzzing/fuzz_content_sniffer.c** as below to test additional functions. The program crashed with the attached input. Is it that there should be additional checks whether the returned header is NULL, either before the function, or as a first condition check in the function?\n\nSuch directed sequential usage of the two functions is observed in a number of other open source projects.\n[Link to poc](https://drive.google.com/file/d/1CaTLe7r7kT7vClycabHMCUSaZ5K9cf1N/view?usp=sharing).\n```c\n#include \&quot;fuzz.h\&quot;\n\nint\nLLVMFuzzerTestOneInput (const unsigned char *data, size_t size)\n{\n        fuzz_set_logging_func ();\n\n        GBytes *bytes = g_bytes_new (data, size);\n        SoupContentSniffer *sniffer = soup_content_sniffer_new ();\n        SoupMessage *msg = soup_message_new (SOUP_METHOD_GET, \&quot;https://example.org\&quot;);\n        char *content_type = soup_content_sniffer_sniff (sniffer, msg, bytes, NULL);\n\n        SoupMessageHeaders * headers = soup_server_message_get_request_headers( msg );\n        const char* header_type =soup_message_headers_get_content_type( headers, NULL);\n\n\n        g_bytes_unref (bytes);\n        g_object_unref (sniffer);\n        g_object_unref (msg);\n        g_free (content_type);\n\n        return 0;\n}\n\n```\n\n\n```\n# gdb --args $OUT/fuzz_content_sniffer /docker_shared/poc-soup_message_headers_get_content_type\n(gdb) run\nStarting program: /out/fuzz_content_sniffer /docker_shared/poc-soup_message_headers_get_content_type\nwarning: Error disabling address space randomization: Operation not permitted\n[Thread debugging using libthread_db enabled]\nUsing host libthread_db library \&quot;/lib/x86_64-linux-gnu/libthread_db.so.1\&quot;.\nINFO: Running with entropic power schedule (0xFF, 100).\nINFO: Seed: 1847391586\nINFO: Loaded 1 modules   (4 inline 8-bit counters): 4 [0x556073c72d40, 0x556073c72d44),\nINFO: Loaded 1 PC tables (4 PCs): 4 [0x556073c72d48,0x556073c72d88),\n[New Thread 0x7f2dbe200700 (LWP 6227)]\n/out/fuzz_content_sniffer: Running 1 inputs 1 time(s) each.\nRunning: /docker_shared/soup_message_headers_get_content_type\n\nThread 1 \&quot;fuzz_content_sn\&quot; received signal SIGSEGV, Segmentation fault.\n0x00005560738bd860 in soup_message_headers_get_content_type ()\n(gdb) bt\n#0  0x00005560738bd860 in soup_message_headers_get_content_type ()\n#1  0x00005560738b321d in LLVMFuzzerTestOneInput ()\n#2  0x0000556073767e71 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) ()\n#3  0x0000556073752605 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) ()\n#4  0x000055607375809b in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long))\n    ()\n#5  0x0000556073784493 in main ()\n```\n\n\n\nThank you,   \nSpencer&quot;,&quot;title&quot;:&quot;Fuzzing crash on soup_message_headers_get_content_type&quot;,&quot;time_estimate&quot;:0,&quot;total_time_spent&quot;:0,&quot;human_time_estimate&quot;:null,&quot;human_total_time_spent&quot;:null,&quot;state&quot;:&quot;closed&quot;,&quot;milestone_id&quot;:null,&quot;updated_by_id&quot;:null,&quot;created_at&quot;:&quot;2024-08-19T17:42:07Z&quot;,&quot;updated_at&quot;:&quot;2024-08-22T17:24:53Z&quot;,&quot;milestone&quot;:null,&quot;labels&quot;:[],&quot;lock_version&quot;:0,&quot;author_id&quot;:143943,&quot;confidential&quot;:false,&quot;discussion_locked&quot;:null,&quot;assignees&quot;:[],&quot;due_date&quot;:null,&quot;project_id&quot;:1630,&quot;moved_to_id&quot;:null,&quot;duplicated_to_id&quot;:null,&quot;web_url&quot;:&quot;/GNOME/libsoup/-/issues/389&quot;,&quot;current_user&quot;:{&quot;can_create_note&quot;:false,&quot;can_create_confidential_note&quot;:false,&quot;can_update&quot;:false,&quot;can_set_issue_metadata&quot;:false,&quot;can_award_emoji&quot;:false},&quot;create_note_path&quot;:&quot;/GNOME/libsoup/notes?target_id=205422\u0026target_type=issue&quot;,&quot;preview_note_path&quot;:&quot;/GNOME/libsoup/-/preview_markdown?target_id=389\u0026target_type=Issue&quot;,&quot;is_project_archived&quot;:false,&quot;issue_email_participants&quot;:[],&quot;type&quot;:&quot;ISSUE&quot;}" data-noteable-type="Issue" data-notes-data="{&quot;noteableType&quot;:&quot;issue&quot;,&quot;noteableId&quot;:205422,&quot;projectId&quot;:1630,&quot;groupId&quot;:null,&quot;discussionsPath&quot;:&quot;/GNOME/libsoup/-/issues/389/discussions.json&quot;,&quot;registerPath&quot;:&quot;/users/sign_up?redirect_to_referer=yes&quot;,&quot;newSessionPath&quot;:&quot;/users/sign_in?redirect_to_referer=yes&quot;,&quot;markdownDocsPath&quot;:&quot;/help/user/markdown.md&quot;,&quot;quickActionsDocsPath&quot;:&quot;/help/user/project/quick_actions.md&quot;,&quot;closePath&quot;:&quot;/GNOME/libsoup/-/issues/389.json?issue%5Bstate_event%5D=close&quot;,&quot;reopenPath&quot;:&quot;/GNOME/libsoup/-/issues/389.json?issue%5Bstate_event%5D=reopen&quot;,&quot;notesPath&quot;:&quot;/GNOME/libsoup/noteable/issue/205422/notes&quot;,&quot;prerenderedNotesCount&quot;:3,&quot;lastFetchedAt&quot;:1774422918000000,&quot;notesFilter&quot;:null}" data-notes-filters="{&quot;Show all activity&quot;:0,&quot;Show comments only&quot;:1,&quot;Show history only&quot;:2}" data-report-abuse-path="/-/abuse_reports/add_category" data-show-timeline-view-toggle="false" data-target-type="issue" id="js-vue-notes"></div>
+</section>
+
+</div>
+</div>
+<aside aria-label="issue" aria-live="polite" class="right-sidebar js-right-sidebar js-issuable-sidebar right-sidebar-expanded" data-always-show-toggle data-auto-collapse data-issuable-type="issue">
+<div class="issuable-sidebar">
+<div class="issuable-sidebar-header">
+<button class="gl-button btn btn-md btn-default gutter-toggle gl-float-right js-sidebar-toggle has-tooltip !gl-border-0" type="button" aria-label="Toggle sidebar" title="Collapse sidebar" data-container="body" data-placement="left" data-boundary="viewport" type="button"><span class="gl-button-text">
+<span class="js-sidebar-toggle-container gl-button-text" data-is-expanded="true"><svg class="s16 js-sidebar-expand hidden" data-testid="chevron-double-lg-left-icon"><use href="/assets/icons-41229992eca580608aadaaa9b83b717650b2863442574d0ebb87f859c42a3b6c.svg#chevron-double-lg-left"></use></svg><svg class="s16 js-sidebar-collapse " data-testid="chevron-double-lg-right-icon"><use href="/assets/icons-41229992eca580608aadaaa9b83b717650b2863442574d0ebb87f859c42a3b6c.svg#chevron-double-lg-right"></use></svg></span>
+
+</span>
+
+</button></div>
+<form class="issuable-context-form inline-update js-issuable-update " action="/GNOME/libsoup/-/issues/389.json" accept-charset="UTF-8" data-remote="true" method="post"><div class="block assignee gl-mt-3" data-testid="assignee-block-container">
+<div class="js-sidebar-assignees-root" data-field="issue" data-max-assignees="1">
+<div class="title hide-collapsed gl-flex gl-justify-between gl-items-center !gl-mb-0">
+<span class="gl-font-bold">Assignee</span>
+<span class="gl-spinner-container" role="status"><span aria-hidden class="gl-spinner gl-spinner-sm gl-spinner-dark !gl-align-text-bottom"></span><span class="gl-sr-only !gl-absolute">Loading</span>
+</span>
+</div>
+</div>
+
+</div>
+<div class="js-sidebar-labels-widget-root" data-allow-label-create="" data-allow-scoped-labels="" data-can-edit="" data-iid="389" data-issuable-type="issue" data-labels-fetch-path="/GNOME/libsoup/-/labels.json?include_ancestor_groups=true" data-labels-manage-path="/GNOME/libsoup/-/labels" data-project-issues-path="/GNOME/libsoup/-/issues" data-project-path="GNOME/libsoup" data-selected-labels="[]"></div>
+<div class="block milestone" data-testid="sidebar-milestones">
+<div class="js-sidebar-milestone-widget-root" data-can-edit="" data-issue-iid="389" data-project-path="GNOME/libsoup"></div>
+</div>
+
+<div class="js-sidebar-due-date-widget-root"></div>
+<div class="js-sidebar-time-tracking-root block">
+<!-- / Fallback while content is loading -->
+<div class="title hide-collapsed gl-flex gl-justify-between gl-items-center !gl-mb-0">
+<span class="gl-font-bold">Time tracking</span>
+<span class="gl-spinner-container" role="status"><span aria-hidden class="gl-spinner gl-spinner-sm gl-spinner-dark !gl-align-text-bottom"></span><span class="gl-sr-only !gl-absolute">Loading</span>
+</span>
+</div>
+</div>
+<script id="js-confidential-issue-data" type="application/json">{"is_confidential":false,"is_editable":null}</script>
+
+<div class="js-sidebar-participants-widget-root"></div>
+</form><script class="js-sidebar-options" type="application/json">{"endpoint":"/GNOME/libsoup/-/issues/389.json?serializer=sidebar_extras","toggleSubscriptionEndpoint":"/GNOME/libsoup/-/issues/389/toggle_subscription","moveIssueEndpoint":"/GNOME/libsoup/-/issues/389/move","projectsAutocompleteEndpoint":"/-/autocomplete/projects?project_id=1630","editable":"","currentUser":{},"rootPath":"/","fullPath":"GNOME/libsoup","iid":389,"id":205422,"severity":"unknown","timeTrackingLimitToHours":false,"canCreateTimelogs":null,"createNoteEmail":null,"issuableType":"issue","directlyInviteMembers":"false"}</script>
+</div>
+</aside>
+
+
+
+</main>
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="js-dynamic-panel paneled-view contextual-panel gl-@container/panel !gl-absolute gl-shadow-lg @xl/content-panels:gl-w-1/2 @xl/content-panels:gl-shadow-none @xl/content-panels:!gl-relative" id="contextual-panel-portal"></div>
+</div>
+</div>
+
+</div>
+
+
+<script>
+//<![CDATA[
+if ('loading' in HTMLImageElement.prototype) {
+  document.querySelectorAll('img.lazy').forEach(img => {
+    img.loading = 'lazy';
+    let imgUrl = img.dataset.src;
+    // Only adding width + height for avatars for now
+    if (imgUrl.indexOf('/avatar/') > -1 && imgUrl.indexOf('?') === -1) {
+      const targetWidth = img.getAttribute('width') || img.width;
+      imgUrl += `?width=${targetWidth}`;
+    }
+    img.src = imgUrl;
+    img.removeAttribute('data-src');
+    img.classList.remove('lazy');
+    img.classList.add('js-lazy-loaded');
+    img.dataset.testid = 'js-lazy-loaded-content';
+  });
+}
+
+//]]>
+</script>
+<script>
+//<![CDATA[
+gl = window.gl || {};
+gl.experiments = {};
+
+
+//]]>
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,389 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>MySQL Bugs: #114880: hang bug in mysql NDB cluster</title>
+ <link rel="shortcut icon" href="/favicon.ico" />
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/screen.css" />
+ <link rel="stylesheet" type="text/css" href="/static/chosen/chosen.css" />
+ <script type="text/javascript" src="/static/prototype.js"></script>
+ <!-- script type="text/javascript" src="/static/chosen/event.simulate.js"></script -->
+ <script type="text/javascript" src="/static/scriptaculous.js?load=builder,effects,dragdrop,controls,slider"></script>
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/calendar-blue.css" />
+ <script type="text/javascript" src="/static/calendar.js"></script>
+ <script type="text/javascript" src="/static/calendar-en.js"></script>
+ <script type="text/javascript" src="/static/calendar-setup.js"></script>
+
+                              <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="E6BB6-B37B4-898B7-F97BA-BBCDB",function(){function e(){if(!o){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,i.parentNode.appendChild(e),o=!0}}function t(e){o=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(i.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",i.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"E6BB6-B37B4-898B7-F97BA-BBCDB";var i=document.currentScript||document.getElementsByTagName("script")[0],o=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!o)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),i.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="yuva3zqxgk2m42odsv6a-f-939dc2280-clientnsv4-s.akamaihd.net",i="false"=="true"?2:1,o={"ak.v":"39","ak.cp":"1983232","ak.ai":parseInt("802521",10),"ak.ol":"0","ak.cr":69,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"22cf51b6","ak.r":50152,"ak.a2":n,"ak.m":"dscx","ak.n":"essl","ak.bpcip":"197.42.13.0","ak.cport":8664,"ak.gh":"2.20.109.4","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1774425468","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==OfeH/Zo9vZ6Z9TOOWmUDyPe9wqx5/xaOQAg/tR6rL8ENMVmmW2w35ayOtLnCxOkhk4k5pVccPgdRRdZMT1iQlZDfTCe+zB+O/oC/rOP6nI19DAEqXP0jmNwFnRaw/GSvTmdU9FZ6lS+KSJRKqBpClgU1qUnn61VDkENxX0IoHcfo1uCVlU5A/ZjxBdA625YBsSCLCW8drk2Qzq72ag/N9htLqp9reslh6RVZJXmDfSx8TO79WXu+RlLNyNUwbe2aVdwk2YyqIZlo18gZryXSS90xUZLkO6ra78m6QOIIsEqa8xnLBtmdTWVwUVCmPm33pb2bVdUfCdLNL/00cXlLvYr7ZDZjS+085TD5KvtyN3TrYakZ3tEfctMGHkobMperPh3m5AHGwNIEjMHPS0GCXTzM3tonDY3ewMB2DUcbNNI=","ak.pv":"20","ak.dpoabenc":"","ak.tf":i};if(""!==t)o["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))o["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(o)},rv:function(){var e=["ak.bpcip","ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:o,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+
+<body class="dev bugs">
+<div id="header">
+ <div id="logo"><a href="http://dev.mysql.com/"><img src="/images/mysql_100x52-64.gif" width="100" height="52" border="0" alt="MySQL" /></a></div>
+ <div id="searchandlogin">
+  <div id="searchbox">
+   <form action="/search.php" method="get">
+    <input class="frm" type="text" name="search_for" size="20" maxlength="255" />
+    <input class="submit2" type="submit" value="Search" />
+   </form>
+  </div>
+  <div id="login">
+
+   <p class="s"><a href="https://dev.mysql.com/auth/login/?dest=http%3A%2F%2Fbugs.mysql.com%2Fbug.php%3Fid%3D114880">Login</a> /
+   <a href="https://dev.mysql.com/auth/register/">Register</a></p>
+  </div>
+ </div>
+</div>
+<div id="nav">
+ <ul>
+  <li><a href="http://dev.mysql.com/">Developer Zone</a></li>
+  <li><a href="/">Bugs Home</a></li>
+   <li><a href="/report.php">Report a bug</a></li>
+  <li><a href="/search.php">Advanced search</a></li>
+  <li><a href="/search-saved.php">Saved searches</a></li>
+  <li><a href="/tags.php">Tags</a></li>
+ </ul>
+</div>
+
+<br clear="both" />
+
+<div id="content">
+<table id="bugheader" style="width: 100%">
+ <tr id="title">
+  <th>Bug&nbsp;#114880</th>
+  <td colspan="3">hang bug in mysql NDB cluster</td>
+ </tr>
+ <tr>
+  <th>Submitted:</th> <td>4 May 2024 13:43</td>
+  <th>Modified:</th> <td>7 May 2024 12:53</td>
+ </tr>
+ <tr>
+  <th>Reporter:</th>
+  <td>
+<a href="/search.php?cmd=display&status=All&severity=all&reporter=17732354">CunDi Fang</a>
+  </td>
+  <th>Email Updates:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/sub.php?action=Subscribe&id=114880" />
+    <input type="submit" name="action" value="Subscribe" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Status:</th>
+  <td>
+  Unsupported  </td>
+  <th>Impact on me:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/impact.php?action=&id=114880" />
+    None&nbsp;<input type="submit" name="action" value="Affects Me" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Category:</th><td>MySQL Cluster: Cluster (NDB) storage engine</td>
+  <th>Severity:</th><td>S2 (Serious)</td>
+ </tr>
+ <tr>
+  <th>Version:</th><td>8.0.35-cluster MySQL Cluster Community S</td>
+  <th>OS:</th><td>Any</td>
+ </tr>
+ <tr>
+  <th>Assigned to:</th>
+  <td>
+<a href="/search.php?cmd=display&status=Under+Development&assign=6685690">MySQL Verification Team</a>
+  </td>
+  <th>CPU Architecture:</th><td>Any</td>
+ </tr>
+</table>
+
+<ul id="controls">
+<li class=" active">View</li>
+<li class=""><a href="/bug.php?id=114880&amp;edit=3">Add Comment</a></li>
+<li class=""><a href="/bug.php?id=114880&amp;files=1">Files</a></li>
+<li class=""><a href="/bug.php?id=114880&amp;edit=1">Developer</a></li>
+<li class=""><a href="/bug.php?id=114880&amp;edit=2">Edit Submission</a></li>
+<li class=""><a href="/bug.php?id=114880&amp;log=1">View Progress Log</a></li>
+<li class=""><a href="/bug.php?id=114880&amp;contribs=1">Contributions</a></li>
+</ul>
+<br clear="all" />
+ <div id="cmain"
+      class="comment">
+  <div class="header">
+   [4 May 2024 13:43]
+   CunDi Fang        </div>
+  <pre class="note"><strong>Description:</strong>
+Hello, I found a hang bug in 8.0.35-cluster version of MYSQL cluster. 
+The detail is as follow.
+
+Relying on NDB&#039;s own timeout mechanism doesn&#039;t handle this, he&#039;ll stay stuck.
+
+OS version and name:
+Ubuntu 22.04.3 LTS (Jammy Jellyfish)
+Linux eb1f47b08982 6.5.11-8-pve #1 SMP PREEMPT_DYNAMIC PMX 6.5.11-8 (2024-01-30T12:27Z) x86_64 x86_64 x86_64 GNU/Linux
+
+I am executing the following sql statement on a node:
+
+Poc:
+```
+elete from mytest100.test3
+where 
+EXISTS (
+  select distinct
+      25 as c0,
+      ref_0.column3 as c1
+    from
+      mytest100.test2 as ref_0
+        left join (select
+                mytest100.test3.column7 as c0,
+                ref_1.column4 as c1,
+                mytest100.test3.column3 as c2,
+                (select FIRST_SEEN from performance_schema.events_errors_summary_by_host_by_error limit 1 offset 6)
+                   as c3,
+                mytest100.test3.column6 as c4,
+                ref_1.column2 as c5,
+                mytest100.test3.column6 as c6,
+                mytest100.test3.column3 as c7,
+                79 as c8,
+                ref_1.column4 as c9,
+                mytest100.test3.column1 as c10,
+                (select CURRENT_CONNECTIONS from performance_schema.accounts limit 1 offset 77)
+                   as c11,
+                ref_1.column4 as c12,
+                mytest100.test3.column1 as c13,
+                mytest100.test3.column2 as c14,
+                (select COUNT_ALLOC from performance_schema.memory_summary_by_thread_by_event_name limit 1 offset 4)
+                   as c15,
+                ref_1.column1 as c16
+              from
+                mytest100.test1 as ref_1
+              where true
+              limit 111) as subq_0          left join mytest100.test9 as ref_2          on (EXISTS (
+              select
+                  mytest100.test3.column7 as c0,
+                  ref_3.column1 as c1,
+                  ref_3.column3 as c2,                  ref_3.column1 as c3,                  mytest100.test3.column7 as c4,
+                  80 as c5,
+                  subq_0.c2 as c6,
+                  ref_2.column2 as c7,
+                  mytest100.test3.column1 as c8,                  subq_0.c11 as c9,                  32 as c10,
+                  (select avg_tmp_tables_per_query from sys.statements_with_temp_tables limit 1 offset 4)
+                     as c11,
+                  mytest100.test3.column6 as c12,
+                  subq_0.c12 as c13,
+                  subq_0.c4 as c14,
+                  ref_3.column3 as c15,
+                  ref_2.column2 as c16,
+                  subq_0.c6 as c17,
+                  ref_3.column1 as c18,
+                  mytest100.test3.column2 as c19,
+                  ref_3.column5 as c20,
+                  mytest100.test3.column2 as c21,
+                  subq_0.c9 as c22,
+                  subq_0.c0 as c23
+                from
+                  mytest100.test2 as ref_3
+                where subq_0.c7 is NULL))
+        on (true)
+    where subq_0.c2 is NULL
+    limit 129);
+```
+
+Architecture Information:
+&#039;&#039;&#039;
+[NDBD DEFAULT]
+NoOfReplicas =2
+DataMemory = 512M
+IndexMemory = 64M
+
+[NDB_MGMD]
+NodeId=1
+hostname =192.172.10.8
+datadir =/var/lib/mysql-cluster
+
+[NDBD]
+NodeId =2
+hostname =192.172.10.9
+datadir =/usr/local/mysql-cluster/data
+NodeGroup=0
+[NDBD]
+NodeId =3
+hostname =192.172.10.10
+datadir =/usr/local/mysql-cluster/data
+NodeGroup=1
+[NDBD]
+NodeId =4
+hostname =192.172.10.11
+datadir =/usr/local/mysql-cluster/data
+NodeGroup=0
+[NDBD]
+NodeId =5
+hostname =192.172.10.12
+datadir =/usr/local/mysql-cluster/data
+NodeGroup=1
+
+[mysqld]
+NodeId =6
+hostname =192.172.10.9
+[mysqld]
+NodeId =7
+hostname =192.172.10.10
+[mysqld]
+NodeId =8
+hostname =192.172.10.11
+[mysqld]
+NodeId =9
+hostname =192.172.10.12
+&#039;&#039;&#039;
+
+Attempted and successfully reproduced!
+
+<strong>How to repeat:</strong>
+Simply execute that PoC to repeat it.
+
+<strong>Suggested fix:</strong>
+I can&#039;t even get its execution plan via explain, there should be a problem with the overall logic.</pre>
+ </div>
+ <div id="c543032"
+      class="comment">
+  <div class="header">
+   [7 May 2024 8:31]
+   MySQL Verification Team        </div>
+  <pre class="note">This does not look like a bug but unsupported type of query for ndbcluster.
+
+During execution of this query
+ - what is your cpu load on the nodes
+ - what is your network load
+ - what does your logs state
+
+Thanks</pre>
+ </div>
+ <div id="c543055"
+      class="comment">
+  <div class="header">
+   [7 May 2024 12:53]
+   CunDi Fang        </div>
+  <pre class="note">Ok, I repeat again and here are the cpu load on the node.
+
+Before I start the sql:
+```
+  15900 mysql     20   0 2762692 400112  36864 S   1.3   0.0   0:03.75 mysqld                                                                
+  15975 root      20   0 1563572   1.3g   2048 S   1.0   0.1   0:02.88 ndbd                                                                  
+      1 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.04 bash                                                                  
+     13 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.02 bash                                                                  
+     24 root      20   0  240796   4096   4096 S   0.0   0.0   0:08.28 fish                                                                  
+    161 root      20   0   15428   6144   6144 S   0.0   0.0   0:00.02 sshd                                                                  
+  12617 root      20   0   36272   8192   8192 T   0.0   0.0   0:00.04 mysql                                                                 
+  15387 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.02 bash                                                                  
+  15399 root      20   0    7584   2048   2048 R   0.0   0.0   0:00.25 top                                                                   
+  15554 root      20   0    2888      0      0 S   0.0   0.0   0:00.02 mysqld_safe                                                           
+  15836 root      20   0   36272   8192   8192 T   0.0   0.0   0:00.02 mysql                                                                 
+  15974 root      20   0   25200   4228   2048 S   0.0   0.0   0:00.01 ndbd                                                                  
+  16294 root      20   0   36272   8192   8192 S   0.0   0.0   0:00.02 mysql 
+```
+
+When I start the sql:
+```
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                                               
+  15900 mysql     20   0 2762692 402160  36864 S 101.7   0.0   0:10.42 mysqld                                                                
+  15975 root      20   0 1563572   1.3g   2048 S   1.0   0.1   0:03.43 ndbd                                                                  
+      1 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.04 bash                                                                  
+     13 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.02 bash                                                                  
+     24 root      20   0  240796   4096   4096 S   0.0   0.0   0:08.28 fish                                                                  
+    161 root      20   0   15428   6144   6144 S   0.0   0.0   0:00.02 sshd                                                                  
+  12617 root      20   0   36272   8192   8192 T   0.0   0.0   0:00.04 mysql                                                                 
+  15387 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.02 bash                                                                  
+  15399 root      20   0    7584   2048   2048 R   0.0   0.0   0:00.29 top                                                                   
+  15554 root      20   0    2888      0      0 S   0.0   0.0   0:00.02 mysqld_safe                                                           
+  15836 root      20   0   36272   8192   8192 T   0.0   0.0   0:00.02 mysql                                                                 
+  15974 root      20   0   25200   4228   2048 S   0.0   0.0   0:00.02 ndbd                                                                  
+  16294 root      20   0   36272   8192   8192 S   0.0   0.0   0:00.02 mysql
+```
+
+It is stuck and never gets over it, even after 10 mins.
+```
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                                               
+  17300 mysql     20   0 2893760 397824  36864 S 101.3   0.0  10:07.81 mysqld                                                                
+  16998 root      20   0 1563572   1.3g   4096 S   1.0   0.1   0:09.07 ndbd                                                                  
+  15399 root      20   0    7584   2048   2048 R   0.3   0.0   0:01.20 top                                                                   
+      1 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.04 bash                                                                  
+     13 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.02 bash                                                                  
+     24 root      20   0  240856   4096   4096 S   0.0   0.0   0:08.52 fish                                                                      161 root      20   0   15428   6144   6144 S   0.0   0.0   0:00.02 sshd                                                                    15387 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.02 bash                                                                  
+  16997 root      20   0   25200   4228   2048 S   0.0   0.0   0:00.16 ndbd                                                                  
+  17086 root      20   0    2888      0      0 S   0.0   0.0   0:00.02 mysqld_safe                                                           
+  17382 root      20   0   36272   8192   8192 S   0.0   0.0   0:00.02 mysql 
+```
+
+I have to ues &quot;KILL -9&quot; to stop mysqld.
+```
+
+^C^C -- query aborted
+^C^C -- query aborted
+^Zfish: Job 1, &#039;mysql -uroot -proot&#039; has stopped
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                                               
+  17300 mysql     20   0 2894792 397824  36864 S 100.7   0.0  11:08.59 mysqld                                                                
+  16998 root      20   0 1563572   1.3g   4096 S   1.0   0.1   0:09.75 ndbd                                                                  
+      1 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.04 bash                                                                       13 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.02 bash                                                                       24 root      20   0  240856   4096   4096 S   0.0   0.0   0:08.52 fish                                                                  
+    161 root      20   0   15428   6144   6144 S   0.0   0.0   0:00.02 sshd                                                                  
+  15387 root      20   0    4624   2048   2048 S   0.0   0.0   0:00.02 bash                                                                  
+  15399 root      20   0    7584   2048   2048 R   0.0   0.0   0:01.23 top                                                                   
+  16997 root      20   0   25200   4228   2048 S   0.0   0.0   0:00.17 ndbd                                                                  
+  17086 root      20   0    2888      0      0 S   0.0   0.0   0:00.02 mysqld_safe                                                           
+  17382 root      20   0   36272   8192   8192 T   0.0   0.0   0:00.02 mysql 
+```</pre>
+ </div>
+</div>
+<script src="/static/chosen/chosen.proto.js" type="text/javascript"></script>
+<script src="/static/misc.js" type="text/javascript"></script>
+<script type="text/javascript">
+  document.observe('dom:loaded', function(evt) {
+    var config = {
+      '.chzn-select'           : {},
+      '.chzn-select-excl'      : {},
+      '.chzn-select-max1'      : {max_selected_options:1},
+      '.chzn-select-deselect'  : {allow_single_deselect:true},
+      '.chzn-select-no-single' : {disable_search_threshold:10},
+      '.chzn-select-no-results': {no_results_text: "Oops, nothing found!"},
+      '.chzn-select-width'     : {width: "95%"}
+    }
+    var results = [];
+    for (var selector in config) {
+      var elements = $$(selector);
+      for (var i = 0; i < elements.length; i++) {
+        results.push(new Chosen(elements[i],config[selector]));
+      }
+    }
+
+    // initialize (store initial state) selects with exclusive options
+    var elements = $$('.chzn-select-excl');
+    for (var i = 0; i < elements.length; i++) {
+      my_init_select(elements[i]);
+    }
+
+    return results;
+  });
+</script>
+<div id="footer">
+ <ul style="float: right; list-style: none">
+  <li><a href="http://www.mysql.com/about/legal/">Legal Policies</a></li>
+  <li><a href="http://www.oracle.com/us/legal/privacy/index.htm">Your Privacy Rights</a></li>
+  <li><a href="http://www.oracle.com/html/terms.html">Terms of Use</a></li>
+  <li><a href="https://www.mysql.com/about/contact/">Contact Us</a></li>
+ </ul>
+ <br class="clear" />
+ <p>Portions of this website are <a href="http://www.php.net/copyright.php">copyright &copy; 2001, 2002 The PHP Group</a></p>
+ <p style="float: right">
+Page generated in 0.240 sec. using MySQL 8.4.5-u11-cloud </p>
+ <br class="clear" />
+ <br style="line-height: 8px;" />
+ <p style="float: left">Timestamp references displayed by the system are UTC.<br/>
+  Content reproduced on this site is the property of the
+  respective copyright holders.<br />It is not reviewed in advance
+  by Oracle and does not necessarily represent the opinion of
+  Oracle or any other party.</p>
+ <p style="float: right"><a href="http://www.oracle.com/"><img src="/images/logo-oracle-red-91x22.gif" alt="Oracle" width="91" height="22" /></a>&nbsp;&nbsp;&copy; 2026, Oracle Corporation and/or its affiliates</p>
+</div>
+<!-- script type="text/javascript" src="http://www.mysql.com/common/js/s_code_remote.js"></script -->
+</body>
+</html>

@@ -1,0 +1,980 @@
+
+
+<!DOCTYPE html>
+<html lang="en-US">   <head>
+    <!-- # block head (placeholder in theme.html) -->
+        <!-- # block head (content inherited from layout.html) -->
+    <title>
+      #8845 (A stack-buffer-overflow in FFmpeg JIT code)
+          – FFmpeg
+
+    </title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!--[if IE]><script>
+        if (/^#__msie303:/.test(window.location.hash))
+        window.location.replace(window.location.hash.replace(/^#__msie303:/, '#'));
+        </script><![endif]-->
+
+    <link rel="start"  href="/wiki" />
+    <link rel="search"  href="/search" />
+    <link rel="help"  href="/wiki/TracGuide" />
+    <link rel="stylesheet"  href="/chrome/common/css/trac.css" type="text/css" />
+    <link rel="stylesheet"  href="/chrome/common/css/ticket.css" type="text/css" />
+    <link rel="stylesheet"  href="/chrome/common/css/jquery-ui/jquery-ui.css" type="text/css" />
+    <link rel="stylesheet"  href="/chrome/common/css/jquery-ui-addons.css" type="text/css" />
+    <link rel="stylesheet"  href="/chrome/vote/css/tracvote.css" type="text/css" />
+    <link rel="icon"  href="/chrome/common/trac.ico" type="image/x-icon" />
+    <link rel="first"  href="/ticket/1" title="Ticket #1" />
+    <link rel="prev"  href="/ticket/8844" title="Ticket #8844" />
+    <link rel="last"  href="/ticket/11696" title="Ticket #11696" />
+    <link rel="next"  href="/ticket/8846" title="Ticket #8846" />
+    <link rel="alternate"  class="rss" href="/ticket/8845?format=rss" title="RSS Feed" type="application/rss+xml" />
+    <link rel="alternate"  class="csv" href="/ticket/8845?format=csv" title="Comma-delimited Text" type="text/csv" />
+    <link rel="alternate"  class="tab" href="/ticket/8845?format=tab" title="Tab-delimited Text" type="text/tab-separated-values" />
+    <noscript>
+      <style>
+        .trac-noscript { display: none !important }
+      </style>     </noscript>
+    <link type="application/opensearchdescription+xml" rel="search"
+          href="/search/opensearch"
+          title="Search FFmpeg"/>
+    <script>
+      var comments_prefs={"comments_order":"oldest","show_comments":"true","show_prop_changes":"true"};
+      var old_values={"analyzed":"0","blockedby":"","blocking":"","cc":"","changetime":"2021-07-13T20:56:49Z","component":"avcodec","description":"== System info ==\r\n\r\nUbuntu x86_64, clang 6.0, ffmpeg (git-master [https://github.com/FFmpeg/FFmpeg/commit/1ead176d874acb489827ace3935fc71e1eea7e0e])\r\n\r\n== Configure ==\r\n\r\n{{{\r\n./configure --cc=clang --cxx=clang++ --ld=clang --enable-debug --toolchain=clang-asan\r\n}}}\r\n\r\n== Command line ==\r\n\r\n{{{\r\n./ffmpeg -i @@ -y -f mov /dev/null\r\n}}}\r\n\r\n== Address Sanitizer ==\r\n\r\n{{{\r\n  built with clang version 6.0.0-1ubuntu2 (tags/RELEASE_600/final)\r\n  configuration: --cc=clang --cxx=clang++ --ld=clang --enable-debug --toolchain=clang-asan\r\n  libavutil      56. 58.100 / 56. 58.100\r\n  libavcodec     58.100.100 / 58.100.100\r\n  libavformat    58. 50.100 / 58. 50.100\r\n  libavdevice    58. 11.101 / 58. 11.101\r\n  libavfilter     7. 87.100 /  7. 87.100\r\n  libswscale      5.  8.100 /  5.  8.100\r\n  libswresample   3.  8.100 /  3.  8.100\r\n[aac @ 0x61b000000080] Format aac detected only with low score of 1, misdetection possible!\r\n[aac @ 0x619000000580] More than one AAC RDB per ADTS frame is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.\r\n[aac @ 0x61b000000080] Packet corrupt (stream = 0, dts = NOPTS).\r\n[aac @ 0x619000000580] Sample rate index in program config element does not match the sample rate index configured by the container.\r\n[aac @ 0x619000000580] Inconsistent channel configuration.\r\n[aac @ 0x619000000580] get_buffer() failed\r\n[aac @ 0x61b000000080] decoding for stream 0 failed\r\n[aac @ 0x61b000000080] Estimating duration from bitrate, this may be inaccurate\r\n[aac @ 0x61b000000080] Could not find codec parameters for stream 0 (Audio: aac (Main), 13 channels (FL+FR+FLC+FRC+TC+TFL+TFC+TFR+TBL+TBC+TBR+TSL+TSR+BFC+BFL+BFR), fltp, 5 kb/s): unspecified sample rate\r\nConsider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options\r\nInput #0, aac, from '/home/seviezhou//experiment-3/AlphaFuzz-ffmpeg/alpha_out/crashes/id:000001,src:003723,op:havoc':\r\n  Duration: 00:00:00.18, bitrate: 5 kb/s\r\n    Stream #0:0: Audio: aac (Main), 13 channels (FL+FR+FLC+FRC+TC+TFL+TFC+TFR+TBL+TBC+TBR+TSL+TSR+BFC+BFL+BFR), fltp, 5 kb/s\r\n[aac @ 0x619000002380] Channel layout '16 channels (FL+FR+FLC+FRC+TC+TFL+TFC+TFR+TBL+TBC+TBR+TSL+TSR+BFC+BFL+BFR)' with 16 channels does not match specified number of channels 13: ignoring specified channel layout\r\nStream mapping:\r\n  Stream #0:0 -\u003e #0:0 (aac (native) -\u003e aac (native))\r\nPress [q] to stop, [?] for help\r\n[aac @ 0x619000002380] More than one AAC RDB per ADTS frame is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.\r\n[aac @ 0x619000002380] channel element 3.7 is not allocated\r\nError while decoding stream #0:0: Invalid data found when processing input\r\n[aac @ 0x619000002380] Sample rate index in program config element does not match the sample rate index configured by the container.\r\n=================================================================\r\n==48056==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffff1e2fba5 at pc 0x0000029497f1 bp 0x7ffff1e2eb50 sp 0x7ffff1e2eb48\r\nREAD of size 1 at 0x7ffff1e2fba5 thread T0\r\n    #0 0x29497f0  (/home/seviezhou/ffmpeg/ffmpeg+0x29497f0)\r\n    #1 0x2959670  (/home/seviezhou/ffmpeg/ffmpeg+0x2959670)\r\n    #2 0x2941d83  (/home/seviezhou/ffmpeg/ffmpeg+0x2941d83)\r\n    #3 0x126e91c  (/home/seviezhou/ffmpeg/ffmpeg+0x126e91c)\r\n    #4 0x126e22d  (/home/seviezhou/ffmpeg/ffmpeg+0x126e22d)\r\n    #5 0x567dae  (/home/seviezhou/ffmpeg/ffmpeg+0x567dae)\r\n    #6 0x560488  (/home/seviezhou/ffmpeg/ffmpeg+0x560488)\r\n    #7 0x555ea5  (/home/seviezhou/ffmpeg/ffmpeg+0x555ea5)\r\n    #8 0x7f1571274b96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310\r\n    #9 0x41dea9 in _init (/home/seviezhou/ffmpeg/ffmpeg+0x41dea9)\r\n\r\nAddress 0x7ffff1e2fba5 is located in stack of thread T0 at offset 165 in frame\r\n    #0 0x294179f  (/home/seviezhou/ffmpeg/ffmpeg+0x294179f)\r\n\r\n  This frame has 4 object(s):\r\n    [32, 64) 'gb.i' (line 1113)\r\n    [96, 128) 'gb' (line 3413)\r\n    [160, 164) 'new_extradata_size' (line 3417) \u003c== Memory access at offset 165 overflows this variable\r\n    [176, 180) 'jp_dualmono_size' (line 3421)\r\nHINT: this may be a false positive if your program uses some custom stack unwind mechanism or swapcontext\r\n      (longjmp and C++ exceptions *are* supported)\r\nSUMMARY: AddressSanitizer: stack-buffer-overflow (/home/seviezhou/ffmpeg/ffmpeg+0x29497f0)\r\nShadow bytes around the buggy address:\r\n  0x10007e3bdf20: f2 f2 f2 f2 f2 f2 f2 f2 00 00 00 00 00 00 00 00\r\n  0x10007e3bdf30: f2 f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00 00\r\n  0x10007e3bdf40: 00 00 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3\r\n  0x10007e3bdf50: f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00\r\n  0x10007e3bdf60: f1 f1 f1 f1 f8 f8 f8 f8 f2 f2 f2 f2 00 00 00 00\r\n=\u003e0x10007e3bdf70: f2 f2 f2 f2[04]f2 04 f3 00 00 00 00 00 00 00 00\r\n  0x10007e3bdf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\r\n  0x10007e3bdf90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\r\n  0x10007e3bdfa0: 00 00 00 00 f1 f1 f1 f1 04 f2 f8 f3 00 00 00 00\r\n  0x10007e3bdfb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\r\n  0x10007e3bdfc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\r\nShadow byte legend (one shadow byte represents 8 application bytes):\r\n  Addressable:           00\r\n  Partially addressable: 01 02 03 04 05 06 07\r\n  Heap left redzone:       fa\r\n  Freed heap region:       fd\r\n  Stack left redzone:      f1\r\n  Stack mid redzone:       f2\r\n  Stack right redzone:     f3\r\n  Stack after return:      f5\r\n  Stack use after scope:   f8\r\n  Global redzone:          f9\r\n  Global init order:       f6\r\n  Poisoned by user:        f7\r\n  Container overflow:      fc\r\n  Array cookie:            ac\r\n  Intra object redzone:    bb\r\n  ASan internal:           fe\r\n  Left alloca redzone:     ca\r\n  Right alloca redzone:    cb\r\n==48056==ABORTING\r\n}}}\r\n\r\nIt seems that if I ran this command multiple times, it can crash different objects, here is another ASAN output, using the same input:\r\n\r\n{{{\r\n  built with clang version 6.0.0-1ubuntu2 (tags/RELEASE_600/final)\r\n  configuration: --cc=clang --cxx=clang++ --ld=clang --enable-debug --toolchain=clang-asan\r\n  libavutil      56. 58.100 / 56. 58.100\r\n  libavcodec     58.100.100 / 58.100.100\r\n  libavformat    58. 50.100 / 58. 50.100\r\n  libavdevice    58. 11.101 / 58. 11.101\r\n  libavfilter     7. 87.100 /  7. 87.100\r\n  libswscale      5.  8.100 /  5.  8.100\r\n  libswresample   3.  8.100 /  3.  8.100\r\n[aac @ 0x61b000000080] Format aac detected only with low score of 1, misdetection possible!\r\n[aac @ 0x619000000580] More than one AAC RDB per ADTS frame is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.\r\n[aac @ 0x61b000000080] Packet corrupt (stream = 0, dts = NOPTS).\r\n[aac @ 0x619000000580] Sample rate index in program config element does not match the sample rate index configured by the container.\r\n=================================================================\r\n==73492==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffe338744d7 at pc 0x0000029497f1 bp 0x7ffe33873cd0 sp 0x7ffe33873cc8\r\nREAD of size 1 at 0x7ffe338744d7 thread T0\r\n    #0 0x29497f0  (/home/seviezhou/ffmpeg/ffmpeg+0x29497f0)\r\n    #1 0x2959670  (/home/seviezhou/ffmpeg/ffmpeg+0x2959670)\r\n    #2 0x2941d83  (/home/seviezhou/ffmpeg/ffmpeg+0x2941d83)\r\n    #3 0x126e91c  (/home/seviezhou/ffmpeg/ffmpeg+0x126e91c)\r\n    #4 0x126e22d  (/home/seviezhou/ffmpeg/ffmpeg+0x126e22d)\r\n    #5 0xfbf83f  (/home/seviezhou/ffmpeg/ffmpeg+0xfbf83f)\r\n    #6 0xfb6db4  (/home/seviezhou/ffmpeg/ffmpeg+0xfb6db4)\r\n    #7 0x51815a  (/home/seviezhou/ffmpeg/ffmpeg+0x51815a)\r\n    #8 0x516cca  (/home/seviezhou/ffmpeg/ffmpeg+0x516cca)\r\n    #9 0x5166f5  (/home/seviezhou/ffmpeg/ffmpeg+0x5166f5)\r\n    #10 0x555cef  (/home/seviezhou/ffmpeg/ffmpeg+0x555cef)\r\n    #11 0x7f0651f26b96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310\r\n    #12 0x41dea9 in _init (/home/seviezhou/ffmpeg/ffmpeg+0x41dea9)\r\n\r\nAddress 0x7ffe338744d7 is located in stack of thread T0 at offset 2039 in frame\r\n    #0 0x294596f  (/home/seviezhou/ffmpeg/ffmpeg+0x294596f)\r\n\r\n  This frame has 26 object(s):\r\n    [32, 37) '.compoundliteral.sroa.5.i.i' (line 199)\r\n    [64, 69) '.compoundliteral11.sroa.5.i.i' (line 199)\r\n    [96, 101) '.compoundliteral22.sroa.5.i.i' (line 199)\r\n    [128, 1152) 'e2c_vec.i' (line 263)\r\n    [1280, 1285) '.compoundliteral.sroa.5.i' (line 260)\r\n    [1312, 1317) '.compoundliteral60.sroa.5.i' (line 260)\r\n    [1344, 1349) '.compoundliteral80.sroa.5.i' (line 260)\r\n    [1376, 1381) '.compoundliteral99.sroa.5.i' (line 260)\r\n    [1408, 1413) '.compoundliteral118.sroa.5.i' (line 260)\r\n    [1440, 1445) '.compoundliteral133.sroa.5.i' (line 260)\r\n    [1472, 1477) '.compoundliteral156.sroa.5.i' (line 260)\r\n    [1504, 1509) '.compoundliteral176.sroa.5.i' (line 260)\r\n    [1536, 1541) '.compoundliteral193.sroa.5.i' (line 260)\r\n    [1568, 1584) 'SWAP_tmp.i' (line 438)\r\n    [1600, 1616) 'SWAP_tmp219.i' (line 439)\r\n    [1632, 1648) 'SWAP_tmp224.i' (line 440)\r\n    [1664, 1680) 'SWAP_tmp229.i' (line 441)\r\n    [1696, 1712) 'SWAP_tmp234.i' (line 442)\r\n    [1728, 1744) 'SWAP_tmp239.i' (line 443)\r\n    [1760, 1776) 'SWAP_tmp244.i' (line 444)\r\n    [1792, 1808) 'SWAP_tmp249.i' (line 445)\r\n    [1824, 1840) 'SWAP_tmp254.i' (line 446)\r\n    [1856, 1872) 'SWAP_tmp270.i' (line 454)\r\n    [1888, 1892) 'channels' (line 514)\r\n    [1904, 2016) 'id_map' (line 516)\r\n    [2048, 2055) 'type_counts' (line 517) \u003c== Memory access at offset 2039 underflows this variable\r\nHINT: this may be a false positive if your program uses some custom stack unwind mechanism or swapcontext\r\n      (longjmp and C++ exceptions *are* supported)\r\nSUMMARY: AddressSanitizer: stack-buffer-overflow (/home/seviezhou/ffmpeg/ffmpeg+0x29497f0)\r\nShadow bytes around the buggy address:\r\n  0x100046706840: f8 f2 f2 f2 f8 f2 f2 f2 f8 f2 f2 f2 f8 f2 f2 f2\r\n  0x100046706850: f8 f2 f2 f2 f8 f2 f2 f2 f8 f2 f2 f2 f8 f2 f2 f2\r\n  0x100046706860: f8 f8 f2 f2 f8 f8 f2 f2 f8 f8 f2 f2 f8 f8 f2 f2\r\n  0x100046706870: f8 f8 f2 f2 f8 f8 f2 f2 f8 f8 f2 f2 f8 f8 f2 f2\r\n  0x100046706880: f8 f8 f2 f2 f8 f8 f2 f2 04 f2 00 00 00 00 00 00\r\n=\u003e0x100046706890: 00 00 00 00 00 00 00 00 f2 f2[f2]f2 07 f3 f3 f3\r\n  0x1000467068a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\r\n  0x1000467068b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\r\n  0x1000467068c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\r\n  0x1000467068d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\r\n  0x1000467068e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\r\nShadow byte legend (one shadow byte represents 8 application bytes):\r\n  Addressable:           00\r\n  Partially addressable: 01 02 03 04 05 06 07\r\n  Heap left redzone:       fa\r\n  Freed heap region:       fd\r\n  Stack left redzone:      f1\r\n  Stack mid redzone:       f2\r\n  Stack right redzone:     f3\r\n  Stack after return:      f5\r\n  Stack use after scope:   f8\r\n  Global redzone:          f9\r\n  Global init order:       f6\r\n  Poisoned by user:        f7\r\n  Container overflow:      fc\r\n  Array cookie:            ac\r\n  Intra object redzone:    bb\r\n  ASan internal:           fe\r\n  Left alloca redzone:     ca\r\n  Right alloca redzone:    cb\r\n==73492==ABORTING\r\n}}}\r\n\r\nAfter it crashes, it also seems to mess up the terminal.","id":8845,"keywords":"aac","owner":"","priority":"important","reporter":"seviezhou","reproduced":"0","resolution":"fixed","status":"closed","summary":"A stack-buffer-overflow in FFmpeg JIT code","time":"2020-08-11T02:52:01Z","type":"defect","version":"git-master"};
+      var changes=[{"author":"cehoyos","comment":"","comment_history":{"0":{"author":"cehoyos","comment":"","date":1597699607144944}},"date":1597699607144944,"fields":{"attachment":{"label":"Attachment","new":"stack-overflow-ffmpeg-JIT","old":"","rendered":"\"\u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003estack-overflow-ffmpeg-JIT\\u003c/span\\u003e\""}},"permanent":0},{"author":"cehoyos","cnum":1,"comment":"valgrind shows a possible issue:\r\n{{{\r\n==17778== Invalid read of size 8\r\n==17778==    at 0x4767E9: che_configure (aacdec_template.c:133)\r\n==17778==    by 0x4767E9: output_configure.cold (aacdec_template.c:543)\r\n==17778==    by 0xE889EC: aac_decode_frame_int.isra.0 (aacdec_template.c:3312)\r\n==17778==    by 0xE8935C: aac_decode_frame (aacdec_template.c:3457)\r\n==17778==    by 0x8B119F: decode_simple_internal (decode.c:342)\r\n==17778==    by 0x8B119F: decode_simple_receive_frame (decode.c:538)\r\n==17778==    by 0x8B119F: decode_receive_frame_internal (decode.c:556)\r\n==17778==    by 0x8B1E4F: avcodec_send_packet (decode.c:614)\r\n==17778==    by 0x4B85AC: decode (ffmpeg.c:2217)\r\n==17778==    by 0x4B85AC: decode_audio (ffmpeg.c:2274)\r\n==17778==    by 0x4B85AC: process_input_packet (ffmpeg.c:2596)\r\n==17778==    by 0x4BB31A: process_input (ffmpeg.c:4493)\r\n==17778==    by 0x4BB31A: transcode_step (ffmpeg.c:4613)\r\n==17778==    by 0x4BB31A: transcode (ffmpeg.c:4667)\r\n==17778==    by 0x49838D: main (ffmpeg.c:4872)\r\n}}}\r\n","comment_history":{"0":{"author":"cehoyos","comment":"valgrind shows a possible issue:\r\n{{{\r\n==17778== Invalid read of size 8\r\n==17778==    at 0x4767E9: che_configure (aacdec_template.c:133)\r\n==17778==    by 0x4767E9: output_configure.cold (aacdec_template.c:543)\r\n==17778==    by 0xE889EC: aac_decode_frame_int.isra.0 (aacdec_template.c:3312)\r\n==17778==    by 0xE8935C: aac_decode_frame (aacdec_template.c:3457)\r\n==17778==    by 0x8B119F: decode_simple_internal (decode.c:342)\r\n==17778==    by 0x8B119F: decode_simple_receive_frame (decode.c:538)\r\n==17778==    by 0x8B119F: decode_receive_frame_internal (decode.c:556)\r\n==17778==    by 0x8B1E4F: avcodec_send_packet (decode.c:614)\r\n==17778==    by 0x4B85AC: decode (ffmpeg.c:2217)\r\n==17778==    by 0x4B85AC: decode_audio (ffmpeg.c:2274)\r\n==17778==    by 0x4B85AC: process_input_packet (ffmpeg.c:2596)\r\n==17778==    by 0x4BB31A: process_input (ffmpeg.c:4493)\r\n==17778==    by 0x4BB31A: transcode_step (ffmpeg.c:4613)\r\n==17778==    by 0x4BB31A: transcode (ffmpeg.c:4667)\r\n==17778==    by 0x49838D: main (ffmpeg.c:4872)\r\n}}}\r\n","date":1597699894008321}},"date":1597699894008321,"fields":{"component":{"label":"Component","new":"avcodec","old":"ffmpeg","rendered":"\"\\u003cspan class=\\\"trac-field-old\\\"\\u003effmpeg\\u003c/span\\u003e \u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003eavcodec\\u003c/span\\u003e\""},"keywords":{"label":"Keywords","new":"aac","old":"asan","rendered":"\"aac added; asan removed\""},"priority":{"label":"Priority","new":"important","old":"normal","rendered":"\"\\u003cspan class=\\\"trac-field-old\\\"\\u003enormal\\u003c/span\\u003e \u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003eimportant\\u003c/span\\u003e\""}},"permanent":1},{"author":"seviezhou","cnum":2,"comment":"I am not surely if these three bug reports point to the same location. I think it is a little bit strange.","comment_history":{"0":{"author":"seviezhou","comment":"I am not surely if these three bug reports point to the same location. I think it is a little bit strange.","date":1597713980516201}},"date":1597713980516201,"fields":{},"permanent":1},{"author":"JEEB","cnum":3,"comment":"For the record I posted a patch set that would improve the sanity checks for 22.2 so that it is not as easy to get handled as such on the 18th, but so far have received no reviews:\r\n\r\nhttps://patchwork.ffmpeg.org/project/ffmpeg/list/?series=2055\r\n\r\nThis causes both of the fuzzing samples I have received to no longer be an issue (with both valgrind and clang 10 ASAN), while it still enables valid 22.2 content to decode properly.","comment_history":{"0":{"author":"JEEB","comment":"For the record I posted a patch set that would improve the sanity checks for 22.2 so that it is not as easy to get handled as such on the 18th, but so far have received no reviews:\r\n\r\nhttps://patchwork.ffmpeg.org/project/ffmpeg/list/?series=2055\r\n\r\nThis causes both of the fuzzing samples I have received to no longer be an issue (with both valgrind and clang 10 ASAN), while it still enables valid 22.2 content to decode properly.","date":1597956073806023}},"date":1597956073806023,"fields":{},"permanent":1},{"author":"cehoyos","cnum":4,"comment":"Fixed by Jan Ekstr\u00f6m in d6f293353c94c7ce200f6e0975ae3de49787f91f","comment_history":{"0":{"author":"cehoyos","comment":"Fixed by Jan Ekstr\u00f6m in d6f293353c94c7ce200f6e0975ae3de49787f91f","date":1598304797219300}},"date":1598304797219300,"fields":{"resolution":{"label":"Resolution","new":"fixed","old":"","rendered":"\"\u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003efixed\\u003c/span\\u003e\""},"status":{"label":"Status","new":"closed","old":"new","rendered":"\"\\u003cspan class=\\\"trac-field-old\\\"\\u003enew\\u003c/span\\u003e \u2192 \\u003cspan class=\\\"trac-field-new\\\"\\u003eclosed\\u003c/span\\u003e\""}},"permanent":1},{"author":"cehoyos","cnum":5,"comment":"Since the information in the CVE report is wrong:\r\nThis issue is neither reproducible with FFmpeg 4.3 nor earlier versions.","comment_history":{"0":{"author":"cehoyos","comment":"Since the information in the CVE report is wrong:\r\nThis issue is neither reproducible with FFmpeg 4.3 nor earlier versions.","date":1626209809479289}},"date":1626209809479289,"fields":{},"permanent":1}];
+      var auto_preview_timeout=2.0;
+      var form_token="1c201c33ecb30bf0b3cec037";
+      var jquery_ui={"ampm":true,"date_format":"M d, yy","day_names":{"abbreviated":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"narrow":["S","M","T","W","T","F","S"],"wide":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]},"default_timezone":0,"first_week_day":0,"month_names":{"abbreviated":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wide":["January","February","March","April","May","June","July","August","September","October","November","December"]},"period_names":{"am":["AM","AM"],"pm":["PM","PM"]},"show_timezone":false,"time_format":"h:mm:ss TT","timepicker_separator":", ","timezone_iso8601":false,"timezone_list":null};
+      var tags={"autocomplete_field":"field-keywords","help_href":null,"help_new_window":false,"keywords":["\"keep","-","-map","-t","-tmcd",".ape",".yuv","/","10","100i","1088","2-pass","2024","264_metadata","3.3.2","302","3221225725","3gpp","404","422.y4m","60000","8","AAC","AIF","AMF","APE","AVI","AVS2","Atmos","Audio","Audiotoolbox","Broken","CC_IDENT","CHUNK","CLosed-caption","CP1252","CSS","ChromaLocation","Crop","D3D11","DASH","DNxHD","DTS","Error","FFREPORT","FFmpeg","FLAC","FPE","G723_1","GPMF","H264","HDS","HLS","HTML","Hevc","ICY","ID3","ID3v2","IDR","IMX","Intel","LCW2","LEAD","LTO","Lyra","METADATA","MP3","MQA","MXF","Metadata","NUT","NVDEC","NVENC","NewTek","No","Non-monotonic","Non-monotonous","Nvidia","OOM","OPUS","PGS","QSV","RDP","RTMP","RTP","RTSP","ReplayGain","Rext","SAP","SCTE-35","SDL2","SEEK","SEGFAULT","SIGSEGV","STF","SVQ1","TARGETDURATION","TIF","TMCD","Tag","VAAPI","VBK","VPP_QSV","Version","Widevine","Windows","YUV4MPEG2","ZyGo","a","a12v","aac","aax","abort","ac3","ac4","acrossfade","adpcm","afade","aiff","aja","alac","alimiter","alive\"","alpha","als","alsa","altivec","amd","amf","amlogic","amovie","amr","amr_nb","amrnb","amrp","analyzeduration","android","anim","animation","ansi","anull","anullsrc","apac","ape","apng","apple","aptx","aresample","arm","art","artifact","asegment","asf","asp","aspect","ass","assertion","astats","astreamselect","async","atmos","atrac","atrac3","atrac3p","atsc","audio","audio/video","audiotoolbox","auth","auto","av1","av1_amf","av1_nvenc","av_get_token","av_interleaved_write_frame","av_log","avc","avc;","avchroma","avcodec","avfilter","avfoundation","avi","avid","avio","avio_close_dir","avio_open_dir","avio_skip","avisynth","binary","bit","bitexact","bitrate","bk2","black","blackmagic","blueiris","blur","bluray","books","bounce","bounty","bpg","bsf","buffer","buffersink","bugs","build","building","bwdif","bytes","cache","caf","callback","caption","captions","capture","carbon","cavs","cc","cc1","ccaption_dec","cdxl","centos","cfhd","cfr","channel_layout","channelmap","channels","channelsplit","chapters","checksum","chromakey","chunk","clang","clipping","cllc","closed","clv","cmdutils","cmyk","codecpar","coder","colon","color_primaries","color_trc","colorhold","colorspace","command","comment","compilation","compile","concat","concatenate","configuration","conversion","convert","convertion","cook","cookie","copy","copyts","corrupted","coverrect","crash","crc","creation","creation_time","crop","cropdetect","cropping","csf","css","csv","cts","cuda","cues","cursor","curve","curves","cuts","cuvid","d3d11va","d3d12va","dahua","dash","dashdec","dashencoder","data","dca","ddagrab","dead","deadlock","debug","decimate","decklink","decode","decode_block","decoder","decoding","default","delay","demuxer","denoise","dereference","deshake","desync","detelecine","device","dicom","direct3d","directio","directshow","disable-x86asm","disconnected","discontinuity","disposition","dither","dithering","divx","djgpp","dn","dnxhd","dnxhr","doc","docker","docs","documentation","dolby_e","dovi","downmix","dplii","dpx","drawtext","drm","drmeter","drop","dropouts","ds2","dsd","dsf","dshow","dss","dts","dtsshift","dual","duplicate","duration","dv","dvb_subtitle","dvb_teletext","dvbsub","dvcpro50","dvd","dvdsub","dvdsubdec","dvvideo","dwab","dxva2","dynaudnorm","eac3","ease_of_use","easy","ebur128","editlist","edl","edts","eia-608","eia608","electronicarts","email","encoder","encoding","encrypt","eof","eq","equirect","error","examples","exif","exit","expression","exr","facebook","failed","faststart","fate","fateclient","fault","fec","fedora","ffjni","ffmetadata","ffmpeg","ffmpeg-vaapi","ffplay","ffprobe","ffreport","ffrprobe","ffserver","fftools","ffv1","ffv1_vulkan","fifo","file","filename","filter","filter_complex","filtering","filters","fits","flac","flic","flif","flite","flv","flv;","fmp4","font","force_key_frames","format","formatting","fps","fps_mode","frame","frame;","frame_num","frame_pts","framerate","frames","framesync","freeze","freezing","frei0r","fsb","fuzz","fuzzer","fuzzing","g722","g726","g729","gamma","gapless","gaps","gaussian","gblur","gdigrab","gfxcapture","gif","glob","global","gmp4","gnutls","gpu","gradfun","granule","grayscale","gsm","gsoc","gxf","h.264","h.264;","h263","h264","h264_amf","h264_mmal","h264_nvenc","h264_omx","h264_qsv","h264_vaapi","h264_vulkan","h265","haiku","handbrake","hang","hardware","hdcd","hdr","hdr10plus","header","header.","headers","heif","help","hevc","hevc_amf","hevc_cuvid","hevc_nvenc","hevc_vaapi","hevc_videotoolbox","hevc_vulkan","histogram","hls","htmlsubtitles","http","http_proxy","https","huge","hv60","hw_decode","hwaccel","hwcontext_qsv","hwdownload","hwupload","hwupload_qsv","i686","iXML","iac","iamf","icecast","ictcp","id","id3","id3v1","id3v2","iec61883","ieee1394","iff","image2","images","indeo3","indeo4","init","initialization","input","intel","interlaced","interrupt","invalid","ios","ip","is","ismindex","itsoffset","ivalid","j2k","jack","join","jpeg2000","jpegls","jump","keyframe","kitty","klfs","klv","kmsgrab","kodi","lame","language","latency","latm","lavf","lavfi","leading","leak","lensfun","libaom","libaom-av1","libass","libatomic","libav","libcdio","libfdk-aac","libiec61883","libjxl","libmp3lame","libndi","libopenh264","libopenjpeg","libopenmpt","libopus","libplacebo","librtmp","libsrt","libsvtav1","libvidstab","libvmaf","libvorbis","libvpx","libx264","libx265","libxvid","libzvbi","linear","links","live","ljpeg","log","logging","login","loglevel","lookahead","loop","loss","lossless","loudness","loudnorm","lowres","lra","lrc","lto","lut3d","lv2","lxf","lyrics","m2v","m3u8","m4a","m4b","m4v","maco","macos","manifest","map","matroska","matrox","max_interleave_delta","maxrate","mbedtls","mcdeint","mdec","media","mediacodec","mediafoundation","megacd","memleak","memory","mesa","mestimate","metadata","mime_type","mingw","mips","mismatch","misplaced","missing","mitchell","mjpeg","mka","mkv","mlp","mlv","mmal","mms","mmsh","mmst","monkey's","mosaic","mouse","mov","mov_text","movement","movie","movtomp4","mp1","mp2","mp3","mp4","mp4a","mpc","mpeg2_vaapi","mpeg2video","mpeg4","mpeg4ssp","mpegps","mpegts","mpegtsraw","mpegvideo","mpfilter","mpg123","mpjpeg","mpjpegdec","mpv","msc","msmpeg4","msvc","msvideo1","multi-client","multiple","multivariante","muxer","muxer:","muxing","mvc","mxf","mxf_opatom","nasm","native","network","nlmeans","nodisp","noexec","nokey","non-existing","normalization","normalize","npp","nsv","null","nullsrc","nut","nvdec","nvenc","nvidia","nvidia-container-toolkit","ocr","ogg","oma","omx","on2avc","oom","op1a","openCL","openal","opencl","opencv","opengl","opus","opw","order","osx","output","outreachy","overflow","overlay","packed","packet","pad","paf","pal8","palettegen","pan","pass","password","pat","pattern_type","pause","pcm_dvd","pcm_s16le","pcm_s24le","performance","perspective","pgssub","photocd","pipe","pixels","pixfmt","piz","pkg-config","pkt_duration","plain-text","playback","pmf","pmp","pmt","png","pngdec","pointer","pos","postprocessing","ppc","ppc64el","premiere","preset","probe","prompeg","prores","prores_ks","protocol","proxy","psf2","psnr","pts","pulldown","pulseaudio","qclp","qcp","qdm2","qdraw","qmax","qmin","qmv","qscale","qsv","qtkit","quality","quick","quicksync","quicktime","r3d","ra28","race","range","rawvideo","rdft","readrate","real","reconnect","rectilinear","redirection","reencode","reference","refs","regression","remux","render","report","resampling","resolv","resources","reverb","rfc6381","rhel","rhozet","riff","rotate","rotated","rounding","roundup","rpl","rpuenc","rtm","rtmp","rtmpe","rtmps","rtp","rtsp","rv10","rv20","rv30","rv40","rw_timeout","s12m","s302m","s337m","sar","saturation","sbr","scale","scale_cuda","scale_qsv","scaling","scenecut","scpr","screen","screencasting","scte_35","sdk","sdl","sdp","sdp_file","search","security","seek","seeking","segacd","segfault","segment","select","sendcmd","separator","sequence","series","server","setpts","sfd","sftp","shader","sharpen","sharpen_npp","shorten","shortest","shoutcast","show_region","showcqt","showcwt","showspectrumpic","showwaves","showwavespic","shq","sighup","sigint","signaling","signature","sigpipe","sigsegv","silicon","sipr","skip","slide","slideshow","slow","slower","smaf","smartblur","smpl","sn40","snow","sofdec","solaris","soxr","spdif","speedhq","speedhqenc","speex","split","srt","srtdec","srtp","ssegment","ssim","stack-overflow","start_pts","status","stdin","stdout","stream","stream_loop","stream_map","streaming","streamselect","stsd","studio","sub","sub-rip","subfile","submitting","subrip","subtitle","subtitles","subviewer","sup","surfaces","svq3","swf","swr_convert","sws_dither","sws_flags","swscale","symbol","sync","synchronous","tags","targa","tcp","tee","template","terminology","test","texi","textfile","thd","the","theora","thumbnail","tif","tiff","time","timecode","timeline","timeout","timescale","timestamp","tiny_psnr","title","tls","tmpdir","to","tpad","track","tracks","tracwiki","transform.trf","transparent","transpose","trim","truehd","truncation","tsan","tta","tunneled","twitch","tx3g","typo","ubsan","udp","underflow","unicode","unsharp","unsupported","url","uspp","ustream","utf16","v360","v4l","v4l2","v4l2loopback","v4l2m2m","va-api","vaapi","vaapi_h264","variance","vbr","vbv","vc1","vce","vda","vdom","vdpau","vfr","vfwcap","via","video","video4linux2","videolan","videotoolbox","vidstabdetect","vimeo","visual","vmixdec","vobsub","volume","volumedetect","vorbis","voxware","vp3","vp6","vp7","vp8","vp9","vpp_qsv","vqavideo","vs2015","vsx","vsync","vulkan","vvc","wav","wavdec","waveform","wavpack","webcam","webm","webp","websocket","webvtt","wiki","wiki-redirect","win","win10","win32","windows","winrt","wish","with","wma","wmalossless","wmapro","wmav2","wmavoice","wmserver","wmv2","wmv3","wrap","wtv","x11grab","x264","x265","x86","xHE-AAC","xerror","xfade","xml","xmv","xsub","xvba","xvid","xyz","y4v","yadif","youtube","yuv","yuv2rgb","yuv420p","yuv420p10le","yuv422p10le","zip","zmq","zoompan","zvr"],"match_from_start":"","separator":" "};
+    </script>
+    <script src="/chrome/common/js/jquery.js"></script>
+    <script src="/chrome/common/js/babel.js"></script>
+    <script src="/chrome/common/js/trac.js"></script>
+    <script src="/chrome/common/js/search.js"></script>
+    <script src="/chrome/common/js/folding.js"></script>
+    <script src="/chrome/common/js/wikitoolbar.js"></script>
+    <script src="/chrome/common/js/resizer.js"></script>
+    <script src="/chrome/common/js/auto_preview.js"></script>
+    <script src="/chrome/common/js/jquery-ui.js"></script>
+    <script src="/chrome/common/js/jquery-ui-addons.js"></script>
+    <script src="/chrome/common/js/jquery-ui-i18n.js"></script>
+    <script src="/chrome/tags/js/autocomplete_tags.js"></script>
+    <script>
+      jQuery(function($) {
+        $(".trac-autofocus").focus();
+        $(".trac-target-new").attr("target", "_blank");
+        if ($.ui) { /* is jquery-ui added? */
+          $(".trac-datepicker:not([readonly])")
+            .prop("autocomplete", "off").datepicker();
+          // Input current date when today is pressed.
+          var _goToToday = $.datepicker._gotoToday;
+          $.datepicker._gotoToday = function(id) {
+            _goToToday.call(this, id);
+            this._selectDate(id)
+          };
+          $(".trac-datetimepicker:not([readonly])")
+            .prop("autocomplete", "off").datetimepicker();
+        }
+        $(".trac-disable").disableSubmit(".trac-disable-determinant");
+        setTimeout(function() { $(".trac-scroll").scrollToTop() }, 1);
+        $(".trac-disable-on-submit").disableOnSubmit();
+      });
+    </script>
+    <!--   # include 'site_head.html' (layout.html) -->
+    <!--   end of site_head.html -->
+    <!-- # endblock head (content inherited from layout.html) -->
+
+
+    <script src="/chrome/common/js/threaded_comments.js"></script>
+    <script>
+      jQuery(function($) {
+        $("div.description").find("h1,h2,h3,h4,h5,h6")
+          .addAnchor(_("Link to this section"));
+        $(".foldable").enableFolding(false, true);
+        $("#attachments").toggleClass("collapsed");
+        $("#trac-up-attachments").click(function () {
+          $("#attachments").removeClass("collapsed");
+          return true;
+        });
+        $("#modify").parent().toggleClass("collapsed");
+        $(".trac-topnav a").click(function() {
+          $("#modify").parent().removeClass("collapsed");
+        });
+
+        function setRevertHandler() {
+          $("button.trac-revert").click(function() {
+            var div = $("div", this);
+            var field_name = div[0].id.substr(7);
+            var field_value = div.text();
+            var input = $("#propertyform *[name=field_" + field_name + "]");
+            if (input.length > 0) {
+              if (input.filter("input[type=radio]").length > 0) {
+                input.val([field_value]);
+              } else if (input.filter("input[type=checkbox]").length > 0) {
+                input.val(field_value == "1" ? [field_value] : []);
+              } else {
+                input.val(field_value);
+              }
+            } else { // Special case for CC checkbox
+              input = $("#propertyform input[name=cc_update]").val([]);
+            }
+            input.change();
+            // Remove the revert button
+            if ($(this).closest("tbody").children("tr").length === 1)
+              $(this).closest(".trac-change-panel").remove();
+            else
+              $(this).closest("tr").remove();
+            return false;
+          });
+        }
+        setRevertHandler();
+
+        var comment_focused = false;
+        $("#comment").focus(function() { comment_focused = true; })
+                     .blur(function() { comment_focused = false; });
+        $("#propertyform").autoSubmit({preview: '1'}, function(data, reply) {
+          var items = $(reply);
+          // Update ticket box
+          $("#ticket").replaceWith(items.filter('#ticket'));
+          // Replaces content of #changelog, without recreating it
+          $("#changelog").empty().append(items.filter("#changelog").contents());
+          // Apply comments order and "Show" preferences
+          applyCommentsOrder(
+            $('#prefs input[name="trac-comments-order"]:checked').val());
+          // Show warnings
+          var new_changes = $("#changelog .trac-new");
+          $("#trac-edit-warning").toggle(new_changes.length != 0);
+          if (new_changes.length != 0)
+            $("#changelog").parent().show().removeClass("collapsed");
+          $("#trac-preview-warning").remove();
+          $("#trac-edit-warning").before(items.filter('#trac-preview-warning'));
+          // Update view time
+          $("#propertyform input[name='view_time']")
+            .replaceWith(items.filter("input[name='view_time']"));
+          // Update preview
+          var preview = $("#ticketchange")
+            .html(items.filter('#preview').children());
+          var show_preview = preview.children().length != 0;
+          $("#ticketchange").toggle(show_preview);
+          setRevertHandler();
+          // Execute scripts to load stylesheets
+          items.filter("script").appendTo("head");
+        }, "#ticketchange .trac-loading");
+        $("#trac-comment-editor")
+            .autoSubmit({preview_comment: '1'}, function(data, reply) {
+          var comment = $("#trac-comment-editor")
+            .next("div.comment").html(reply);
+          comment.toggle(comment.children().length != 0);
+        }, "#changelog .trac-loading");
+
+      });
+    </script>
+    <!-- # endblock head (placeholder in theme.html) -->
+  </head> 
+  <body>
+    <!-- # block body (content inherited from theme.html) -->
+    <!--   # include 'site_header.html' (theme.html) -->
+    <!--   end of site_header.html -->
+
+    <div id="banner">
+      <div id="header">
+        <a id="logo"
+           href="https://ffmpeg.org">
+          <img  alt="FFmpeg" src="/ffmpeg-logo.png" /></a>
+
+
+      </div>
+      <form id="search" action="/search" method="get">
+        <div>
+          <label for="proj-search">Search:</label>
+          <input type="text" id="proj-search" name="q" size="18"
+                  value="" />
+          <input type="submit" value="Search" />
+        </div>
+      </form>
+          <div id="metanav" class="nav">
+      <ul><li  class="first"><a href="/login">Login</a></li><li ><a href="/prefs">Preferences</a></li><li ><a href="/wiki/TracGuide">Help/Guide</a></li><li ><a href="/about">About Trac</a></li><li ><a href="/register">Register</a></li><li  class="last"><a href="/reset_password">Forgot your password?</a></li></ul>
+    </div>
+
+    </div>
+        <div id="mainnav" class="nav">
+      <ul><li  class="first"><a href="/wiki">Wiki</a></li><li ><a href="/timeline">Timeline</a></li><li  class="active"><a href="/report">View Tickets</a></li><li ><a href="/search">Search</a></li><li  class="last"><a accesskey="T" href="/tags">Tags</a></li></ul>
+    </div>
+
+
+    <div id="main"
+         >
+      <div id="ctxtnav" class="nav">
+        <h2>Context Navigation</h2>
+        <ul>
+          <li  class="first"><span id="vote" title="Vote count"><img alt="Up-vote" src="/chrome/vote/aupgray.png" /><span id="votes">+0</span><img alt="Down-vote" src="/chrome/vote/adowngray.png" /></span></li>
+          <li ><span>&larr; <a class="prev" href="/ticket/8844" title="Ticket #8844">Previous Ticket</a></span></li>
+          <li  class="last"><span><a class="next" href="/ticket/8846" title="Ticket #8846">Next Ticket</a> &rarr;</span></li>
+        </ul>
+        <hr />
+      </div>
+
+      
+
+      
+
+      <!-- # block content (placeholder in theme.html) -->
+    <div id="content" class="ticket">
+
+
+
+<div id="ticket">
+  <div id="ticketbox" class="trac-content">
+    <div class="date">
+      <p>Opened <a class="timeline" href="/timeline?from=2020-08-11T02%3A52%3A01Z&amp;precision=second" title="See timeline at Aug 11, 2020, 2:52:01 AM">6 years ago</a></p>
+      <p>Closed <a class="timeline" href="/timeline?from=2020-08-24T21%3A33%3A17Z&amp;precision=second" title="See timeline at Aug 24, 2020, 9:33:17 PM">6 years ago</a></p>
+      <p>Last modified <a class="timeline" href="/timeline?from=2021-07-13T20%3A56%3A49Z&amp;precision=second" title="See timeline at Jul 13, 2021, 8:56:49 PM">5 years ago</a></p>
+    </div>
+
+
+    <h2>
+      <a href="/ticket/8845" class="trac-id">#8845</a>
+      <span class="trac-status">
+        <a href="/query?status=closed">closed</a>
+      </span>
+      <span class="trac-type">
+        <a href="/query?status=!closed&amp;type=defect">defect</a>
+      </span>
+      <span class="trac-resolution">
+        (<a href="/query?resolution=fixed&amp;status=closed">fixed</a>)
+      </span>
+    </h2>
+
+    <h1 id="trac-ticket-title" class="searchable">
+      <span class="summary">A stack-buffer-overflow in FFmpeg JIT code</span>
+    </h1>
+
+    <table class="properties">
+
+      <tr>
+        <th id="h_reporter">Reported by:</th>
+        <td class="searchable" headers="h_reporter"><a class="trac-author" href="/query?reporter=seviezhou&amp;status=!closed">Zhou Anshunkang</a></td>
+
+        <th id="h_owner" class="missing">Owned by:</th>
+        <td headers="h_owner"></td>
+      </tr>
+      <tr>
+        <th id="h_priority">
+          Priority:
+        </th>
+        <td headers="h_priority">
+          <a href="/query?priority=important&amp;status=!closed">important</a>
+        </td>
+        <th id="h_component">
+          Component:
+        </th>
+        <td headers="h_component">
+          <a href="/query?component=avcodec&amp;status=!closed">avcodec</a>
+        </td>
+      </tr>
+      <tr>
+        <th id="h_version">
+          Version:
+        </th>
+        <td headers="h_version">
+          <a href="/query?status=!closed&amp;version=git-master">git-master</a>
+        </td>
+        <th id="h_keywords">
+          Keywords:
+        </th>
+        <td class="searchable" headers="h_keywords">
+          <a href="/query?keywords=~aac&amp;status=!closed">aac</a>
+        </td>
+      </tr>
+      <tr>
+        <th class="missing" id="h_cc">
+          Cc:
+        </th>
+        <td class="searchable" headers="h_cc">
+          
+        </td>
+        <th class="missing" id="h_blockedby">
+          Blocked By:
+        </th>
+        <td headers="h_blockedby">
+        </td>
+      </tr>
+      <tr>
+        <th class="missing" id="h_blocking">
+          Blocking:
+        </th>
+        <td headers="h_blocking">
+        </td>
+        <th id="h_reproduced">
+          Reproduced by developer:
+        </th>
+        <td headers="h_reproduced">
+          <a href="/query?reproduced=0&amp;status=!closed">no</a>
+        </td>
+      </tr>
+      <tr>
+        <th id="h_analyzed">
+          Analyzed by developer:
+        </th>
+        <td headers="h_analyzed">
+          <a href="/query?analyzed=0&amp;status=!closed">no</a>
+        </td>
+        <th class="missing">
+        </th>
+        <td>
+        </td>
+      </tr>
+    </table>
+    <div class="description">
+      <h2 id="comment:description">Description
+      </h2>
+
+
+
+      <script>
+        // float left elements like inlinebuttons will be presented in
+        // right-to-left order, i.e. those added before #addreply will
+        // be on the right, those added after will be on the left
+        function insertNearReplyToDescription(content, side) {
+          if (side === 'right') {
+            $("#ticket .description #addreply").before(content);
+          } else if (side === 'rightmost') {
+            $("#ticket .description > h2").after(content);
+          } else if (side === 'leftmost') {
+            $("#ticket .description").children(".searchable, br")
+              .before(content);
+          } else { // 'left'
+            $("#ticket .description #addreply").after(content);
+          }
+        }
+      </script>
+
+      <div class="searchable">
+        <h2 class="section" id="Systeminfo">System info</h2>
+<p>
+Ubuntu x86_64, clang 6.0, ffmpeg (git-master <a class="ext-link" href="https://github.com/FFmpeg/FFmpeg/commit/1ead176d874acb489827ace3935fc71e1eea7e0e"><span class="icon">​</span>https://github.com/FFmpeg/FFmpeg/commit/1ead176d874acb489827ace3935fc71e1eea7e0e</a>)<br />
+</p>
+<h2 class="section" id="Configure">Configure</h2>
+<pre class="wiki">./configure --cc=clang --cxx=clang++ --ld=clang --enable-debug --toolchain=clang-asan
+</pre><h2 class="section" id="Commandline">Command line</h2>
+<pre class="wiki">./ffmpeg -i @@ -y -f mov /dev/null
+</pre><h2 class="section" id="AddressSanitizer">Address Sanitizer</h2>
+<pre class="wiki">  built with clang version 6.0.0-1ubuntu2 (tags/RELEASE_600/final)
+  configuration: --cc=clang --cxx=clang++ --ld=clang --enable-debug --toolchain=clang-asan
+  libavutil      56. 58.100 / 56. 58.100
+  libavcodec     58.100.100 / 58.100.100
+  libavformat    58. 50.100 / 58. 50.100
+  libavdevice    58. 11.101 / 58. 11.101
+  libavfilter     7. 87.100 /  7. 87.100
+  libswscale      5.  8.100 /  5.  8.100
+  libswresample   3.  8.100 /  3.  8.100
+[aac @ 0x61b000000080] Format aac detected only with low score of 1, misdetection possible!
+[aac @ 0x619000000580] More than one AAC RDB per ADTS frame is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.
+[aac @ 0x61b000000080] Packet corrupt (stream = 0, dts = NOPTS).
+[aac @ 0x619000000580] Sample rate index in program config element does not match the sample rate index configured by the container.
+[aac @ 0x619000000580] Inconsistent channel configuration.
+[aac @ 0x619000000580] get_buffer() failed
+[aac @ 0x61b000000080] decoding for stream 0 failed
+[aac @ 0x61b000000080] Estimating duration from bitrate, this may be inaccurate
+[aac @ 0x61b000000080] Could not find codec parameters for stream 0 (Audio: aac (Main), 13 channels (FL+FR+FLC+FRC+TC+TFL+TFC+TFR+TBL+TBC+TBR+TSL+TSR+BFC+BFL+BFR), fltp, 5 kb/s): unspecified sample rate
+Consider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options
+Input #0, aac, from '/home/seviezhou//experiment-3/AlphaFuzz-ffmpeg/alpha_out/crashes/id:000001,src:003723,op:havoc':
+  Duration: 00:00:00.18, bitrate: 5 kb/s
+    Stream #0:0: Audio: aac (Main), 13 channels (FL+FR+FLC+FRC+TC+TFL+TFC+TFR+TBL+TBC+TBR+TSL+TSR+BFC+BFL+BFR), fltp, 5 kb/s
+[aac @ 0x619000002380] Channel layout '16 channels (FL+FR+FLC+FRC+TC+TFL+TFC+TFR+TBL+TBC+TBR+TSL+TSR+BFC+BFL+BFR)' with 16 channels does not match specified number of channels 13: ignoring specified channel layout
+Stream mapping:
+  Stream #0:0 -&gt; #0:0 (aac (native) -&gt; aac (native))
+Press [q] to stop, [?] for help
+[aac @ 0x619000002380] More than one AAC RDB per ADTS frame is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.
+[aac @ 0x619000002380] channel element 3.7 is not allocated
+Error while decoding stream #0:0: Invalid data found when processing input
+[aac @ 0x619000002380] Sample rate index in program config element does not match the sample rate index configured by the container.
+=================================================================
+==48056==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffff1e2fba5 at pc 0x0000029497f1 bp 0x7ffff1e2eb50 sp 0x7ffff1e2eb48
+READ of size 1 at 0x7ffff1e2fba5 thread T0
+    #0 0x29497f0  (/home/seviezhou/ffmpeg/ffmpeg+0x29497f0)
+    #1 0x2959670  (/home/seviezhou/ffmpeg/ffmpeg+0x2959670)
+    #2 0x2941d83  (/home/seviezhou/ffmpeg/ffmpeg+0x2941d83)
+    #3 0x126e91c  (/home/seviezhou/ffmpeg/ffmpeg+0x126e91c)
+    #4 0x126e22d  (/home/seviezhou/ffmpeg/ffmpeg+0x126e22d)
+    #5 0x567dae  (/home/seviezhou/ffmpeg/ffmpeg+0x567dae)
+    #6 0x560488  (/home/seviezhou/ffmpeg/ffmpeg+0x560488)
+    #7 0x555ea5  (/home/seviezhou/ffmpeg/ffmpeg+0x555ea5)
+    #8 0x7f1571274b96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310
+    #9 0x41dea9 in _init (/home/seviezhou/ffmpeg/ffmpeg+0x41dea9)
+
+Address 0x7ffff1e2fba5 is located in stack of thread T0 at offset 165 in frame
+    #0 0x294179f  (/home/seviezhou/ffmpeg/ffmpeg+0x294179f)
+
+  This frame has 4 object(s):
+    [32, 64) 'gb.i' (line 1113)
+    [96, 128) 'gb' (line 3413)
+    [160, 164) 'new_extradata_size' (line 3417) &lt;== Memory access at offset 165 overflows this variable
+    [176, 180) 'jp_dualmono_size' (line 3421)
+HINT: this may be a false positive if your program uses some custom stack unwind mechanism or swapcontext
+      (longjmp and C++ exceptions *are* supported)
+SUMMARY: AddressSanitizer: stack-buffer-overflow (/home/seviezhou/ffmpeg/ffmpeg+0x29497f0)
+Shadow bytes around the buggy address:
+  0x10007e3bdf20: f2 f2 f2 f2 f2 f2 f2 f2 00 00 00 00 00 00 00 00
+  0x10007e3bdf30: f2 f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e3bdf40: 00 00 00 00 00 00 00 00 00 00 00 00 f3 f3 f3 f3
+  0x10007e3bdf50: f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e3bdf60: f1 f1 f1 f1 f8 f8 f8 f8 f2 f2 f2 f2 00 00 00 00
+=&gt;0x10007e3bdf70: f2 f2 f2 f2[04]f2 04 f3 00 00 00 00 00 00 00 00
+  0x10007e3bdf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e3bdf90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e3bdfa0: 00 00 00 00 f1 f1 f1 f1 04 f2 f8 f3 00 00 00 00
+  0x10007e3bdfb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10007e3bdfc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==48056==ABORTING
+</pre><p>
+It seems that if I ran this command multiple times, it can crash different objects, here is another ASAN output, using the same input:<br />
+</p>
+<pre class="wiki">  built with clang version 6.0.0-1ubuntu2 (tags/RELEASE_600/final)
+  configuration: --cc=clang --cxx=clang++ --ld=clang --enable-debug --toolchain=clang-asan
+  libavutil      56. 58.100 / 56. 58.100
+  libavcodec     58.100.100 / 58.100.100
+  libavformat    58. 50.100 / 58. 50.100
+  libavdevice    58. 11.101 / 58. 11.101
+  libavfilter     7. 87.100 /  7. 87.100
+  libswscale      5.  8.100 /  5.  8.100
+  libswresample   3.  8.100 /  3.  8.100
+[aac @ 0x61b000000080] Format aac detected only with low score of 1, misdetection possible!
+[aac @ 0x619000000580] More than one AAC RDB per ADTS frame is not implemented. Update your FFmpeg version to the newest one from Git. If the problem still occurs, it means that your file has a feature which has not been implemented.
+[aac @ 0x61b000000080] Packet corrupt (stream = 0, dts = NOPTS).
+[aac @ 0x619000000580] Sample rate index in program config element does not match the sample rate index configured by the container.
+=================================================================
+==73492==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffe338744d7 at pc 0x0000029497f1 bp 0x7ffe33873cd0 sp 0x7ffe33873cc8
+READ of size 1 at 0x7ffe338744d7 thread T0
+    #0 0x29497f0  (/home/seviezhou/ffmpeg/ffmpeg+0x29497f0)
+    #1 0x2959670  (/home/seviezhou/ffmpeg/ffmpeg+0x2959670)
+    #2 0x2941d83  (/home/seviezhou/ffmpeg/ffmpeg+0x2941d83)
+    #3 0x126e91c  (/home/seviezhou/ffmpeg/ffmpeg+0x126e91c)
+    #4 0x126e22d  (/home/seviezhou/ffmpeg/ffmpeg+0x126e22d)
+    #5 0xfbf83f  (/home/seviezhou/ffmpeg/ffmpeg+0xfbf83f)
+    #6 0xfb6db4  (/home/seviezhou/ffmpeg/ffmpeg+0xfb6db4)
+    #7 0x51815a  (/home/seviezhou/ffmpeg/ffmpeg+0x51815a)
+    #8 0x516cca  (/home/seviezhou/ffmpeg/ffmpeg+0x516cca)
+    #9 0x5166f5  (/home/seviezhou/ffmpeg/ffmpeg+0x5166f5)
+    #10 0x555cef  (/home/seviezhou/ffmpeg/ffmpeg+0x555cef)
+    #11 0x7f0651f26b96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310
+    #12 0x41dea9 in _init (/home/seviezhou/ffmpeg/ffmpeg+0x41dea9)
+
+Address 0x7ffe338744d7 is located in stack of thread T0 at offset 2039 in frame
+    #0 0x294596f  (/home/seviezhou/ffmpeg/ffmpeg+0x294596f)
+
+  This frame has 26 object(s):
+    [32, 37) '.compoundliteral.sroa.5.i.i' (line 199)
+    [64, 69) '.compoundliteral11.sroa.5.i.i' (line 199)
+    [96, 101) '.compoundliteral22.sroa.5.i.i' (line 199)
+    [128, 1152) 'e2c_vec.i' (line 263)
+    [1280, 1285) '.compoundliteral.sroa.5.i' (line 260)
+    [1312, 1317) '.compoundliteral60.sroa.5.i' (line 260)
+    [1344, 1349) '.compoundliteral80.sroa.5.i' (line 260)
+    [1376, 1381) '.compoundliteral99.sroa.5.i' (line 260)
+    [1408, 1413) '.compoundliteral118.sroa.5.i' (line 260)
+    [1440, 1445) '.compoundliteral133.sroa.5.i' (line 260)
+    [1472, 1477) '.compoundliteral156.sroa.5.i' (line 260)
+    [1504, 1509) '.compoundliteral176.sroa.5.i' (line 260)
+    [1536, 1541) '.compoundliteral193.sroa.5.i' (line 260)
+    [1568, 1584) 'SWAP_tmp.i' (line 438)
+    [1600, 1616) 'SWAP_tmp219.i' (line 439)
+    [1632, 1648) 'SWAP_tmp224.i' (line 440)
+    [1664, 1680) 'SWAP_tmp229.i' (line 441)
+    [1696, 1712) 'SWAP_tmp234.i' (line 442)
+    [1728, 1744) 'SWAP_tmp239.i' (line 443)
+    [1760, 1776) 'SWAP_tmp244.i' (line 444)
+    [1792, 1808) 'SWAP_tmp249.i' (line 445)
+    [1824, 1840) 'SWAP_tmp254.i' (line 446)
+    [1856, 1872) 'SWAP_tmp270.i' (line 454)
+    [1888, 1892) 'channels' (line 514)
+    [1904, 2016) 'id_map' (line 516)
+    [2048, 2055) 'type_counts' (line 517) &lt;== Memory access at offset 2039 underflows this variable
+HINT: this may be a false positive if your program uses some custom stack unwind mechanism or swapcontext
+      (longjmp and C++ exceptions *are* supported)
+SUMMARY: AddressSanitizer: stack-buffer-overflow (/home/seviezhou/ffmpeg/ffmpeg+0x29497f0)
+Shadow bytes around the buggy address:
+  0x100046706840: f8 f2 f2 f2 f8 f2 f2 f2 f8 f2 f2 f2 f8 f2 f2 f2
+  0x100046706850: f8 f2 f2 f2 f8 f2 f2 f2 f8 f2 f2 f2 f8 f2 f2 f2
+  0x100046706860: f8 f8 f2 f2 f8 f8 f2 f2 f8 f8 f2 f2 f8 f8 f2 f2
+  0x100046706870: f8 f8 f2 f2 f8 f8 f2 f2 f8 f8 f2 f2 f8 f8 f2 f2
+  0x100046706880: f8 f8 f2 f2 f8 f8 f2 f2 04 f2 00 00 00 00 00 00
+=&gt;0x100046706890: 00 00 00 00 00 00 00 00 f2 f2[f2]f2 07 f3 f3 f3
+  0x1000467068a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x1000467068b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x1000467068c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x1000467068d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x1000467068e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==73492==ABORTING
+</pre><p>
+After it crashes, it also seems to mess up the terminal.<br />
+</p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<div id="attachments">
+  <h3  class="foldable">
+    Attachments
+    <span class="trac-count">(1)</span></h3>
+  <div class="attachments">
+    <dl class="attachments">
+      <dt><a href="/attachment/ticket/8845/stack-overflow-ffmpeg-JIT" title="View attachment">stack-overflow-ffmpeg-JIT</a><a href="/raw-attachment/ticket/8845/stack-overflow-ffmpeg-JIT"
+          class="trac-rawlink" title="Download">&#8203;</a>
+ (<span title="116 bytes">116 bytes</span>
+) - added by <span class="trac-author">Carl Eugen Hoyos</span> <a class="timeline" href="/timeline?from=2020-08-17T21%3A26%3A47Z&amp;precision=second" title="See timeline at Aug 17, 2020, 9:26:47 PM">6 years ago</a>.</dt>
+    </dl>
+    <p>
+  Download all attachments as:
+  <a rel="nofollow" href="/zip-attachment/ticket/8845/">.zip</a>
+</p>
+
+
+
+
+  </div>
+</div>
+      <div>
+        <div class="trac-noscript" style="position: relative">
+          <form id="prefs" method="get" action="/prefs"
+                style="position: absolute; right: 0">
+            <div id="trac-comments-order">
+              <input type="radio" id="trac-comments-oldest"
+                     name="trac-comments-order" value="oldest"
+                     checked="checked" />
+              <label for="trac-comments-oldest">Oldest first</label>
+              <input type="radio" id="trac-comments-newest"
+                     name="trac-comments-order" value="newest" />
+              <label for="trac-comments-newest">Newest first</label>
+              <span id="trac-threaded-toggle" style="display: none">
+                <input type="radio" id="trac-comments-threaded"
+                       name="trac-comments-order" value="threaded" />
+                <label for="trac-comments-threaded">Threaded</label>
+              </span>
+            </div>
+            <div>
+              <input id="trac-show-comments-toggle" type="checkbox"
+                     checked="checked" />
+              <label for="trac-show-comments-toggle">Show comments</label>
+              <input id="trac-show-property-changes-toggle" type="checkbox" />
+              <label for="trac-show-property-changes-toggle">
+                Show property changes</label>
+            </div>
+          </form>
+        </div>
+
+        <h3 class="foldable">
+          Change History
+          <span class="trac-count">(6)</span></h3>
+
+        <div id="changelog">
+          <div class="change">
+
+
+
+
+
+
+<h3 class="change">
+  <span class="threading">
+  </span>
+  by <span class="trac-author">Carl Eugen Hoyos</span>, <a class="timeline" href="/timeline?from=2020-08-17T21%3A26%3A47Z&amp;precision=second" title="See timeline at Aug 17, 2020, 9:26:47 PM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+  <table class="changes">
+
+
+    <tr class="trac-field-attachment">
+      <th class="trac-field-attachment">Attachment:</th>
+      <td>
+        <a href="/attachment/ticket/8845/stack-overflow-ffmpeg-JIT"><em>stack-overflow-ffmpeg-JIT</em></a><a href="/raw-attachment/ticket/8845/stack-overflow-ffmpeg-JIT"
+                                  title="Download"
+                                  class="trac-rawlink">&#8203;</a>
+ added      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+          </div>
+          <div class="change" id="trac-change-1-1597699894008321">
+
+
+
+
+
+
+<h3 class="change" id="comment:1">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:1" class="">comment:1</a>
+</span>
+  by <span class="trac-author">Carl Eugen Hoyos</span>, <a class="timeline" href="/timeline?from=2020-08-17T21%3A31%3A34Z&amp;precision=second" title="See timeline at Aug 17, 2020, 9:31:34 PM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+  <table class="changes">
+
+
+    <tr class="trac-field-component">
+      <th class="trac-field-component">Component:</th>
+      <td>
+        <span class="trac-field-old">ffmpeg</span> → <span class="trac-field-new">avcodec</span>
+      </td>
+    </tr>
+
+    <tr class="trac-field-keywords">
+      <th class="trac-field-keywords">Keywords:</th>
+      <td>
+        aac added; asan removed
+      </td>
+    </tr>
+
+    <tr class="trac-field-priority">
+      <th class="trac-field-priority">Priority:</th>
+      <td>
+        <span class="trac-field-old">normal</span> → <span class="trac-field-new">important</span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+valgrind shows a possible issue:<br />
+</p>
+<pre class="wiki">==17778== Invalid read of size 8
+==17778==    at 0x4767E9: che_configure (aacdec_template.c:133)
+==17778==    by 0x4767E9: output_configure.cold (aacdec_template.c:543)
+==17778==    by 0xE889EC: aac_decode_frame_int.isra.0 (aacdec_template.c:3312)
+==17778==    by 0xE8935C: aac_decode_frame (aacdec_template.c:3457)
+==17778==    by 0x8B119F: decode_simple_internal (decode.c:342)
+==17778==    by 0x8B119F: decode_simple_receive_frame (decode.c:538)
+==17778==    by 0x8B119F: decode_receive_frame_internal (decode.c:556)
+==17778==    by 0x8B1E4F: avcodec_send_packet (decode.c:614)
+==17778==    by 0x4B85AC: decode (ffmpeg.c:2217)
+==17778==    by 0x4B85AC: decode_audio (ffmpeg.c:2274)
+==17778==    by 0x4B85AC: process_input_packet (ffmpeg.c:2596)
+==17778==    by 0x4BB31A: process_input (ffmpeg.c:4493)
+==17778==    by 0x4BB31A: transcode_step (ffmpeg.c:4613)
+==17778==    by 0x4BB31A: transcode (ffmpeg.c:4667)
+==17778==    by 0x49838D: main (ffmpeg.c:4872)
+</pre>
+</div>
+          </div>
+          <div class="change" id="trac-change-2-1597713980516201">
+
+
+
+
+
+
+<h3 class="change" id="comment:2">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:2" class="">comment:2</a>
+</span>
+  by <span class="trac-author">Zhou Anshunkang</span>, <a class="timeline" href="/timeline?from=2020-08-18T01%3A26%3A20Z&amp;precision=second" title="See timeline at Aug 18, 2020, 1:26:20 AM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+I am not surely if these three bug reports point to the same location. I think it is a little bit strange.<br />
+</p>
+
+</div>
+          </div>
+          <div class="change" id="trac-change-3-1597956073806023">
+
+
+
+
+
+
+<h3 class="change" id="comment:3">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:3" class="">comment:3</a>
+</span>
+  by <span class="trac-author">jeeb</span>, <a class="timeline" href="/timeline?from=2020-08-20T20%3A41%3A13Z&amp;precision=second" title="See timeline at Aug 20, 2020, 8:41:13 PM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+For the record I posted a patch set that would improve the sanity checks for 22.2 so that it is not as easy to get handled as such on the 18th, but so far have received no reviews:<br />
+</p>
+<p>
+<a class="ext-link" href="https://patchwork.ffmpeg.org/project/ffmpeg/list/?series=2055"><span class="icon">​</span>https://patchwork.ffmpeg.org/project/ffmpeg/list/?series=2055</a><br />
+</p>
+<p>
+This causes both of the fuzzing samples I have received to no longer be an issue (with both valgrind and clang 10 ASAN), while it still enables valid 22.2 content to decode properly.<br />
+</p>
+
+</div>
+          </div>
+          <div class="change" id="trac-change-4-1598304797219300">
+
+
+
+
+
+
+<h3 class="change" id="comment:4">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:4" class="">comment:4</a>
+</span>
+  by <span class="trac-author">Carl Eugen Hoyos</span>, <a class="timeline" href="/timeline?from=2020-08-24T21%3A33%3A17Z&amp;precision=second" title="See timeline at Aug 24, 2020, 9:33:17 PM">6 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+  <table class="changes">
+
+
+    <tr class="trac-field-resolution">
+      <th class="trac-field-resolution">Resolution:</th>
+      <td>
+        → <span class="trac-field-new">fixed</span>
+      </td>
+    </tr>
+
+    <tr class="trac-field-status">
+      <th class="trac-field-status">Status:</th>
+      <td>
+        <span class="trac-field-old">new</span> → <span class="trac-field-new">closed</span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+Fixed by Jan Ekström in <a class="changeset" href="/changeset/d6f293353c94c7ce200f6e0975ae3de49787f91f/ffmpeg" title="avcodec/aacdec_template: add more checks to make sure only 22.2 gets ...">d6f293353c94c7ce200f6e0975ae3de49787f91f</a><br />
+</p>
+
+</div>
+          </div>
+          <div class="change" id="trac-change-5-1626209809479289">
+
+
+
+
+
+
+<h3 class="change" id="comment:5">
+  <span class="threading">
+  </span>
+  <span class="cnum"><a href="#comment:5" class="">comment:5</a>
+</span>
+  by <span class="trac-author">Carl Eugen Hoyos</span>, <a class="timeline" href="/timeline?from=2021-07-13T20%3A56%3A49Z&amp;precision=second" title="See timeline at Jul 13, 2021, 8:56:49 PM">5 years ago</a>
+
+</h3>
+
+<div class="trac-change-panel">
+
+
+
+  <div class="trac-ticket-buttons">
+  </div>
+
+
+</div>
+
+
+
+
+
+<div class="comment searchable">
+  <p>
+Since the information in the CVE report is wrong:<br />
+This issue is neither reproducible with FFmpeg 4.3 nor earlier versions.<br />
+</p>
+
+</div>
+          </div>
+          <script>
+            // inlinebuttons in ticket change are presented in
+            // left-to-right order, i.e. those added before
+            // #reply-to-comment-n will be on its left, those added
+            // after will be on its right
+            function insertNearReplyToComment(num, content, side) {
+              var $replyto = $("#reply-to-comment-" + num);
+              if (side === 'right') {
+                $replyto.after(content);
+              } else if (side === 'rightmost') {
+                $replyto.parent().append(content);
+              } else if (side === 'leftmost') {
+                $replyto.parent().prepend(content);
+              } else { // 'left'
+                $replyto.before(content);
+              }
+            }
+          </script>
+
+        </div>
+      </div>
+
+
+<div class="trac-help">
+  <strong>Note:</strong>
+ See   <a href="/wiki/TracTickets">TracTickets</a>
+ for help on using tickets.
+</div>
+    </div>
+        <!-- # block content (content inherited from layout.html) -->
+    <script type="text/javascript">
+      jQuery("body").addClass("trac-has-js");
+    </script>
+    <div id="altlinks">
+      <h3>Download in other formats:</h3>
+      <ul>
+        <li class="first">
+          <a rel="nofollow" href="/ticket/8845?format=rss"
+              class="rss">
+            RSS Feed</a>
+        </li>
+        <li class="">
+          <a rel="nofollow" href="/ticket/8845?format=csv"
+              class="csv">
+            Comma-delimited Text</a>
+        </li>
+        <li class="last">
+          <a rel="nofollow" href="/ticket/8845?format=tab"
+              class="tab">
+            Tab-delimited Text</a>
+        </li>
+      </ul>
+    </div>
+    <!-- # endblock content (content inherited from layout.html) -->
+
+      <!-- # endblock content (placeholder in theme.html) -->
+    </div>
+
+    <div id="footer"><hr/>
+      <a id="tracpowered" href="https://trac.edgewall.org/"
+         ><img src="/chrome/common/trac_logo_mini.png" height="30"
+               width="107" alt="Trac Powered"/></a>
+      <p class="left">
+Powered by         <a href="/about"><strong>Trac 1.6</strong></a>
+        <br />
+ By         <a href="http://www.edgewall.org/">Edgewall Software</a>
+.      </p>
+      <p class="right">Visit the Trac open source project at<br /><a href="http://trac.edgewall.org/">http://trac.edgewall.org/</a></p>
+    </div>
+    <!--   # include 'site_footer.html' (theme.html) -->
+    <!--   end of site_footer.html -->
+    <!-- # endblock body (content inherited from theme.html) -->
+  </body> </html>

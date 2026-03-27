@@ -1,0 +1,586 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>MySQL Bugs: #116349: Sync crash in NDB cluster</title>
+ <link rel="shortcut icon" href="/favicon.ico" />
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/screen.css" />
+ <link rel="stylesheet" type="text/css" href="/static/chosen/chosen.css" />
+ <script type="text/javascript" src="/static/prototype.js"></script>
+ <!-- script type="text/javascript" src="/static/chosen/event.simulate.js"></script -->
+ <script type="text/javascript" src="/static/scriptaculous.js?load=builder,effects,dragdrop,controls,slider"></script>
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/calendar-blue.css" />
+ <script type="text/javascript" src="/static/calendar.js"></script>
+ <script type="text/javascript" src="/static/calendar-en.js"></script>
+ <script type="text/javascript" src="/static/calendar-setup.js"></script>
+
+                              <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="E6BB6-B37B4-898B7-F97BA-BBCDB",function(){function e(){if(!o){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,i.parentNode.appendChild(e),o=!0}}function t(e){o=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(i.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",i.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"E6BB6-B37B4-898B7-F97BA-BBCDB";var i=document.currentScript||document.getElementsByTagName("script")[0],o=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!o)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),i.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n=""=="true"?1:0,t="",a="yuva3zqxgk2m42odsv7q-f-6ada7b3df-clientnsv4-s.akamaihd.net",i="false"=="true"?2:1,o={"ak.v":"39","ak.cp":"1983232","ak.ai":parseInt("802521",10),"ak.ol":"0","ak.cr":81,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"22cf579a","ak.r":50152,"ak.a2":n,"ak.m":"dscx","ak.n":"essl","ak.bpcip":"197.42.13.0","ak.cport":8670,"ak.gh":"2.20.109.4","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1774425471","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==fJhCMw8YtcOFdpg7z3xB8sIFEx5utXnLNIwJyoDsEV+Z1ya+f9M/XZ7zoGJtaNp2s1CQbBF5SADeYOdiHRvb72zbATapzasrRG1EZFU03avpqa76avTGgdwe7KIJXzRD3wKQlcM+muXsfAijCVK/6zK0jLzkIWTC83YbM34msm/ZnPv/dtER+gcT5txZkJF2oH7L2jOv2y+16KwpRa3IL36tFBF7XupuPHjMUdRi0pLfQ+bnb8P+6gMURnGr96jYO281SXqpR5G3z8naMymx2miailGJDsk23rld+QVtybc2ThISEWCOLmPKYELHoXNPb0uaCG3zYiueffb93X6rf0eqLzmI32acx3C8NKL4rCMNlCVxUFSBQi5gs9P5aaJ62UtxK0vzfc5VULtoZK8qMdZ84TIwJ5hZgQ8tVEpMG98=","ak.pv":"20","ak.dpoabenc":"","ak.tf":i};if(""!==t)o["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))o["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(o)},rv:function(){var e=["ak.bpcip","ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:o,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+
+<body class="dev bugs">
+<div id="header">
+ <div id="logo"><a href="http://dev.mysql.com/"><img src="/images/mysql_100x52-64.gif" width="100" height="52" border="0" alt="MySQL" /></a></div>
+ <div id="searchandlogin">
+  <div id="searchbox">
+   <form action="/search.php" method="get">
+    <input class="frm" type="text" name="search_for" size="20" maxlength="255" />
+    <input class="submit2" type="submit" value="Search" />
+   </form>
+  </div>
+  <div id="login">
+
+   <p class="s"><a href="https://dev.mysql.com/auth/login/?dest=http%3A%2F%2Fbugs.mysql.com%2Fbug.php%3Fid%3D116349">Login</a> /
+   <a href="https://dev.mysql.com/auth/register/">Register</a></p>
+  </div>
+ </div>
+</div>
+<div id="nav">
+ <ul>
+  <li><a href="http://dev.mysql.com/">Developer Zone</a></li>
+  <li><a href="/">Bugs Home</a></li>
+   <li><a href="/report.php">Report a bug</a></li>
+  <li><a href="/search.php">Advanced search</a></li>
+  <li><a href="/search-saved.php">Saved searches</a></li>
+  <li><a href="/tags.php">Tags</a></li>
+ </ul>
+</div>
+
+<br clear="both" />
+
+<div id="content">
+<table id="bugheader" style="width: 100%">
+ <tr id="title">
+  <th>Bug&nbsp;#116349</th>
+  <td colspan="3">Sync crash in NDB cluster</td>
+ </tr>
+ <tr>
+  <th>Submitted:</th> <td>14 Oct 2024 0:12</td>
+  <th>Modified:</th> <td>24 Oct 2024 9:37</td>
+ </tr>
+ <tr>
+  <th>Reporter:</th>
+  <td>
+<a href="/search.php?cmd=display&status=All&severity=all&reporter=17732354">CunDi Fang</a>
+  </td>
+  <th>Email Updates:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/sub.php?action=Subscribe&id=116349" />
+    <input type="submit" name="action" value="Subscribe" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Status:</th>
+  <td>
+  Verified  </td>
+  <th>Impact on me:</th>
+  <td>
+    <form style="margin:0px" method="get" action="https://dev.mysql.com/auth/login/">
+    <input type="hidden" name="dest" value="http://bugs.mysql.com/impact.php?action=&id=116349" />
+    None&nbsp;<input type="submit" name="action" value="Affects Me" />    </form>
+  </td>
+ </tr>
+ <tr>
+  <th>Category:</th><td>MySQL Cluster: Cluster (NDB) storage engine</td>
+  <th>Severity:</th><td>S3 (Non-critical)</td>
+ </tr>
+ <tr>
+  <th>Version:</th><td>8.0.35-cluster MySQL Cluster Community S</td>
+  <th>OS:</th><td>Any</td>
+ </tr>
+ <tr>
+  <th>Assigned to:</th>
+  <td>
+  </td>
+  <th>CPU Architecture:</th><td>Any</td>
+ </tr>
+</table>
+
+<ul id="controls">
+<li class=" active">View</li>
+<li class=""><a href="/bug.php?id=116349&amp;edit=3">Add Comment</a></li>
+<li class=""><a href="/bug.php?id=116349&amp;files=1">Files</a></li>
+<li class=""><a href="/bug.php?id=116349&amp;edit=1">Developer</a></li>
+<li class=""><a href="/bug.php?id=116349&amp;edit=2">Edit Submission</a></li>
+<li class=""><a href="/bug.php?id=116349&amp;log=1">View Progress Log</a></li>
+<li class=""><a href="/bug.php?id=116349&amp;contribs=1">Contributions</a></li>
+</ul>
+<br clear="all" />
+ <div id="cmain"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 0:12]
+   CunDi Fang        </div>
+  <pre class="note"><strong>Description:</strong>
+I was in a cluster of 4 data nodes and tried to remove a sync related node while doing a sync, causing the cluster to crash and all nodes ndbd all down.
+
+<strong>How to repeat:</strong>
+I am a four data node mysql NDB cluster cluster, I removed node 5 during the synchronization of node 2, probably due to the presence of data on node 5 that has a dependency on node 2, which ultimately led to the failure of the synchronization and the termination of all ndbd.
+
+manager log as follows:
+```
+2024-10-08 08:26:15 [MgmtSrvr] INFO     -- Node 4: Node 8: API mysql-8.0.35 ndb-8.0.35
+2024-10-08 08:26:15 [MgmtSrvr] INFO     -- Node 5: Node 8: API mysql-8.0.35 ndb-8.0.35
+2024-10-08 08:26:15 [MgmtSrvr] INFO     -- Node 4: Suma: initiate handover for startup with nodes 0000000000000000000000000000000000000004 GCI: 5781886
+2024-10-08 08:26:15 [MgmtSrvr] INFO     -- Node 4: Suma: handover from node 2 gci: 5781886 buckets: 00000002 (2)
+2024-10-08 08:26:15 [MgmtSrvr] INFO     -- Node 2: DICT: index 89 stats auto-update starting
+2024-10-08 08:26:18 [MgmtSrvr] INFO     -- Node 2: DICT: index 89 stats auto-update starting - Repeated 2 times
+2024-10-08 08:26:20 [MgmtSrvr] INFO     -- Node 2: DICT: index 89 stats auto-update starting
+2024-10-08 08:26:20 [MgmtSrvr] INFO     -- Node 4: Start phase 101 completed (node restart)
+2024-10-08 08:26:20 [MgmtSrvr] INFO     -- Node 4: Started (mysql-8.0.35 ndb-8.0.35)
+2024-10-08 08:26:20 [MgmtSrvr] INFO     -- Node 2: NR Status: node=4,OLD=Wait handover of subscriptions,NEW=Restart completed
+2024-10-08 08:26:20 [MgmtSrvr] INFO     -- Node 2: DICT: unlocked by node 4 for NodeRestart
+2024-10-08 08:26:20 [MgmtSrvr] INFO     -- Node 5: Suma: initiate handover for startup with nodes 0000000000000000000000000000000000000008 GCI: 5781889
+2024-10-08 08:26:20 [MgmtSrvr] INFO     -- Node 5: Suma: handover from node 3 gci: 5781889 buckets: 00000002 (2)
+2024-10-08 08:26:20 [MgmtSrvr] INFO     -- Node 2: DICT: index 89 stats auto-update starting
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 2: Cluster shutdown initiated
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 3: Cluster shutdown initiated
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 4: Cluster shutdown initiated
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 5 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:21 [MgmtSrvr] ALERT    -- Node 1: Node 5 Disconnected
+2024-10-08 08:26:21 [MgmtSrvr] ALERT    -- Node 4: Node 5 Disconnected
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 2: Communication to Node 5 closed
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 3: Communication to Node 5 closed
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 4: Communication to Node 5 closed
+2024-10-08 08:26:21 [MgmtSrvr] ALERT    -- Node 2: Arbitration check won - node group majority
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 2: President restarts arbitration thread [state=6]
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 2: Removed lock for node 5
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 2: DICT: remove lock by failed node 5 for NodeRestart
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 2: DICT: unlocked by node 5 for NodeRestart
+2024-10-08 08:26:21 [MgmtSrvr] ALERT    -- Node 2: Node 5 Disconnected
+2024-10-08 08:26:21 [MgmtSrvr] ALERT    -- Node 3: Node 5 Disconnected
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 5: Node shutdown completed.
+2024-10-08 08:26:25 [MgmtSrvr] INFO     -- Node 4: Communication to Node 5 opened
+2024-10-08 08:26:25 [MgmtSrvr] INFO     -- Node 2: Communication to Node 5 opened
+2024-10-08 08:26:25 [MgmtSrvr] INFO     -- Node 3: Communication to Node 5 opened
+2024-10-08 08:26:28 [MgmtSrvr] INFO     -- Node 2 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:28 [MgmtSrvr] INFO     -- Node 4 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:28 [MgmtSrvr] INFO     -- Node 2: Node shutdown completed.
+2024-10-08 08:26:28 [MgmtSrvr] INFO     -- Node 3 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:28 [MgmtSrvr] INFO     -- Node 4: Node shutdown completed.
+2024-10-08 08:26:28 [MgmtSrvr] INFO     -- Node 3: Node shutdown completed.
+2024-10-08 08:26:28 [MgmtSrvr] ALERT    -- Node 1: Node 2 Disconnected
+2024-10-08 08:26:28 [MgmtSrvr] ALERT    -- Node 1: Node 3 Disconnected
+2024-10-08 08:26:28 [MgmtSrvr] ALERT    -- Node 1: Node 4 Disconnected
+2024-10-08 08:26:28 [MgmtSrvr] INFO     -- Nodeid 2 allocated for NDB at 192.172.10.9
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Node 1: Node 2 Connected
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Alloc node id 3 rejected, no new president yet
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Nodeid 3 allocated for NDB at 192.172.10.10
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Node 2: Start phase 0 completed (system restart)
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Node 2: Communication to Node 3 opened
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Node 2: Communication to Node 4 opened
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Node 2: Communication to Node 5 opened
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Node 2: Waiting 30 sec for nodes 3, 4 and 5 to connect, nodes [ all: 2, 3, 4 and 5 connected: 2 no-wait:  ]
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Node 1: Node 3 Connected
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Alloc node id 4 rejected, no new president yet
+2024-10-08 08:26:29 [MgmtSrvr] INFO     -- Nodeid 4 allocated for NDB at 192.172.10.11
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 1: Node 4 Connected
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 3: Start phase 0 completed (system restart)
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 3: Communication to Node 2 opened
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 3: Communication to Node 4 opened
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 3: Communication to Node 5 opened
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 3: Waiting 30 sec for nodes 2, 4 and 5 to connect, nodes [ all: 2, 3, 4 and 5 connected: 3 no-wait:  ]
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Alloc node id 5 rejected, no new president yet
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Nodeid 5 allocated for NDB at 192.172.10.12
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 3: Node 2 Connected
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 2: Node 3 Connected
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 2: Waiting 29 sec for nodes 4 and 5 to connect, nodes [ all: 2, 3, 4 and 5 connected: 2 and 3 no-wait:  ]
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 1: Node 5 Connected
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 5 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 5: Node shutdown completed.
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 4 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 3 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 2 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:30 [MgmtSrvr] ALERT    -- Node 1: Node 4 Disconnected
+2024-10-08 08:26:30 [MgmtSrvr] ALERT    -- Node 1: Node 5 Disconnected
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 2: Node shutdown completed.
+2024-10-08 08:26:30 [MgmtSrvr] INFO     -- Node 4: Node shutdown completed.
+2024-10-08 08:26:31 [MgmtSrvr] INFO     -- Node 3: Node shutdown completed.
+2024-10-08 08:26:31 [MgmtSrvr] ALERT    -- Node 1: Node 2 Disconnected
+2024-10-08 08:26:31 [MgmtSrvr] ALERT    -- Node 1: Node 3 Disconnected
+2024-10-08 08:26:31 [MgmtSrvr] INFO     -- Nodeid 2 allocated for NDB at 192.172.10.9
+2024-10-08 08:26:31 [MgmtSrvr] INFO     -- Node 1: Node 2 Connected
+2024-10-08 08:26:31 [MgmtSrvr] INFO     -- Nodeid 3 allocated for NDB at 192.172.10.10
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Alloc node id 4 rejected, no new president yet
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Nodeid 4 allocated for NDB at 192.172.10.11
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 1: Node 3 Connected
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 3: Buffering maximum epochs 100
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 1: Node 4 Connected
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 3: Start phase 0 completed (system restart)
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 3: Communication to Node 2 opened
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 3: Communication to Node 4 opened
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 3: Communication to Node 5 opened
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 3: Waiting 30 sec for nodes 2, 4 and 5 to connect, nodes [ all: 2, 3, 4 and 5 connected: 3 no-wait:  ]
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 2: Node 3 Connected
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 3 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 4 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 2 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 3: Node shutdown completed.
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 2: Node shutdown completed.
+2024-10-08 08:26:32 [MgmtSrvr] INFO     -- Node 4: Node shutdown completed.
+2024-10-08 08:26:33 [MgmtSrvr] ALERT    -- Node 1: Node 2 Disconnected
+2024-10-08 08:26:33 [MgmtSrvr] ALERT    -- Node 1: Node 3 Disconnected
+2024-10-08 08:26:33 [MgmtSrvr] ALERT    -- Node 1: Node 4 Disconnected
+2024-10-08 08:26:33 [MgmtSrvr] INFO     -- Nodeid 2 allocated for NDB at 192.172.10.9
+2024-10-08 08:26:33 [MgmtSrvr] INFO     -- Node 1: Node 2 Connected
+2024-10-08 08:26:33 [MgmtSrvr] INFO     -- Nodeid 3 allocated for NDB at 192.172.10.10
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 1: Node 3 Connected
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 2: Start phase 0 completed (system restart)
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 2: Communication to Node 3 opened
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 2: Communication to Node 4 opened
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 2: Communication to Node 5 opened
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 2: Waiting 30 sec for nodes 3, 4 and 5 to connect, nodes [ all: 2, 3, 4 and 5 connected: 2 no-wait:  ]
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 3 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 3: Node shutdown completed.
+2024-10-08 08:26:34 [MgmtSrvr] ALERT    -- Node 1: Node 3 Disconnected
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 2 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Node 2: Node shutdown completed.
+2024-10-08 08:26:34 [MgmtSrvr] ALERT    -- Node 1: Node 2 Disconnected
+2024-10-08 08:26:34 [MgmtSrvr] INFO     -- Nodeid 2 allocated for NDB at 192.172.10.9
+2024-10-08 08:26:35 [MgmtSrvr] INFO     -- Node 1: Node 2 Connected
+2024-10-08 08:26:35 [MgmtSrvr] INFO     -- Node 2 disconnected in recv with errnum: 104 in state: 0
+2024-10-08 08:26:35 [MgmtSrvr] INFO     -- Node 2: Node shutdown completed.
+2024-10-08 08:26:35 [MgmtSrvr] ALERT    -- Node 1: Node 2 Disconnected
+2024-10-08 08:27:44 [MgmtSrvr] WARNING  -- Unable to allocate nodeid for API at 192.172.10.9. Returned error: &#039;Cluster not ready for nodeid allocation.&#039;
+2024-10-08 08:27:47 [MgmtSrvr] WARNING  -- Unable to allocate nodeid for API at 192.172.10.9. Returned error: &#039;Cluster not ready for nodeid allocation.&#039;
+2024-10-08 08:27:50 [MgmtSrvr] WARNING  -- Unable to allocate nodeid for API at 192.172.10.9. Returned error: &#039;Cluster not ready for nodeid allocation.&#039;
+2024-10-08 08:27:53 [MgmtSrvr] WARNING  -- Unable to allocate nodeid for API at 192.172.10.9. Returned error: &#039;Cluster not ready for nodeid allocation.&#039;
+```
+
+From the log file, I found that:
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 2: Removed lock for node 5
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 2: DICT: remove lock by failed node 5 for NodeRestart
+2024-10-08 08:26:21 [MgmtSrvr] INFO     -- Node 2: DICT: unlocked by node 5 for NodeRestart
+
+It seems that the misusing of locks caused this synchronization failure.
+
+However, I did not find the log of node2 during 08:26:21, only found the log file of node5:
+2024-10-08 08:26:20 [ndbd] INFO     -- Node 4 has completed its restart
+2024-10-08 08:26:20 [ndbd] INFO     -- Suma: handover from node 3 gci: 5781889 buckets: 00000002 (2)
+2024-10-08 08:26:21 [ndbd] INFO     -- The data node run-time environment has been stopped
+2024-10-08 08:26:21 [ndbd] INFO     -- Shutdown initiated
+2024-10-08 08:26:21 [ndbd] INFO     -- Shutdown completed - exiting
+2024-10-08 08:26:21 [ndbd] INFO     -- Angel shutting down
+2024-10-08 08:26:21 [ndbd] INFO     -- Node 5: Node shutdown completed.
+
+Only some binlog on node2.
+
+<strong>Suggested fix:</strong>
+There should be a problem with the locking mechanism during synchronization, which doesn&#039;t handle node exits occurring during synchronization.</pre>
+ </div>
+ <div id="c547667"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 5:24]
+   MySQL Verification Team        </div>
+  <pre class="note">Hi,
+
+I do not understand what you did. Can you write in details how you managed to get your ndbcluster to this state.
+
+Thanks</pre>
+ </div>
+ <div id="c547680"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 9:02]
+   CunDi Fang        </div>
+  <pre class="note">Okay, I reorganized the logs from that time and found that I was supposed to be trying to rejoin node 5 to the cluster, and then node 5 established communication in the cluster and joined successfully. However, immediately after that node 5 disconnected again. At the same time, I had sql transactions going on on both sql servers and found data inconsistencies. I will give you the rest of the log files next and hopefully that will help.</pre>
+ </div>
+ <div id="f33699"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 9:03]
+   CunDi Fang        </div>
+  <pre class="note">This is the log file of the manager<br /><br />Attachment: <a href="/file.php?id=33699&bug_id=116349">ndb_error_report_116349-log-manager.txt</a> (text/plain), 12.48 KiB.</p></pre>
+ </div>
+ <div id="f33700"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 9:03]
+   CunDi Fang        </div>
+  <pre class="note">This is the log file of the ndbd node 2<br /><br />Attachment: <a href="/file.php?id=33700&bug_id=116349">ndb_error_report_116349-log-ndb2.txt</a> (text/plain), 5.51 KiB.</p></pre>
+ </div>
+ <div id="f33701"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 9:04]
+   CunDi Fang        </div>
+  <pre class="note">This is the log file of the ndbd node 3<br /><br />Attachment: <a href="/file.php?id=33701&bug_id=116349">ndb_error_report_116349-log-ndb3.txt</a> (text/plain), 3.72 KiB.</p></pre>
+ </div>
+ <div id="f33702"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 9:04]
+   CunDi Fang        </div>
+  <pre class="note">This is the log file of the ndbd node 4<br /><br />Attachment: <a href="/file.php?id=33702&bug_id=116349">ndb_error_report_116349-log-ndb4.txt</a> (text/plain), 4.77 KiB.</p></pre>
+ </div>
+ <div id="f33703"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 9:05]
+   CunDi Fang        </div>
+  <pre class="note">This is the log file of the ndbd node 5<br /><br />Attachment: <a href="/file.php?id=33703&bug_id=116349">ndb_error_report_116349-log-ndb5.txt</a> (text/plain), 3.47 KiB.</p></pre>
+ </div>
+ <div id="c547681"
+      class="comment">
+  <div class="header">
+   [14 Oct 2024 9:10]
+   CunDi Fang        </div>
+  <pre class="note">Looking at the log file, it appears that a large number of &quot;mbind: Operation not permitted&quot; have been logged in the file even before this bug was encountered. There should be a problem with one of the locks, but when I traced it back, I realized that the log had already arrived:
+2024-09-23T13:27:42.953769Z 0 [System] [MY-010866] [NDB] Metadata: Failed to submit table &#039;mysql.ndb_apply_status&#039; for synchronization
+2024-09-23T13:28:42.962014Z 0 [System] [MY-010866] [NDB] Metadata: Failed to submit table &#039;mysql.ndb_apply_status&#039; for synchronization
+2024-09-23T13:29:42.969867Z 0 [System] [MY-010866] [NDB] Metadata: Failed to submit table &#039;mysql.ndb_apply_status&#039; for synchronization
+2024-09-23T13:30:42.257748Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:42.728303Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test0&#039; for table &#039;mytest100.test0&#039; already exists
+2024-09-23T13:30:42.736237Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:42.952290Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test1&#039; for table &#039;mytest100.test1&#039; already exists
+2024-09-23T13:30:42.958592Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:42.976104Z 0 [System] [MY-010866] [NDB] Metadata: Failed to submit table &#039;mysql.ndb_apply_status&#039; for synchronization
+2024-09-23T13:30:43.230317Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test2&#039; for table &#039;mytest100.test2&#039; already exists
+2024-09-23T13:30:43.236269Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:43.532614Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test3&#039; for table &#039;mytest100.test3&#039; already exists
+2024-09-23T13:30:43.539566Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:43.770974Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test4&#039; for table &#039;mytest100.test4&#039; already exists
+2024-09-23T13:30:43.778368Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:44.142185Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test5&#039; for table &#039;mytest100.test5&#039; already exists
+2024-09-23T13:30:44.156434Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:44.559589Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test6&#039; for table &#039;mytest100.test6&#039; already exists
+2024-09-23T13:30:44.567982Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:44.871424Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test7&#039; for table &#039;mytest100.test7&#039; already exists
+2024-09-23T13:30:44.925371Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:45.402160Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test8&#039; for table &#039;mytest100.test8&#039; already exists
+2024-09-23T13:30:45.420683Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+2024-09-23T13:30:45.796922Z 2 [System] [MY-010865] [NDB] Event &#039;REPL$mytest100/test9&#039; for table &#039;mytest100.test9&#039; already exists
+2024-09-23T13:30:45.814623Z 2 [System] [MY-010866] [NDB] Binlog: Reloaded metadata cache
+mbind: Operation not permitted
+mbind: Operation not permitted
+mbind: Operation not permitted
+
+The affairs I was performing were:
+SELECT * FROM ndbinfo.table_replicas;
+SELECT COLUMN_NAME FROM INFORMATION_SCHEMA. KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = &#039;mytest100&#039;   AND TABLE_NAME = &#039;test0&#039;   AND CONSTRAINT_NAME = &#039;PRIMARY&#039; ORDER BY ORDINAL_POSITION;
+From the results, it looks like these two statements are executing properly on both sql servers</pre>
+ </div>
+ <div id="c547720"
+      class="comment">
+  <div class="header">
+   [16 Oct 2024 4:11]
+   MySQL Verification Team        </div>
+  <pre class="note">Hi,
+
+I&#039;m having issue reproducing this. Are you running this on bare metal or in VM or you are using docker?</pre>
+ </div>
+ <div id="c547722"
+      class="comment">
+  <div class="header">
+   [16 Oct 2024 4:42]
+   CunDi Fang        </div>
+  <pre class="note">I am using docker. Five docker containers, one for manager, four for data and sql server. all are Ubuntu 22.04 environments. The configuration of the architecture is as follows:
+[NDBD DEFAULT]
+NoOfReplicas =2
+DataMemory = 512M
+IndexMemory = 64M
+
+[NDB_MGMD]
+NodeId=1
+hostname =192.168.10.8
+datadir =/var/lib/mysql-cluster
+LogFilename=/var/lib/mysql-cluster/ndb_1_mgmd.log
+
+[NDBD]
+NodeId =2
+hostname =192.168.10.9
+datadir =/usr/local/mysql-cluster/data
+[NDBD]
+NodeId =3
+hostname =192.168.10.10
+datadir =/usr/local/mysql-cluster/data
+
+[mysqld]
+NodeId =4
+hostname =192.168.10.9
+[mysqld]
+NodeId =5
+hostname =192.168.10.10</pre>
+ </div>
+ <div id="c547733"
+      class="comment">
+  <div class="header">
+   [16 Oct 2024 7:28]
+   MySQL Verification Team        </div>
+  <pre class="note">Hi,
+
+Docker is not properly configured. If you look at your log you can see
+
+mbind: Operation not permitted
+
+Checkout CAP_SYS_NICE option for docker.
+
+Since docker is improperly configured MySQL cannot handle thread priorities and this can lead to problems. ( <a href="https://dev.mysql.com/doc/refman/8.0/en/resource-groups.html">https://dev.mysql.com/doc/refman/8.0/en/resource-groups.html</a> )
+
+Can you retest with properly configured docker.</pre>
+ </div>
+ <div id="c547738"
+      class="comment">
+  <div class="header">
+   [16 Oct 2024 8:09]
+   CunDi Fang        </div>
+  <pre class="note">I checked my docker configurations, and you are right, I did not set the CAP_SYS_NICE:
+```
+        &quot;HostConfig&quot;: {                                                                                                                                                                           
+            &quot;Binds&quot;: null,                                                                                                                                                                        
+            &quot;ContainerIDFile&quot;: &quot;&quot;,                                                                                                                                                                
+            &quot;LogConfig&quot;: {                                                                                                                                                                        
+                &quot;Type&quot;: &quot;json-file&quot;,                                                                                                                                                              
+                &quot;Config&quot;: {}                                                                                                                                                                      
+            },                                                                                                                                                                                    
+            &quot;NetworkMode&quot;: &quot;mysqlcluster_net2&quot;,                                                                                                                                                   
+            &quot;PortBindings&quot;: {},                                                                                                                                                                   
+            &quot;RestartPolicy&quot;: {                                                                                                                                                                    
+                &quot;Name&quot;: &quot;no&quot;,                                                                                                                                                                     
+                &quot;MaximumRetryCount&quot;: 0                                                                                                                                                            
+            },                                                                                                                                                                                    
+            &quot;AutoRemove&quot;: false,                                                                                                                                                                  
+            &quot;VolumeDriver&quot;: &quot;&quot;,                                                                                                                                                                   
+            &quot;VolumesFrom&quot;: null,                                                                                                                                                                  
+            &quot;CapAdd&quot;: null,            //HERE                                                                                                                                                           
+            &quot;CapDrop&quot;: null,                                                                                                                                                                      
+            &quot;CgroupnsMode&quot;: &quot;private&quot;,                                                                                                                                                            
+            &quot;Dns&quot;: [],                                                                                                                                                                            
+            &quot;DnsOptions&quot;: [],                                                                                                                                                                     
+            &quot;DnsSearch&quot;: [],                                                                                                                                                                      
+            &quot;ExtraHosts&quot;: null,  
+```
+However, I still do not understand. This configuration should be related to Resource Groups, a feature that optimizes the use of resources, and I have not been involved in modifying the scheduling of threads and CPU resource allocation transactions, just the normal select, insert, alter, and then carried out node join and restart and so on. Why did it cause the resource error?
+I&#039;m sorry to say that since I only kept the log file at the time of this bug, it&#039;s difficult on my end to try to reproduce the bug in a strict time sequence now. But if, as you say, this bug and 116351 are caused by the same thing, then this type of bug is encountered frequently on my side.</pre>
+ </div>
+ <div id="c547739"
+      class="comment">
+  <div class="header">
+   [16 Oct 2024 8:10]
+   CunDi Fang        </div>
+  <pre class="note">I checked my docker configurations, and you are right, I did not set the CAP_SYS_NICE:
+```
+        &quot;HostConfig&quot;: {                                                                                                                                                                           
+            &quot;Binds&quot;: null,                                                                                                                                                                        
+            &quot;ContainerIDFile&quot;: &quot;&quot;,                                                                                                                                                                
+            &quot;LogConfig&quot;: {                                                                                                                                                                        
+                &quot;Type&quot;: &quot;json-file&quot;,                                                                                                                                                              
+                &quot;Config&quot;: {}                                                                                                                                                                      
+            },                                                                                                                                                                                    
+            &quot;NetworkMode&quot;: &quot;mysqlcluster_net2&quot;,                                                                                                                                                   
+            &quot;PortBindings&quot;: {},                                                                                                                                                                   
+            &quot;RestartPolicy&quot;: {                                                                                                                                                                    
+                &quot;Name&quot;: &quot;no&quot;,                                                                                                                                                                     
+                &quot;MaximumRetryCount&quot;: 0                                                                                                                                                            
+            },                                                                                                                                                                                    
+            &quot;AutoRemove&quot;: false,                                                                                                                                                                  
+            &quot;VolumeDriver&quot;: &quot;&quot;,                                                                                                                                                                   
+            &quot;VolumesFrom&quot;: null,                                                                                                                                                                  
+            &quot;CapAdd&quot;: null,            //HERE                                                                                                                                                           
+            &quot;CapDrop&quot;: null,                                                                                                                                                                      
+            &quot;CgroupnsMode&quot;: &quot;private&quot;,                                                                                                                                                            
+            &quot;Dns&quot;: [],                                                                                                                                                                            
+            &quot;DnsOptions&quot;: [],                                                                                                                                                                     
+            &quot;DnsSearch&quot;: [],                                                                                                                                                                      
+            &quot;ExtraHosts&quot;: null,  
+```
+However, I still do not understand. This configuration should be related to Resource Groups, a feature that optimizes the use of resources, and I have not been involved in modifying the scheduling of threads and CPU resource allocation transactions, just the normal select, insert, alter, and then carried out node join and restart and so on. Why did it cause the resource error?
+I&#039;m sorry to say that since I only kept the log file at the time of this bug, it&#039;s difficult on my end to try to reproduce the bug in a strict time sequence now. But if, as you say, this bug and 116351 are caused by the same thing, then this type of bug is encountered frequently on my side.</pre>
+ </div>
+ <div id="c547741"
+      class="comment">
+  <div class="header">
+   [16 Oct 2024 8:48]
+   MySQL Verification Team        </div>
+  <pre class="note">Hi,
+
+&gt; I have not been involved in modifying the scheduling of threads and CPU resource allocation transactions
+
+You did not but MySQL tried and failed as you can see in the log.
+
+&gt; But if, as you say, this bug and 116351 are caused by the same thing, 
+
+I cannot say for sure it is the same, but it could be so properly configuring docker is the first step, as I cannot reproduce this issue you are having (neither this nor 116351) so that is a best bet at the moment.
+
+&gt; then this type of bug is encountered frequently on my side.
+
+So you can then easily see if reconfiguring docker solves the problem, if problem do not happen again after properly configuring docker - that was the issue, if it happens again, please collect logs again and update the report.
+
+Thanks</pre>
+ </div>
+ <div id="c547743"
+      class="comment">
+  <div class="header">
+   [16 Oct 2024 9:33]
+   CunDi Fang        </div>
+  <pre class="note">Ok, I&#039;ll try from my side if this bug and 116351 will continue to appear after changing the docker configuration. I will get back to you within three days.</pre>
+ </div>
+ <div id="c547908"
+      class="comment">
+  <div class="header">
+   [19 Oct 2024 15:39]
+   CunDi Fang        </div>
+  <pre class="note">Hi, after dozens of my attempts, I found that this one record should reflect the bug I reported, and this one was reproduced with CAP_SYS_NICE turned on. Also, I found <a href="https://bugs.mysql.com/bug.php?id=116351" style="text-decoration: line-through">bug116351</a> you confirmed as verified, may I ask if you are reproducing it successfully? Is there any more information needed from this side?</pre>
+ </div>
+ <div id="c548039"
+      class="comment">
+  <div class="header">
+   [24 Oct 2024 9:38]
+   MySQL Verification Team        </div>
+  <pre class="note">We will update these reports if we need more data, thanks.</pre>
+ </div>
+</div>
+<script src="/static/chosen/chosen.proto.js" type="text/javascript"></script>
+<script src="/static/misc.js" type="text/javascript"></script>
+<script type="text/javascript">
+  document.observe('dom:loaded', function(evt) {
+    var config = {
+      '.chzn-select'           : {},
+      '.chzn-select-excl'      : {},
+      '.chzn-select-max1'      : {max_selected_options:1},
+      '.chzn-select-deselect'  : {allow_single_deselect:true},
+      '.chzn-select-no-single' : {disable_search_threshold:10},
+      '.chzn-select-no-results': {no_results_text: "Oops, nothing found!"},
+      '.chzn-select-width'     : {width: "95%"}
+    }
+    var results = [];
+    for (var selector in config) {
+      var elements = $$(selector);
+      for (var i = 0; i < elements.length; i++) {
+        results.push(new Chosen(elements[i],config[selector]));
+      }
+    }
+
+    // initialize (store initial state) selects with exclusive options
+    var elements = $$('.chzn-select-excl');
+    for (var i = 0; i < elements.length; i++) {
+      my_init_select(elements[i]);
+    }
+
+    return results;
+  });
+</script>
+<div id="footer">
+ <ul style="float: right; list-style: none">
+  <li><a href="http://www.mysql.com/about/legal/">Legal Policies</a></li>
+  <li><a href="http://www.oracle.com/us/legal/privacy/index.htm">Your Privacy Rights</a></li>
+  <li><a href="http://www.oracle.com/html/terms.html">Terms of Use</a></li>
+  <li><a href="https://www.mysql.com/about/contact/">Contact Us</a></li>
+ </ul>
+ <br class="clear" />
+ <p>Portions of this website are <a href="http://www.php.net/copyright.php">copyright &copy; 2001, 2002 The PHP Group</a></p>
+ <p style="float: right">
+Page generated in 0.057 sec. using MySQL 8.4.5-u11-cloud </p>
+ <br class="clear" />
+ <br style="line-height: 8px;" />
+ <p style="float: left">Timestamp references displayed by the system are UTC.<br/>
+  Content reproduced on this site is the property of the
+  respective copyright holders.<br />It is not reviewed in advance
+  by Oracle and does not necessarily represent the opinion of
+  Oracle or any other party.</p>
+ <p style="float: right"><a href="http://www.oracle.com/"><img src="/images/logo-oracle-red-91x22.gif" alt="Oracle" width="91" height="22" /></a>&nbsp;&nbsp;&copy; 2026, Oracle Corporation and/or its affiliates</p>
+</div>
+<!-- script type="text/javascript" src="http://www.mysql.com/common/js/s_code_remote.js"></script -->
+</body>
+</html>

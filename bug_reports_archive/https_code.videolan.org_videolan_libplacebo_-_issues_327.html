@@ -1,0 +1,415 @@
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html class="gl-system ui-neutral with-top-bar with-header application-chrome page-with-panels with-gl-container-queries with-system-footer" lang="en">
+<head prefix="og: http://ogp.me/ns#">
+<meta charset="utf-8">
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<title>Crash when fuzzing shaders (#327) · Issues · VideoLAN / libplacebo · GitLab</title>
+<script>
+//<![CDATA[
+window.gon={};gon.math_rendering_limits_enabled=true;gon.features={"allowIframesInMarkdown":false,"preserveMarkdown":false,"notificationsTodosButtons":false,"workItemPlanningView":false,"glqlLoadOnClick":false,"hideIncidentManagementFeatures":false,"epicWidgetEditConfirmation":false,"okrsMvc":false,"duoDeveloperButton":true};gon.licensed_features={"escalationPolicies":false,"okrs":false};gon.abilities={"summarizeComments":false,"measureCommentTemperature":false};
+//]]>
+</script>
+
+<script>
+//<![CDATA[
+const root = document.documentElement;
+if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  root.classList.add('gl-dark');
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  if (e.matches) {
+    root.classList.add('gl-dark');
+  } else {
+    root.classList.remove('gl-dark');
+  }
+});
+
+//]]>
+</script>
+<script>
+//<![CDATA[
+var gl = window.gl || {};
+gl.startup_calls = {"/videolan/libplacebo/-/issues/327/related_branches":{},"/videolan/libplacebo/-/issues/327/discussions.json?per_page=20":{},"/videolan/libplacebo/-/issues/327.json?serializer=sidebar_extras":{}};
+gl.startup_graphql_calls = null;
+
+if (gl.startup_calls && window.fetch) {
+  Object.keys(gl.startup_calls).forEach(apiCall => {
+   gl.startup_calls[apiCall] = {
+      fetchCall: fetch(apiCall, {
+        // Emulate XHR for Rails AJAX request checks
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        // fetch won’t send cookies in older browsers, unless you set the credentials init option.
+        // We set to `same-origin` which is default value in modern browsers.
+        // See https://github.com/whatwg/fetch/pull/585 for more information.
+        credentials: 'same-origin'
+      })
+    };
+  });
+}
+if (gl.startup_graphql_calls && window.fetch) {
+  const headers = {"X-CSRF-Token":"GRS_ixYVsWthYwbUmrq0wGnw1B_PF248t4g3mtuWnTf3dW-H2x1gCazugYQk3W0XVbZBlVy0X6NbHJmMhOJRpA","x-gitlab-feature-category":"team_planning"};
+  const url = `https://code.videolan.org/api/graphql`
+
+  const opts = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...headers,
+    }
+  };
+
+  gl.startup_graphql_calls = gl.startup_graphql_calls.map(call => ({
+    ...call,
+    fetchCall: fetch(url, {
+      ...opts,
+      credentials: 'same-origin',
+      body: JSON.stringify(call)
+    })
+  }))
+}
+
+
+//]]>
+</script>
+
+
+
+<meta content="light dark" name="color-scheme">
+<link rel="stylesheet" href="/assets/application-abccfa37b0f17cedddf56895cec864ac4f135996a53749e184b6795ed8e8f38a.css" media="(prefers-color-scheme: light)" />
+<link rel="stylesheet" href="/assets/application_dark-781abccc6b4b0c240f759a865fbe4122481d5684e558de337acd8f95da33428a.css" media="(prefers-color-scheme: dark)" />
+<link rel="stylesheet" href="/assets/page_bundles/design_management-714c36aa7869317006d0fdf3fa26fe925dcbcda6a0c71a93a3e54f3fc27ca849.css" /><link rel="stylesheet" href="/assets/page_bundles/incidents-70919d2acabcc4d627e9cd7adf1754065bca7e5c859a5be0b6925c8298646821.css" /><link rel="stylesheet" href="/assets/page_bundles/issuable-a1426ec32621b16dfde0bb759644dde9c2420a266b82578555e8cf4478d95dca.css" /><link rel="stylesheet" href="/assets/page_bundles/notes_shared-8f7a9513332533cc4a53b3be3d16e69570e82bc87b3f8913578eaeb0dce57e21.css" /><link rel="stylesheet" href="/assets/page_bundles/issues_show-772d033f6edeb2b0194d5d8e7a458874b0c6ccd961b76643df7be26ef78eccc2.css" /><link rel="stylesheet" href="/assets/page_bundles/work_items-af321897c3b1ae7c1f6f0cb993681211b837df7ec8e5ff59e3795fd08ab83a13.css" /><link rel="stylesheet" href="/assets/page_bundles/labels-b23cc06813aa6fbbc608e40531a9a2c605d4b464b1a2b1bd22360ba37986127f.css" /><link rel="stylesheet" href="/assets/page_bundles/promotions-3416091e6596edaf447d5a37b703a9e02e7d334129e60a0cf5c64d373b07312d.css" /><link rel="stylesheet" href="/assets/page_bundles/commit_description-9e7efe20f0cef17d0606edabfad0418e9eb224aaeaa2dae32c817060fa60abcc.css" />
+<link rel="stylesheet" href="/assets/tailwind_cqs-b9adbe9c024833fa0f808263c71839a0ded2e06d56803e7530d029b884bd5252.css" />
+
+
+<link rel="stylesheet" href="/assets/fonts-deb7ad1d55ca77c0172d8538d53442af63604ff490c74acc2859db295c125bdb.css" />
+<link rel="stylesheet" href="/assets/highlight/themes/white-c47e38e4a3eafd97b389c0f8eec06dce295f311cdc1c9e55073ea9406b8fe5b0.css" media="(prefers-color-scheme: light)" />
+<link rel="stylesheet" href="/assets/highlight/themes/dark-8796b0549a7cd8fd6d2646619fa5840db4505d7031a76d5441a3cee1d12390d2.css" media="(prefers-color-scheme: dark)" />
+
+<script src="/assets/webpack/runtime.f7713078.bundle.js" defer="defer"></script>
+<script src="/assets/webpack/main.736b319c.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/tracker.85adcc5f.chunk.js" defer="defer"></script>
+<script>
+//<![CDATA[
+window.snowplowOptions = {"namespace":"gl","hostname":"code.videolan.org:443","postPath":"/-/collect_events","forceSecureTracker":true,"appId":"gitlab_sm"};
+gl = window.gl || {};
+gl.snowplowStandardContext = {"schema":"iglu:com.gitlab/gitlab_standard/jsonschema/1-1-7","data":{"environment":"self-managed","source":"gitlab-rails","correlation_id":"01KMHXHM7ZAWB6Z0HMHZQ9Z9FR","extra":{},"user_id":null,"global_user_id":null,"user_type":null,"is_gitlab_team_member":null,"namespace_id":9,"ultimate_parent_namespace_id":9,"project_id":380,"feature_enabled_by_namespace_ids":null,"realm":"self-managed","deployment_type":"self-managed","context_generated_at":"2026-03-25T07:15:05.331Z"}};
+gl.snowplowPseudonymizedPageUrl = "https://code.videolan.org/namespace9/project380/-/issues/327";
+gl.maskedDefaultReferrerUrl = null;
+gl.ga4MeasurementId = 'G-ENFH3X7M5Y';
+gl.duoEvents = ["ai_question_category","perform_completion_worker","process_gitlab_duo_question","agent_platform_session_created","agent_platform_session_dropped","agent_platform_session_finished","agent_platform_session_resumed","agent_platform_session_started","agent_platform_session_stopped","ai_response_time","ci_repository_xray_artifact_created","cleanup_stuck_agent_platform_session","click_duo_agentic_not_available_empty_state_learn_more","click_duo_agentic_not_available_empty_state_start_trial","click_enable_ai_catalog_item_button","click_purchase_seats_button_group_duo_pro_home_page","code_suggestion_accepted_in_ide","code_suggestion_rejected_in_ide","code_suggestion_shown_in_ide","code_suggestions_connection_details_rate_limit_exceeded","code_suggestions_direct_access_rate_limit_exceeded","code_suggestions_rate_limit_exceeded","create_ai_catalog_item","create_ai_catalog_item_consumer","create_ai_self_hosted_model","default_answer","delete_ai_catalog_item","delete_ai_catalog_item_consumer","delete_ai_self_hosted_model","detected_high_comment_temperature","detected_repeated_high_comment_temperature","dismiss_sast_vulnerability_false_positive_analysis","encounter_duo_code_review_error_during_review","error_answer","excluded_files_from_duo_code_review","execute_llm_method","find_no_issues_duo_code_review_after_review","find_nothing_to_review_duo_code_review_on_mr","finish_duo_workflow_execution","finish_mcp_tool_call","forced_high_temperature_commenting","i_quickactions_q","include_repository_xray_data_into_code_generation_prompt","mention_gitlabduo_in_mr_comment","post_comment_duo_code_review_on_diff","process_gitlab_duo_slash_command","react_thumbs_down_on_duo_code_review_comment","react_thumbs_up_on_duo_code_review_comment","reported_sast_vulnerability_false_positive_analysis","request_ask_help","request_duo_chat_response","request_review_duo_code_review_on_mr_by_author","request_review_duo_code_review_on_mr_by_non_author","requested_comment_temperature","retry_duo_workflow_execution","start_duo_workflow_execution","start_mcp_tool_call","submit_gitlab_duo_question","tokens_per_embedding","tokens_per_user_request_prompt","tokens_per_user_request_response","trigger_ai_catalog_item","trigger_sast_vulnerability_fp_detection_workflow","troubleshoot_job","update_ai_catalog_item","update_ai_catalog_item_consumer","update_ai_self_hosted_model","update_model_selection_feature","update_self_hosted_ai_feature_to_vendored_model","view_ai_catalog_item","view_ai_catalog_item_index","view_ai_catalog_project_managed","view_duo_agentic_not_available_empty_state"];
+gl.onlySendDuoEvents = true;
+
+
+//]]>
+</script>
+<link rel="preload" href="/assets/application-abccfa37b0f17cedddf56895cec864ac4f135996a53749e184b6795ed8e8f38a.css" as="style" type="text/css">
+<link rel="preload" href="/assets/highlight/themes/white-c47e38e4a3eafd97b389c0f8eec06dce295f311cdc1c9e55073ea9406b8fe5b0.css" as="style" type="text/css">
+
+
+
+
+<script src="/assets/webpack/commons-pages.search.show-super_sidebar.38f249e1.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/super_sidebar.8e163747.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/commons-pages.groups-pages.groups.achievements-pages.groups.activity-pages.groups.analytics.ci_cd_an-8a40a427.9967ce8c.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/commons-pages.projects-pages.projects.activity-pages.projects.alert_management.details-pages.project-93b287cd.b6ea34d8.chunk.js" defer="defer"></script>
+<script src="/assets/webpack/pages.projects.issues.show.22ae6b21.chunk.js" defer="defer"></script>
+
+<meta content="object" property="og:type">
+<meta content="GitLab" property="og:site_name">
+<meta content="Crash when fuzzing shaders (#327) · Issues · VideoLAN / libplacebo · GitLab" property="og:title">
+<meta content="Hi libplacebo devs, I found an assertion error when fuzzing libplacebo with libfuzzer. The harness I use is ported to libfuzzer with limited modifications from " property="og:description">
+<meta content="https://code.videolan.org/assets/twitter_card-570ddb06edf56a2312253c5872489847a0f385112ddbcd71ccfa1570febab5d2.jpg" property="og:image">
+<meta content="64" property="og:image:width">
+<meta content="64" property="og:image:height">
+<meta content="https://code.videolan.org/videolan/libplacebo/-/issues/327" property="og:url">
+<meta content="summary" property="twitter:card">
+<meta content="Crash when fuzzing shaders (#327) · Issues · VideoLAN / libplacebo · GitLab" property="twitter:title">
+<meta content="Hi libplacebo devs, I found an assertion error when fuzzing libplacebo with libfuzzer. The harness I use is ported to libfuzzer with limited modifications from " property="twitter:description">
+<meta content="https://code.videolan.org/assets/twitter_card-570ddb06edf56a2312253c5872489847a0f385112ddbcd71ccfa1570febab5d2.jpg" property="twitter:image">
+<meta property="twitter:label1" content="Author"><meta property="twitter:data1" content="Spencer Wu">
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="cQFW8jiNLjmbp51p3as-3hRta80KC8wJX7s502wckH2fYIb-9YX_W1YqGjljzOcJKCv-R5mo_ZazL5fFM2hc7g" />
+<meta name="csp-nonce" />
+<meta name="action-cable-url" content="/-/cable" />
+<link href="/-/manifest.json" rel="manifest">
+<link rel="icon" type="image/png" href="/uploads/-/system/appearance/favicon/1/new-favicon.png" id="favicon" data-original-href="/uploads/-/system/appearance/favicon/1/new-favicon.png" />
+<link rel="apple-touch-icon" type="image/x-icon" href="/assets/apple-touch-icon-b049d4bc0dd9626f31db825d61880737befc7835982586d015bded10b4435460.png" />
+<link href="/search/opensearch.xml" rel="search" title="Search GitLab" type="application/opensearchdescription+xml">
+
+
+
+
+<meta content="Hi libplacebo devs, I found an assertion error when fuzzing libplacebo with libfuzzer. The harness I use is ported to libfuzzer with limited modifications from " name="description">
+<meta content="#F1F0F6" media="(prefers-color-scheme: light)" name="theme-color">
+<meta content="#232128" media="(prefers-color-scheme: dark)" name="theme-color">
+</head>
+
+<body class="tab-width-8 gl-browser-generic gl-platform-other " data-group="videolan" data-group-full-path="videolan" data-namespace-id="9" data-page="projects:issues:show" data-page-type-id="327" data-project="libplacebo" data-project-full-path="videolan/libplacebo" data-project-id="380" data-project-studio-enabled="true">
+<div id="js-tooltips-container"></div>
+<script>
+//<![CDATA[
+gl = window.gl || {};
+gl.GfmAutoComplete = gl.GfmAutoComplete || {};
+gl.GfmAutoComplete.dataSources = {"members":"/videolan/libplacebo/-/autocomplete_sources/members?type=Issue\u0026type_id=327","issues":"/videolan/libplacebo/-/autocomplete_sources/issues","mergeRequests":"/videolan/libplacebo/-/autocomplete_sources/merge_requests","labels":"/videolan/libplacebo/-/autocomplete_sources/labels?type=Issue\u0026type_id=327","milestones":"/videolan/libplacebo/-/autocomplete_sources/milestones","commands":"/videolan/libplacebo/-/autocomplete_sources/commands?type=Issue\u0026type_id=327","snippets":"/videolan/libplacebo/-/autocomplete_sources/snippets","contacts":"/videolan/libplacebo/-/autocomplete_sources/contacts?type=Issue\u0026type_id=327","wikis":"/videolan/libplacebo/-/autocomplete_sources/wikis"};
+
+
+//]]>
+</script>
+<script>
+//<![CDATA[
+gl = window.gl || {};
+gl.client = {"isGeneric":true,"isOther":true};
+
+
+//]]>
+</script>
+
+
+<header class="super-topbar js-super-topbar"></header>
+<div class="layout-page js-page-layout page-gutter  page-with-super-sidebar">
+<script>
+//<![CDATA[
+const outer = document.createElement('div');
+outer.style.visibility = 'hidden';
+outer.style.overflow = 'scroll';
+document.body.appendChild(outer);
+const inner = document.createElement('div');
+outer.appendChild(inner);
+const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+outer.parentNode.removeChild(outer);
+document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`);
+
+//]]>
+</script><aside class="js-super-sidebar super-sidebar super-sidebar-loading" data-command-palette="{&quot;project_files_url&quot;:&quot;/videolan/libplacebo/-/files/master?format=json&quot;,&quot;project_blob_url&quot;:&quot;/videolan/libplacebo/-/blob/master&quot;}" data-force-desktop-expanded-sidebar="" data-is-saas="false" data-root-path="/" data-sidebar="{&quot;is_logged_in&quot;:false,&quot;compare_plans_url&quot;:&quot;https://about.gitlab.com/pricing&quot;,&quot;context_switcher_links&quot;:[{&quot;title&quot;:&quot;Explore&quot;,&quot;link&quot;:&quot;/explore&quot;,&quot;icon&quot;:&quot;compass&quot;}],&quot;current_menu_items&quot;:[{&quot;id&quot;:&quot;project_overview&quot;,&quot;title&quot;:&quot;libplacebo&quot;,&quot;entity_id&quot;:380,&quot;link&quot;:&quot;/videolan/libplacebo&quot;,&quot;link_classes&quot;:&quot;shortcuts-project&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;manage_menu&quot;,&quot;title&quot;:&quot;Manage&quot;,&quot;icon&quot;:&quot;users&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/activity&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;activity&quot;,&quot;title&quot;:&quot;Activity&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/activity&quot;,&quot;link_classes&quot;:&quot;shortcuts-project-activity&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;members&quot;,&quot;title&quot;:&quot;Members&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/project_members&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;labels&quot;,&quot;title&quot;:&quot;Labels&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/labels&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;plan_menu&quot;,&quot;title&quot;:&quot;Plan&quot;,&quot;icon&quot;:&quot;planning&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/issues&quot;,&quot;is_active&quot;:true,&quot;items&quot;:[{&quot;id&quot;:&quot;project_issue_list&quot;,&quot;title&quot;:&quot;Issues&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/issues&quot;,&quot;link_classes&quot;:&quot;shortcuts-issues has-sub-items&quot;,&quot;pill_count_field&quot;:&quot;openIssuesCount&quot;,&quot;pill_count_dynamic&quot;:false,&quot;is_active&quot;:true},{&quot;id&quot;:&quot;boards&quot;,&quot;title&quot;:&quot;Issue boards&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/boards&quot;,&quot;link_classes&quot;:&quot;shortcuts-issue-boards&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;milestones&quot;,&quot;title&quot;:&quot;Milestones&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/milestones&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;project_wiki&quot;,&quot;title&quot;:&quot;Wiki&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/wikis/home&quot;,&quot;link_classes&quot;:&quot;shortcuts-wiki&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;code_menu&quot;,&quot;title&quot;:&quot;Code&quot;,&quot;icon&quot;:&quot;code&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/merge_requests&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;project_merge_request_list&quot;,&quot;title&quot;:&quot;Merge requests&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/merge_requests&quot;,&quot;link_classes&quot;:&quot;shortcuts-merge_requests&quot;,&quot;pill_count_field&quot;:&quot;openMergeRequestsCount&quot;,&quot;pill_count_dynamic&quot;:false,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;files&quot;,&quot;title&quot;:&quot;Repository&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/tree/master&quot;,&quot;link_classes&quot;:&quot;shortcuts-tree&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;branches&quot;,&quot;title&quot;:&quot;Branches&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/branches&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;commits&quot;,&quot;title&quot;:&quot;Commits&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/commits/master?ref_type=heads&quot;,&quot;link_classes&quot;:&quot;shortcuts-commits&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;tags&quot;,&quot;title&quot;:&quot;Tags&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/tags&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;graphs&quot;,&quot;title&quot;:&quot;Repository graph&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/network/master?ref_type=heads&quot;,&quot;link_classes&quot;:&quot;shortcuts-network&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;compare&quot;,&quot;title&quot;:&quot;Compare revisions&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/compare?from=master\u0026to=master&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;project_snippets&quot;,&quot;title&quot;:&quot;Snippets&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/snippets&quot;,&quot;link_classes&quot;:&quot;shortcuts-snippets&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;build_menu&quot;,&quot;title&quot;:&quot;Build&quot;,&quot;icon&quot;:&quot;rocket&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/pipelines&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;pipelines&quot;,&quot;title&quot;:&quot;Pipelines&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/pipelines&quot;,&quot;link_classes&quot;:&quot;shortcuts-pipelines&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;jobs&quot;,&quot;title&quot;:&quot;Jobs&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/jobs&quot;,&quot;link_classes&quot;:&quot;shortcuts-builds&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;pipeline_schedules&quot;,&quot;title&quot;:&quot;Pipeline schedules&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/pipeline_schedules&quot;,&quot;link_classes&quot;:&quot;shortcuts-builds&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;artifacts&quot;,&quot;title&quot;:&quot;Artifacts&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/artifacts&quot;,&quot;link_classes&quot;:&quot;shortcuts-builds&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;deploy_menu&quot;,&quot;title&quot;:&quot;Deploy&quot;,&quot;icon&quot;:&quot;deployments&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/releases&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;releases&quot;,&quot;title&quot;:&quot;Releases&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/releases&quot;,&quot;link_classes&quot;:&quot;shortcuts-deployments-releases&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false},{&quot;id&quot;:&quot;analyze_menu&quot;,&quot;title&quot;:&quot;Analyze&quot;,&quot;icon&quot;:&quot;chart&quot;,&quot;avatar_shape&quot;:&quot;rect&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/value_stream_analytics&quot;,&quot;is_active&quot;:false,&quot;items&quot;:[{&quot;id&quot;:&quot;cycle_analytics&quot;,&quot;title&quot;:&quot;Value stream analytics&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/value_stream_analytics&quot;,&quot;link_classes&quot;:&quot;shortcuts-project-cycle-analytics&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;contributors&quot;,&quot;title&quot;:&quot;Contributor analytics&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/graphs/master?ref_type=heads&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;ci_cd_analytics&quot;,&quot;title&quot;:&quot;CI/CD analytics&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/pipelines/charts&quot;,&quot;is_active&quot;:false},{&quot;id&quot;:&quot;repository_analytics&quot;,&quot;title&quot;:&quot;Repository analytics&quot;,&quot;link&quot;:&quot;/videolan/libplacebo/-/graphs/master/charts&quot;,&quot;link_classes&quot;:&quot;shortcuts-repository-charts&quot;,&quot;is_active&quot;:false}],&quot;separated&quot;:false}],&quot;current_context_header&quot;:&quot;Project&quot;,&quot;university_path&quot;:&quot;https://university.gitlab.com&quot;,&quot;support_path&quot;:&quot;https://about.gitlab.com/get-help/&quot;,&quot;docs_path&quot;:&quot;/help/docs&quot;,&quot;display_whats_new&quot;:false,&quot;show_version_check&quot;:null,&quot;search&quot;:{&quot;search_path&quot;:&quot;/search&quot;,&quot;issues_path&quot;:&quot;/dashboard/issues&quot;,&quot;mr_path&quot;:&quot;/dashboard/merge_requests&quot;,&quot;autocomplete_path&quot;:&quot;/search/autocomplete&quot;,&quot;settings_path&quot;:&quot;/search/settings&quot;,&quot;search_context&quot;:{&quot;group&quot;:{&quot;id&quot;:9,&quot;name&quot;:&quot;VideoLAN&quot;,&quot;full_name&quot;:&quot;VideoLAN&quot;},&quot;group_metadata&quot;:{&quot;issues_path&quot;:&quot;/groups/videolan/-/issues&quot;,&quot;mr_path&quot;:&quot;/groups/videolan/-/merge_requests&quot;},&quot;project&quot;:{&quot;id&quot;:380,&quot;name&quot;:&quot;libplacebo&quot;},&quot;project_metadata&quot;:{&quot;mr_path&quot;:&quot;/videolan/libplacebo/-/merge_requests&quot;,&quot;issues_path&quot;:&quot;/videolan/libplacebo/-/issues&quot;},&quot;code_search&quot;:false,&quot;scope&quot;:&quot;issues&quot;,&quot;for_snippets&quot;:null}},&quot;panel_type&quot;:&quot;project&quot;,&quot;shortcut_links&quot;:[{&quot;title&quot;:&quot;Snippets&quot;,&quot;href&quot;:&quot;/explore/snippets&quot;,&quot;css_class&quot;:&quot;dashboard-shortcuts-snippets&quot;},{&quot;title&quot;:&quot;Groups&quot;,&quot;href&quot;:&quot;/explore/groups&quot;,&quot;css_class&quot;:&quot;dashboard-shortcuts-groups&quot;},{&quot;title&quot;:&quot;Projects&quot;,&quot;href&quot;:&quot;/explore/projects/starred&quot;,&quot;css_class&quot;:&quot;dashboard-shortcuts-projects&quot;}],&quot;terms&quot;:null,&quot;sign_in_visible&quot;:&quot;true&quot;,&quot;allow_signup&quot;:&quot;true&quot;,&quot;new_user_registration_path&quot;:&quot;/users/sign_up&quot;,&quot;sign_in_path&quot;:&quot;/users/sign_in?redirect_to_referer=yes&quot;}"></aside>
+
+
+<div class="panels-container gl-flex gl-gap-3">
+<div class="content-panels gl-flex-1 gl-w-full gl-flex gl-gap-3 gl-relative js-content-panels gl-@container/content-panels">
+<div class="js-static-panel static-panel content-wrapper gl-relative paneled-view gl-flex-1 gl-overflow-y-auto gl-bg-default" id="static-panel-portal">
+<div class="panel-header">
+<div class="broadcast-wrapper">
+
+
+
+</div>
+<div class="top-bar-fixed container-fluid gl-rounded-t-lg gl-sticky gl-top-0 gl-left-0 gl-mx-0 gl-w-full" data-testid="top-bar">
+<div class="top-bar-container gl-flex gl-items-center gl-gap-2">
+<div class="gl-grow gl-basis-0 gl-flex gl-items-center gl-justify-start gl-gap-3">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"VideoLAN","item":"https://code.videolan.org/videolan"},{"@type":"ListItem","position":2,"name":"libplacebo","item":"https://code.videolan.org/videolan/libplacebo"},{"@type":"ListItem","position":3,"name":"Issues","item":"https://code.videolan.org/videolan/libplacebo/-/issues"},{"@type":"ListItem","position":4,"name":"#327","item":"https://code.videolan.org/videolan/libplacebo/-/issues/327"}]}
+
+
+</script>
+<div data-testid="breadcrumb-links" id="js-vue-page-breadcrumbs-wrapper">
+<div data-breadcrumbs-json="[{&quot;text&quot;:&quot;VideoLAN&quot;,&quot;href&quot;:&quot;/videolan&quot;,&quot;avatarPath&quot;:&quot;/uploads/-/system/group/avatar/9/largeVLC.png&quot;},{&quot;text&quot;:&quot;libplacebo&quot;,&quot;href&quot;:&quot;/videolan/libplacebo&quot;,&quot;avatarPath&quot;:null},{&quot;text&quot;:&quot;Issues&quot;,&quot;href&quot;:&quot;/videolan/libplacebo/-/issues&quot;,&quot;avatarPath&quot;:null},{&quot;text&quot;:&quot;#327&quot;,&quot;href&quot;:&quot;/videolan/libplacebo/-/issues/327&quot;,&quot;avatarPath&quot;:null}]" id="js-vue-page-breadcrumbs"></div>
+<div id="js-injected-page-breadcrumbs"></div>
+<div id="js-page-breadcrumbs-extra"></div>
+</div>
+
+
+<div id="js-work-item-feedback"></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="panel-content">
+<div class="panel-content-inner js-static-panel-inner">
+<div class="alert-wrapper alert-wrapper-top-space gl-flex gl-flex-col gl-gap-3 container-fluid container-limited">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<div class="container-fluid container-limited limit-container-width project-highlight-puc">
+<main class="content gl-@container/panel gl-pb-3" id="content-body" itemscope itemtype="http://schema.org/SoftwareSourceCode">
+<div id="js-drawer-container"></div>
+<div class="flash-container flash-container-page sticky" data-testid="flash-container">
+<div id="js-global-alerts"></div>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="issue-details issuable-details js-issue-details">
+<div class="detail-page-description content-block js-detail-page-description gl-pt-3 gl-pb-0 gl-border-none">
+<div data-header-actions-data="{&quot;can_create_issue&quot;:&quot;true&quot;,&quot;can_create_incident&quot;:&quot;false&quot;,&quot;can_destroy_issue&quot;:&quot;false&quot;,&quot;can_reopen_issue&quot;:&quot;false&quot;,&quot;can_report_spam&quot;:&quot;&quot;,&quot;can_update_issue&quot;:&quot;false&quot;,&quot;is_issue_author&quot;:&quot;false&quot;,&quot;issue_path&quot;:&quot;/videolan/libplacebo/-/issues/327&quot;,&quot;new_issue_path&quot;:&quot;/videolan/libplacebo/-/issues/new?add_related_issue=327&quot;,&quot;project_path&quot;:&quot;videolan/libplacebo&quot;,&quot;report_abuse_path&quot;:&quot;/-/abuse_reports/add_category&quot;,&quot;reported_user_id&quot;:162785,&quot;reported_from_url&quot;:&quot;https://code.videolan.org/videolan/libplacebo/-/issues/327&quot;,&quot;submit_as_spam_path&quot;:&quot;/videolan/libplacebo/-/issues/327/mark_as_spam&quot;,&quot;issuable_email_address&quot;:null,&quot;can_promote_to_epic&quot;:&quot;false&quot;}" data-initial="{&quot;endpoint&quot;:&quot;/videolan/libplacebo/-/issues/327&quot;,&quot;updateEndpoint&quot;:&quot;/videolan/libplacebo/-/issues/327.json&quot;,&quot;canUpdate&quot;:false,&quot;canDestroy&quot;:false,&quot;issuableRef&quot;:&quot;#327&quot;,&quot;imported&quot;:false,&quot;markdownPreviewPath&quot;:&quot;/videolan/libplacebo/-/preview_markdown?target_id=327\u0026target_type=Issue&quot;,&quot;markdownDocsPath&quot;:&quot;/help/user/markdown.md&quot;,&quot;lockVersion&quot;:0,&quot;issuableTemplateNamesPath&quot;:&quot;/videolan/libplacebo/description_templates/names/issue&quot;,&quot;initialTitleHtml&quot;:&quot;Crash when fuzzing shaders&quot;,&quot;initialTitleText&quot;:&quot;Crash when fuzzing shaders&quot;,&quot;initialDescriptionHtml&quot;:&quot;\u003cp data-sourcepos=\&quot;1:1-1:19\&quot; dir=\&quot;auto\&quot;\u003eHi libplacebo devs,\u003c/p\u003e\u0026#x000A;\u003cp data-sourcepos=\&quot;3:1-3:167\&quot; dir=\&quot;auto\&quot;\u003eI found an assertion error when fuzzing libplacebo with libfuzzer. The harness I use is ported to libfuzzer with limited modifications from \u003ccode data-sourcepos=\&quot;3:142-3:165\&quot;\u003esrc/tests/fuzz/shaders.c\u003c/code\u003e\u003c/p\u003e\u0026#x000A;\u003cp data-sourcepos=\&quot;5:1-5:111\&quot; dir=\&quot;auto\&quot;\u003eI attached the harness source file, static compiled binary, and poc with this report. Below is the error output\u003c/p\u003e\u0026#x000A;\u003cdiv class=\&quot;gl-relative markdown-code-block js-markdown-code\&quot;\u003e\u0026#x000A;\u003cpre data-sourcepos=\&quot;6:1-39:3\&quot; class=\&quot;code highlight js-syntax-highlight language-plaintext\&quot; v-pre=\&quot;true\&quot;\u003e\u003ccode\u003e\u003cspan id=\&quot;LC1\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e$ ./shaders crash-6d3236ec3c88039ca534b81acad564e847ecb062\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC2\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eINFO: Running with entropic power schedule (0xFF, 100).\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC3\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eINFO: Seed: 2992537906\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC4\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eINFO: Loaded 1 modules   (22420 inline 8-bit counters): 22420 [0x556c76f3fda0, 0x556c76f45534),\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC5\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eINFO: Loaded 1 PC tables (22420 PCs): 22420 [0x556c76f45538,0x556c76f9ce78),\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC6\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e./shaders: Running 1 inputs 1 time(s) each.\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC7\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eRunning: crash-6d3236ec3c88039ca534b81acad564e847ecb062\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC8\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eshaders: ../src/shaders.h:56: ident_t sh_ident_unpack(const char *): Assertion `(uname \u0026amp; ~IDENT_MASK) == IDENT_SENTINEL&#39; failed.\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC9\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e==3670634== ERROR: libFuzzer: deadly signal\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC10\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #0 0x556c76ac8651 in __sanitizer_print_stack_trace /src/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:87:3\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC11\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #1 0x556c76d49c68 in fuzzer::PrintStackTrace() /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:5\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC12\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #2 0x556c76d2c993 in fuzzer::Fuzzer::CrashCallback() /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:231:3\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC13\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #3 0x7f1092209adf  (/usr/lib/libc.so.6+0x3cadf) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC14\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #4 0x7f1092261e43  (/usr/lib/libc.so.6+0x94e43) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC15\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #5 0x7f1092209a2f in raise (/usr/lib/libc.so.6+0x3ca2f) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC16\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #6 0x7f10921f14c2 in abort (/usr/lib/libc.so.6+0x244c2) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC17\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #7 0x7f10921f13de  (/usr/lib/libc.so.6+0x243de) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC18\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #8 0x7f1092201c66 in __assert_fail (/usr/lib/libc.so.6+0x34c66) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC19\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #9 0x556c76ca0c83 in sh_ident_unpack /src/libplacebo/build/../src/shaders.h:56:5\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC20\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #10 0x556c76ca0c83 in pl_shader_finalize /src/libplacebo/build/src/shaders.c\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC21\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #11 0x556c76d0eda9 in LLVMFuzzerTestOneInput /src/libplacebo/build/../src/tests/fuzz/shaders.c:143:5\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC22\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #12 0x556c76d2deb0 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:614:13\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC23\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #13 0x556c76d18644 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:327:6\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC24\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #14 0x556c76d1e0da in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:862:9\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC25\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #15 0x556c76d4a4d2 in main /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:10\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC26\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #16 0x7f10921f2c87  (/usr/lib/libc.so.6+0x25c87) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC27\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #17 0x7f10921f2d4b in __libc_start_main (/usr/lib/libc.so.6+0x25d4b) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC28\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e    #18 0x556c76a2288d in _start (/home/weicheng/shaders+0x11888d)\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC29\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC30\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eNOTE: libFuzzer has rudimentary signal handlers.\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC31\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003e      Combine libFuzzer with AddressSanitizer or similar for better crash reports.\u003c/span\u003e\u0026#x000A;\u003cspan id=\&quot;LC32\&quot; class=\&quot;line\&quot; lang=\&quot;plaintext\&quot;\u003eSUMMARY: libFuzzer: deadly signal\u003c/span\u003e\u003c/code\u003e\u003c/pre\u003e\u0026#x000A;\u003ccopy-code\u003e\u003c/copy-code\u003e\u0026#x000A;\u003c/div\u003e\u0026#x000A;\u003cp data-sourcepos=\&quot;41:1-42:138\&quot; dir=\&quot;auto\&quot;\u003e\u003ca data-sourcepos=\&quot;41:1-41:64\&quot; href=\&quot;/-/project/380/uploads/c4ed4d7f6805727594bae3e124164cb3/shaders.c\&quot; data-canonical-src=\&quot;/uploads/c4ed4d7f6805727594bae3e124164cb3/shaders.c\&quot; data-link=\&quot;true\&quot; class=\&quot;gfm\&quot;\u003eshaders.c\u003c/a\u003e\u0026#x000A;\u003ca data-sourcepos=\&quot;42:1-42:138\&quot; href=\&quot;/-/project/380/uploads/7fd20d5df2f545f45e2d22e5ce2a3374/crash-6d3236ec3c88039ca534b81acad564e847ecb062\&quot; data-canonical-src=\&quot;/uploads/7fd20d5df2f545f45e2d22e5ce2a3374/crash-6d3236ec3c88039ca534b81acad564e847ecb062\&quot; data-link=\&quot;true\&quot; class=\&quot;gfm\&quot;\u003ecrash-6d3236ec3c88039ca534b81acad564e847ecb062\u003c/a\u003e\u003c/p\u003e\u0026#x000A;\u003cp data-sourcepos=\&quot;44:1-44:104\&quot; dir=\&quot;auto\&quot;\u003e\u003ca data-sourcepos=\&quot;44:1-44:104\&quot; href=\&quot;https://drive.google.com/file/d/1N3jH3OIp3a2gTj-umCu2SOpwkE-iE55d/view?usp=sharing\&quot; rel=\&quot;nofollow noreferrer noopener\&quot; target=\&quot;_blank\&quot;\u003egdrive for shaders\u003c/a\u003e\u003c/p\u003e&quot;,&quot;initialDescriptionText&quot;:&quot;Hi libplacebo devs,\n\nI found an assertion error when fuzzing libplacebo with libfuzzer. The harness I use is ported to libfuzzer with limited modifications from `src/tests/fuzz/shaders.c` \n\nI attached the harness source file, static compiled binary, and poc with this report. Below is the error output\n```\n$ ./shaders crash-6d3236ec3c88039ca534b81acad564e847ecb062\nINFO: Running with entropic power schedule (0xFF, 100).\nINFO: Seed: 2992537906\nINFO: Loaded 1 modules   (22420 inline 8-bit counters): 22420 [0x556c76f3fda0, 0x556c76f45534),\nINFO: Loaded 1 PC tables (22420 PCs): 22420 [0x556c76f45538,0x556c76f9ce78),\n./shaders: Running 1 inputs 1 time(s) each.\nRunning: crash-6d3236ec3c88039ca534b81acad564e847ecb062\nshaders: ../src/shaders.h:56: ident_t sh_ident_unpack(const char *): Assertion `(uname \u0026 ~IDENT_MASK) == IDENT_SENTINEL&#39; failed.\n==3670634== ERROR: libFuzzer: deadly signal\n    #0 0x556c76ac8651 in __sanitizer_print_stack_trace /src/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:87:3\n    #1 0x556c76d49c68 in fuzzer::PrintStackTrace() /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:5\n    #2 0x556c76d2c993 in fuzzer::Fuzzer::CrashCallback() /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:231:3\n    #3 0x7f1092209adf  (/usr/lib/libc.so.6+0x3cadf) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #4 0x7f1092261e43  (/usr/lib/libc.so.6+0x94e43) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #5 0x7f1092209a2f in raise (/usr/lib/libc.so.6+0x3ca2f) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #6 0x7f10921f14c2 in abort (/usr/lib/libc.so.6+0x244c2) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #7 0x7f10921f13de  (/usr/lib/libc.so.6+0x243de) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #8 0x7f1092201c66 in __assert_fail (/usr/lib/libc.so.6+0x34c66) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #9 0x556c76ca0c83 in sh_ident_unpack /src/libplacebo/build/../src/shaders.h:56:5\n    #10 0x556c76ca0c83 in pl_shader_finalize /src/libplacebo/build/src/shaders.c\n    #11 0x556c76d0eda9 in LLVMFuzzerTestOneInput /src/libplacebo/build/../src/tests/fuzz/shaders.c:143:5\n    #12 0x556c76d2deb0 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:614:13\n    #13 0x556c76d18644 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:327:6\n    #14 0x556c76d1e0da in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:862:9\n    #15 0x556c76d4a4d2 in main /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:10\n    #16 0x7f10921f2c87  (/usr/lib/libc.so.6+0x25c87) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #17 0x7f10921f2d4b in __libc_start_main (/usr/lib/libc.so.6+0x25d4b) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #18 0x556c76a2288d in _start (/home/weicheng/shaders+0x11888d)\n\nNOTE: libFuzzer has rudimentary signal handlers.\n      Combine libFuzzer with AddressSanitizer or similar for better crash reports.\nSUMMARY: libFuzzer: deadly signal\n```\n\n[shaders.c](/uploads/c4ed4d7f6805727594bae3e124164cb3/shaders.c)\n[crash-6d3236ec3c88039ca534b81acad564e847ecb062](/uploads/7fd20d5df2f545f45e2d22e5ce2a3374/crash-6d3236ec3c88039ca534b81acad564e847ecb062)\n\n[gdrive for shaders](https://drive.google.com/file/d/1N3jH3OIp3a2gTj-umCu2SOpwkE-iE55d/view?usp=sharing)&quot;,&quot;initialTaskCompletionStatus&quot;:{&quot;count&quot;:0,&quot;completed_count&quot;:0},&quot;canCreateIncident&quot;:false,&quot;fullPath&quot;:&quot;videolan/libplacebo&quot;,&quot;iid&quot;:327,&quot;issuableId&quot;:394989,&quot;issueType&quot;:&quot;issue&quot;,&quot;isHidden&quot;:false,&quot;zoomMeetingUrl&quot;:null,&quot;authorId&quot;:162785,&quot;authorName&quot;:&quot;Spencer Wu&quot;,&quot;authorUsername&quot;:&quot;spencerwuwu&quot;,&quot;authorWebUrl&quot;:&quot;/spencerwuwu&quot;,&quot;createdAt&quot;:&quot;2024-07-24T23:48:59+00:00&quot;,&quot;isFirstContribution&quot;:false,&quot;serviceDeskReplyTo&quot;:null,&quot;registerPath&quot;:&quot;/users/sign_up?redirect_to_referer=yes&quot;,&quot;signInPath&quot;:&quot;/users/sign_in?redirect_to_referer=yes&quot;,&quot;publishedIncidentUrl&quot;:null,&quot;slaFeatureAvailable&quot;:&quot;false&quot;,&quot;uploadMetricsFeatureAvailable&quot;:&quot;false&quot;,&quot;projectId&quot;:380,&quot;projectPath&quot;:&quot;libplacebo&quot;,&quot;projectNamespace&quot;:&quot;videolan&quot;,&quot;canAdmin&quot;:false,&quot;hasIssueWeightsFeature&quot;:false,&quot;hasIterationsFeature&quot;:false,&quot;hasStatusFeature&quot;:false,&quot;canAdminRelation&quot;:false}" id="js-issuable-app">
+<div class="title-container">
+<h1 class="gl-heading-1 !gl-m-0">Crash when fuzzing shaders</h1>
+</div>
+<div class="description">
+<div class="md"><p data-sourcepos="1:1-1:19" dir="auto">Hi libplacebo devs,</p>&#x000A;<p data-sourcepos="3:1-3:167" dir="auto">I found an assertion error when fuzzing libplacebo with libfuzzer. The harness I use is ported to libfuzzer with limited modifications from <code data-sourcepos="3:142-3:165">src/tests/fuzz/shaders.c</code></p>&#x000A;<p data-sourcepos="5:1-5:111" dir="auto">I attached the harness source file, static compiled binary, and poc with this report. Below is the error output</p>&#x000A;<div class="gl-relative markdown-code-block js-markdown-code">&#x000A;<pre data-sourcepos="6:1-39:3" class="code highlight js-syntax-highlight language-plaintext" v-pre="true"><code><span id="LC1" class="line" lang="plaintext">$ ./shaders crash-6d3236ec3c88039ca534b81acad564e847ecb062</span>&#x000A;<span id="LC2" class="line" lang="plaintext">INFO: Running with entropic power schedule (0xFF, 100).</span>&#x000A;<span id="LC3" class="line" lang="plaintext">INFO: Seed: 2992537906</span>&#x000A;<span id="LC4" class="line" lang="plaintext">INFO: Loaded 1 modules   (22420 inline 8-bit counters): 22420 [0x556c76f3fda0, 0x556c76f45534),</span>&#x000A;<span id="LC5" class="line" lang="plaintext">INFO: Loaded 1 PC tables (22420 PCs): 22420 [0x556c76f45538,0x556c76f9ce78),</span>&#x000A;<span id="LC6" class="line" lang="plaintext">./shaders: Running 1 inputs 1 time(s) each.</span>&#x000A;<span id="LC7" class="line" lang="plaintext">Running: crash-6d3236ec3c88039ca534b81acad564e847ecb062</span>&#x000A;<span id="LC8" class="line" lang="plaintext">shaders: ../src/shaders.h:56: ident_t sh_ident_unpack(const char *): Assertion `(uname &amp; ~IDENT_MASK) == IDENT_SENTINEL' failed.</span>&#x000A;<span id="LC9" class="line" lang="plaintext">==3670634== ERROR: libFuzzer: deadly signal</span>&#x000A;<span id="LC10" class="line" lang="plaintext">    #0 0x556c76ac8651 in __sanitizer_print_stack_trace /src/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:87:3</span>&#x000A;<span id="LC11" class="line" lang="plaintext">    #1 0x556c76d49c68 in fuzzer::PrintStackTrace() /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:5</span>&#x000A;<span id="LC12" class="line" lang="plaintext">    #2 0x556c76d2c993 in fuzzer::Fuzzer::CrashCallback() /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:231:3</span>&#x000A;<span id="LC13" class="line" lang="plaintext">    #3 0x7f1092209adf  (/usr/lib/libc.so.6+0x3cadf) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)</span>&#x000A;<span id="LC14" class="line" lang="plaintext">    #4 0x7f1092261e43  (/usr/lib/libc.so.6+0x94e43) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)</span>&#x000A;<span id="LC15" class="line" lang="plaintext">    #5 0x7f1092209a2f in raise (/usr/lib/libc.so.6+0x3ca2f) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)</span>&#x000A;<span id="LC16" class="line" lang="plaintext">    #6 0x7f10921f14c2 in abort (/usr/lib/libc.so.6+0x244c2) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)</span>&#x000A;<span id="LC17" class="line" lang="plaintext">    #7 0x7f10921f13de  (/usr/lib/libc.so.6+0x243de) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)</span>&#x000A;<span id="LC18" class="line" lang="plaintext">    #8 0x7f1092201c66 in __assert_fail (/usr/lib/libc.so.6+0x34c66) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)</span>&#x000A;<span id="LC19" class="line" lang="plaintext">    #9 0x556c76ca0c83 in sh_ident_unpack /src/libplacebo/build/../src/shaders.h:56:5</span>&#x000A;<span id="LC20" class="line" lang="plaintext">    #10 0x556c76ca0c83 in pl_shader_finalize /src/libplacebo/build/src/shaders.c</span>&#x000A;<span id="LC21" class="line" lang="plaintext">    #11 0x556c76d0eda9 in LLVMFuzzerTestOneInput /src/libplacebo/build/../src/tests/fuzz/shaders.c:143:5</span>&#x000A;<span id="LC22" class="line" lang="plaintext">    #12 0x556c76d2deb0 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:614:13</span>&#x000A;<span id="LC23" class="line" lang="plaintext">    #13 0x556c76d18644 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:327:6</span>&#x000A;<span id="LC24" class="line" lang="plaintext">    #14 0x556c76d1e0da in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:862:9</span>&#x000A;<span id="LC25" class="line" lang="plaintext">    #15 0x556c76d4a4d2 in main /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:10</span>&#x000A;<span id="LC26" class="line" lang="plaintext">    #16 0x7f10921f2c87  (/usr/lib/libc.so.6+0x25c87) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)</span>&#x000A;<span id="LC27" class="line" lang="plaintext">    #17 0x7f10921f2d4b in __libc_start_main (/usr/lib/libc.so.6+0x25d4b) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)</span>&#x000A;<span id="LC28" class="line" lang="plaintext">    #18 0x556c76a2288d in _start (/home/weicheng/shaders+0x11888d)</span>&#x000A;<span id="LC29" class="line" lang="plaintext"></span>&#x000A;<span id="LC30" class="line" lang="plaintext">NOTE: libFuzzer has rudimentary signal handlers.</span>&#x000A;<span id="LC31" class="line" lang="plaintext">      Combine libFuzzer with AddressSanitizer or similar for better crash reports.</span>&#x000A;<span id="LC32" class="line" lang="plaintext">SUMMARY: libFuzzer: deadly signal</span></code></pre>&#x000A;<copy-code></copy-code>&#x000A;</div>&#x000A;<p data-sourcepos="41:1-42:138" dir="auto"><a data-sourcepos="41:1-41:64" href="/-/project/380/uploads/c4ed4d7f6805727594bae3e124164cb3/shaders.c" data-canonical-src="/uploads/c4ed4d7f6805727594bae3e124164cb3/shaders.c" data-link="true" class="gfm">shaders.c</a>&#x000A;<a data-sourcepos="42:1-42:138" href="/-/project/380/uploads/7fd20d5df2f545f45e2d22e5ce2a3374/crash-6d3236ec3c88039ca534b81acad564e847ecb062" data-canonical-src="/uploads/7fd20d5df2f545f45e2d22e5ce2a3374/crash-6d3236ec3c88039ca534b81acad564e847ecb062" data-link="true" class="gfm">crash-6d3236ec3c88039ca534b81acad564e847ecb062</a></p>&#x000A;<p data-sourcepos="44:1-44:104" dir="auto"><a data-sourcepos="44:1-44:104" href="https://drive.google.com/file/d/1N3jH3OIp3a2gTj-umCu2SOpwkE-iE55d/view?usp=sharing" rel="nofollow noreferrer noopener" target="_blank">gdrive for shaders</a></p></div>
+</div>
+
+</div>
+<div class="js-issue-widgets">
+<div class="emoji-block emoji-block-sticky">
+<div class="row gl-m-0 gl-justify-between">
+<div class="js-noteable-awards">
+<div class="gl-flex gl-flex-wrap gl-justify-between gl-pt-3">
+<div data-can-award-emoji="false" data-path="/api/v4/projects/380/issues/327/award_emoji" data-show-default-award-emojis="true" id="js-vue-awards-block"></div>
+
+</div>
+
+</div>
+<div class="new-branch-col gl-font-size-0 gl-my-2">
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<div class="js-issue-widgets">
+
+<div class="js-work-item-links-root" data-full-path="videolan/libplacebo" data-issuable-id="394989" data-issuable-iid="327" data-register-path="/users/sign_up?redirect_to_referer=yes" data-sign-in-path="/users/sign_in?redirect_to_referer=yes" data-wi-autocomplete-award-emojis-path="/-/autocomplete/award_emojis" data-wi-calendar-path="/videolan/libplacebo/-/work_items.ics?due_date=next_month_and_previous_two_weeks&amp;id=327&amp;sort=closest_future_date" data-wi-can-admin-label="false" data-wi-can-bulk-edit-epics="false" data-wi-can-bulk-update="false" data-wi-can-create-projects="false" data-wi-can-edit="false" data-wi-can-import-work-items="false" data-wi-can-read-crm-contact="false" data-wi-can-read-crm-organization="false" data-wi-default-branch="master" data-wi-duo-remote-flows-availability="true" data-wi-epics-list-path="/groups/libplacebo/-/epics" data-wi-export-csv-path="/videolan/libplacebo/-/issues/export_csv" data-wi-full-path="videolan/libplacebo" data-wi-group-id="9" data-wi-group-issues-path="/groups/libplacebo/-/issues" data-wi-group-path="videolan" data-wi-has-blocked-issues-feature="false" data-wi-has-custom-fields-feature="false" data-wi-has-group-bulk-edit-feature="false" data-wi-has-projects="false" data-wi-has-status-feature="false" data-wi-is-issue-repositioning-disabled="false" data-wi-is-signed-in="false" data-wi-issues-list-path="/videolan/libplacebo/-/issues" data-wi-labels-fetch-path="/groups/libplacebo/-/labels.json?include_ancestor_groups=true&amp;only_group_labels=true" data-wi-labels-manage-path="/videolan/libplacebo/-/labels" data-wi-max-attachment-size="10 MiB" data-wi-new-comment-template-paths="[{&quot;text&quot;:&quot;Your comment templates&quot;,&quot;href&quot;:&quot;/-/profile/comment_templates&quot;}]" data-wi-new-issue-path="/videolan/libplacebo/-/issues/new" data-wi-new-project-path="/projects/new?namespace_id=9" data-wi-new-trial-path="https://customers.gitlab.com/trials/new?return_to=https%3A%2F%2Fcode.videolan.org%2Fadmin%2Fapplication_settings%2Fgeneral%23js-add-license-toggle" data-wi-project-import-jira-path="/videolan/libplacebo/-/import/jira" data-wi-project-namespace-full-path="videolan" data-wi-register-path="/users/sign_up?redirect_to_referer=yes" data-wi-releases-path="/videolan/libplacebo/-/releases.json" data-wi-report-abuse-path="/-/abuse_reports/add_category" data-wi-rss-path="/videolan/libplacebo/-/work_items.atom?id=327" data-wi-show-new-work-item="true" data-wi-sign-in-path="/users/sign_in?redirect_to_referer=yes" data-wi-time-tracking-limit-to-hours="false" data-wi-work-item-planning-view-enabled="false" data-wi-work-items-saved-views-enabled="false"></div>
+
+
+<div class="js-related-issues-root" data-can-add-related-issues="false" data-endpoint="/videolan/libplacebo/-/issues/327/links" data-full-path="videolan/libplacebo" data-has-issue-weights-feature="false" data-has-iterations-feature="false" data-help-path="/help/user/project/issues/related_issues.md" data-is-group="false" data-issuable-type="issue" data-show-categorized-issues="false" data-wi-autocomplete-award-emojis-path="/-/autocomplete/award_emojis" data-wi-calendar-path="/videolan/libplacebo/-/work_items.ics?due_date=next_month_and_previous_two_weeks&amp;id=327&amp;sort=closest_future_date" data-wi-can-admin-label="false" data-wi-can-bulk-edit-epics="false" data-wi-can-bulk-update="false" data-wi-can-create-projects="false" data-wi-can-edit="false" data-wi-can-import-work-items="false" data-wi-can-read-crm-contact="false" data-wi-can-read-crm-organization="false" data-wi-default-branch="master" data-wi-duo-remote-flows-availability="true" data-wi-epics-list-path="/groups/libplacebo/-/epics" data-wi-export-csv-path="/videolan/libplacebo/-/issues/export_csv" data-wi-full-path="videolan/libplacebo" data-wi-group-id="9" data-wi-group-issues-path="/groups/libplacebo/-/issues" data-wi-group-path="videolan" data-wi-has-blocked-issues-feature="false" data-wi-has-custom-fields-feature="false" data-wi-has-group-bulk-edit-feature="false" data-wi-has-projects="false" data-wi-has-status-feature="false" data-wi-is-issue-repositioning-disabled="false" data-wi-is-signed-in="false" data-wi-issues-list-path="/videolan/libplacebo/-/issues" data-wi-labels-fetch-path="/groups/libplacebo/-/labels.json?include_ancestor_groups=true&amp;only_group_labels=true" data-wi-labels-manage-path="/videolan/libplacebo/-/labels" data-wi-max-attachment-size="10 MiB" data-wi-new-comment-template-paths="[{&quot;text&quot;:&quot;Your comment templates&quot;,&quot;href&quot;:&quot;/-/profile/comment_templates&quot;}]" data-wi-new-issue-path="/videolan/libplacebo/-/issues/new" data-wi-new-project-path="/projects/new?namespace_id=9" data-wi-new-trial-path="https://customers.gitlab.com/trials/new?return_to=https%3A%2F%2Fcode.videolan.org%2Fadmin%2Fapplication_settings%2Fgeneral%23js-add-license-toggle" data-wi-project-import-jira-path="/videolan/libplacebo/-/import/jira" data-wi-project-namespace-full-path="videolan" data-wi-register-path="/users/sign_up?redirect_to_referer=yes" data-wi-releases-path="/videolan/libplacebo/-/releases.json" data-wi-report-abuse-path="/-/abuse_reports/add_category" data-wi-rss-path="/videolan/libplacebo/-/work_items.atom?id=327" data-wi-show-new-work-item="true" data-wi-sign-in-path="/users/sign_in?redirect_to_referer=yes" data-wi-time-tracking-limit-to-hours="false" data-wi-work-item-planning-view-enabled="false" data-wi-work-items-saved-views-enabled="false"></div>
+
+<div data-has-closing-merge-request="false" data-iid="327" data-project-path="videolan/libplacebo" id="js-related-merge-requests"></div>
+<div data-url="/videolan/libplacebo/-/issues/327/related_branches" id="related-branches">
+</div>
+</div>
+<div class="js-issue-widgets">
+<section class="issuable-discussion js-vue-notes-event">
+<div data-can-add-timeline-events="false" data-current-user-data="null" data-new-comment-template-paths="[{&quot;text&quot;:&quot;Your comment templates&quot;,&quot;href&quot;:&quot;/-/profile/comment_templates&quot;}]" data-noteable-data="{&quot;id&quot;:394989,&quot;iid&quot;:327,&quot;description&quot;:&quot;Hi libplacebo devs,\n\nI found an assertion error when fuzzing libplacebo with libfuzzer. The harness I use is ported to libfuzzer with limited modifications from `src/tests/fuzz/shaders.c` \n\nI attached the harness source file, static compiled binary, and poc with this report. Below is the error output\n```\n$ ./shaders crash-6d3236ec3c88039ca534b81acad564e847ecb062\nINFO: Running with entropic power schedule (0xFF, 100).\nINFO: Seed: 2992537906\nINFO: Loaded 1 modules   (22420 inline 8-bit counters): 22420 [0x556c76f3fda0, 0x556c76f45534),\nINFO: Loaded 1 PC tables (22420 PCs): 22420 [0x556c76f45538,0x556c76f9ce78),\n./shaders: Running 1 inputs 1 time(s) each.\nRunning: crash-6d3236ec3c88039ca534b81acad564e847ecb062\nshaders: ../src/shaders.h:56: ident_t sh_ident_unpack(const char *): Assertion `(uname \u0026 ~IDENT_MASK) == IDENT_SENTINEL&#39; failed.\n==3670634== ERROR: libFuzzer: deadly signal\n    #0 0x556c76ac8651 in __sanitizer_print_stack_trace /src/llvm-project/compiler-rt/lib/asan/asan_stack.cpp:87:3\n    #1 0x556c76d49c68 in fuzzer::PrintStackTrace() /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerUtil.cpp:210:5\n    #2 0x556c76d2c993 in fuzzer::Fuzzer::CrashCallback() /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:231:3\n    #3 0x7f1092209adf  (/usr/lib/libc.so.6+0x3cadf) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #4 0x7f1092261e43  (/usr/lib/libc.so.6+0x94e43) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #5 0x7f1092209a2f in raise (/usr/lib/libc.so.6+0x3ca2f) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #6 0x7f10921f14c2 in abort (/usr/lib/libc.so.6+0x244c2) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #7 0x7f10921f13de  (/usr/lib/libc.so.6+0x243de) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #8 0x7f1092201c66 in __assert_fail (/usr/lib/libc.so.6+0x34c66) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #9 0x556c76ca0c83 in sh_ident_unpack /src/libplacebo/build/../src/shaders.h:56:5\n    #10 0x556c76ca0c83 in pl_shader_finalize /src/libplacebo/build/src/shaders.c\n    #11 0x556c76d0eda9 in LLVMFuzzerTestOneInput /src/libplacebo/build/../src/tests/fuzz/shaders.c:143:5\n    #12 0x556c76d2deb0 in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerLoop.cpp:614:13\n    #13 0x556c76d18644 in fuzzer::RunOneTest(fuzzer::Fuzzer*, char const*, unsigned long) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:327:6\n    #14 0x556c76d1e0da in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerDriver.cpp:862:9\n    #15 0x556c76d4a4d2 in main /src/llvm-project/compiler-rt/lib/fuzzer/FuzzerMain.cpp:20:10\n    #16 0x7f10921f2c87  (/usr/lib/libc.so.6+0x25c87) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #17 0x7f10921f2d4b in __libc_start_main (/usr/lib/libc.so.6+0x25d4b) (BuildId: 32a656aa5562eece8c59a585f5eacd6cf5e2307b)\n    #18 0x556c76a2288d in _start (/home/weicheng/shaders+0x11888d)\n\nNOTE: libFuzzer has rudimentary signal handlers.\n      Combine libFuzzer with AddressSanitizer or similar for better crash reports.\nSUMMARY: libFuzzer: deadly signal\n```\n\n[shaders.c](/uploads/c4ed4d7f6805727594bae3e124164cb3/shaders.c)\n[crash-6d3236ec3c88039ca534b81acad564e847ecb062](/uploads/7fd20d5df2f545f45e2d22e5ce2a3374/crash-6d3236ec3c88039ca534b81acad564e847ecb062)\n\n[gdrive for shaders](https://drive.google.com/file/d/1N3jH3OIp3a2gTj-umCu2SOpwkE-iE55d/view?usp=sharing)&quot;,&quot;title&quot;:&quot;Crash when fuzzing shaders&quot;,&quot;time_estimate&quot;:0,&quot;total_time_spent&quot;:0,&quot;human_time_estimate&quot;:null,&quot;human_total_time_spent&quot;:null,&quot;state&quot;:&quot;closed&quot;,&quot;milestone_id&quot;:null,&quot;updated_by_id&quot;:null,&quot;created_at&quot;:&quot;2024-07-24T23:48:59Z&quot;,&quot;updated_at&quot;:&quot;2025-05-21T18:18:22Z&quot;,&quot;milestone&quot;:null,&quot;labels&quot;:[],&quot;lock_version&quot;:0,&quot;author_id&quot;:162785,&quot;confidential&quot;:false,&quot;discussion_locked&quot;:null,&quot;assignees&quot;:[],&quot;due_date&quot;:null,&quot;project_id&quot;:380,&quot;moved_to_id&quot;:null,&quot;duplicated_to_id&quot;:null,&quot;web_url&quot;:&quot;/videolan/libplacebo/-/issues/327&quot;,&quot;current_user&quot;:{&quot;can_create_note&quot;:false,&quot;can_create_confidential_note&quot;:false,&quot;can_update&quot;:false,&quot;can_set_issue_metadata&quot;:false,&quot;can_award_emoji&quot;:false},&quot;create_note_path&quot;:&quot;/videolan/libplacebo/notes?target_id=394989\u0026target_type=issue&quot;,&quot;preview_note_path&quot;:&quot;/videolan/libplacebo/-/preview_markdown?target_id=327\u0026target_type=Issue&quot;,&quot;is_project_archived&quot;:false,&quot;issue_email_participants&quot;:[],&quot;type&quot;:&quot;ISSUE&quot;,&quot;blocked&quot;:false,&quot;blocked_by_issues&quot;:[]}" data-noteable-type="Issue" data-notes-data="{&quot;noteableType&quot;:&quot;issue&quot;,&quot;noteableId&quot;:394989,&quot;projectId&quot;:380,&quot;groupId&quot;:null,&quot;discussionsPath&quot;:&quot;/videolan/libplacebo/-/issues/327/discussions.json&quot;,&quot;registerPath&quot;:&quot;/users/sign_up?redirect_to_referer=yes&quot;,&quot;newSessionPath&quot;:&quot;/users/sign_in?redirect_to_referer=yes&quot;,&quot;markdownDocsPath&quot;:&quot;/help/user/markdown.md&quot;,&quot;quickActionsDocsPath&quot;:&quot;/help/user/project/quick_actions.md&quot;,&quot;closePath&quot;:&quot;/videolan/libplacebo/-/issues/327.json?issue%5Bstate_event%5D=close&quot;,&quot;reopenPath&quot;:&quot;/videolan/libplacebo/-/issues/327.json?issue%5Bstate_event%5D=reopen&quot;,&quot;notesPath&quot;:&quot;/videolan/libplacebo/noteable/issue/394989/notes&quot;,&quot;prerenderedNotesCount&quot;:2,&quot;lastFetchedAt&quot;:1774422905000000,&quot;notesFilter&quot;:null}" data-notes-filters="{&quot;Show all activity&quot;:0,&quot;Show comments only&quot;:1,&quot;Show history only&quot;:2}" data-report-abuse-path="/-/abuse_reports/add_category" data-show-timeline-view-toggle="false" data-target-type="issue" id="js-vue-notes"></div>
+</section>
+
+</div>
+</div>
+<aside aria-label="issue" aria-live="polite" class="right-sidebar js-right-sidebar js-issuable-sidebar right-sidebar-expanded" data-always-show-toggle data-auto-collapse data-issuable-type="issue">
+<div class="issuable-sidebar">
+<div class="issuable-sidebar-header">
+<button class="gl-button btn btn-md btn-default gutter-toggle gl-float-right js-sidebar-toggle has-tooltip !gl-border-0" type="button" aria-label="Toggle sidebar" title="Collapse sidebar" data-container="body" data-placement="left" data-boundary="viewport" type="button"><span class="gl-button-text">
+<span class="js-sidebar-toggle-container gl-button-text" data-is-expanded="true"><svg class="s16 js-sidebar-expand hidden" data-testid="chevron-double-lg-left-icon"><use href="/assets/icons-dafe78f1f5f3f39844d40e6211b4b6b2b89533b96324c26e6ca12cfd6cf1b0ca.svg#chevron-double-lg-left"></use></svg><svg class="s16 js-sidebar-collapse " data-testid="chevron-double-lg-right-icon"><use href="/assets/icons-dafe78f1f5f3f39844d40e6211b4b6b2b89533b96324c26e6ca12cfd6cf1b0ca.svg#chevron-double-lg-right"></use></svg></span>
+
+</span>
+
+</button></div>
+<form class="issuable-context-form inline-update js-issuable-update " action="/videolan/libplacebo/-/issues/327.json" accept-charset="UTF-8" data-remote="true" method="post"><div class="block assignee gl-mt-3" data-testid="assignee-block-container">
+<div class="js-sidebar-assignees-root" data-field="issue" data-max-assignees="1">
+<div class="title hide-collapsed gl-flex gl-justify-between gl-items-center !gl-mb-0">
+<span class="gl-font-bold">Assignee</span>
+<span class="gl-spinner-container" role="status"><span aria-hidden class="gl-spinner gl-spinner-sm gl-spinner-dark !gl-align-text-bottom"></span><span class="gl-sr-only !gl-absolute">Loading</span>
+</span>
+</div>
+</div>
+
+</div>
+<div class="js-sidebar-labels-widget-root" data-allow-label-create="" data-allow-scoped-labels="false" data-can-edit="" data-iid="327" data-issuable-type="issue" data-labels-fetch-path="/videolan/libplacebo/-/labels.json?include_ancestor_groups=true" data-labels-manage-path="/videolan/libplacebo/-/labels" data-project-issues-path="/videolan/libplacebo/-/issues" data-project-path="videolan/libplacebo" data-selected-labels="[]"></div>
+<div class="block milestone" data-testid="sidebar-milestones">
+<div class="js-sidebar-milestone-widget-root" data-can-edit="" data-issue-iid="327" data-project-path="videolan/libplacebo"></div>
+</div>
+
+
+<div class="js-sidebar-due-date-widget-root"></div>
+<div class="js-sidebar-time-tracking-root block">
+<!-- / Fallback while content is loading -->
+<div class="title hide-collapsed gl-flex gl-justify-between gl-items-center !gl-mb-0">
+<span class="gl-font-bold">Time tracking</span>
+<span class="gl-spinner-container" role="status"><span aria-hidden class="gl-spinner gl-spinner-sm gl-spinner-dark !gl-align-text-bottom"></span><span class="gl-sr-only !gl-absolute">Loading</span>
+</span>
+</div>
+</div>
+<script id="js-confidential-issue-data" type="application/json">{"is_confidential":false,"is_editable":null}</script>
+
+<div class="js-sidebar-participants-widget-root"></div>
+</form><script class="js-sidebar-options" type="application/json">{"endpoint":"/videolan/libplacebo/-/issues/327.json?serializer=sidebar_extras","toggleSubscriptionEndpoint":"/videolan/libplacebo/-/issues/327/toggle_subscription","moveIssueEndpoint":"/videolan/libplacebo/-/issues/327/move","projectsAutocompleteEndpoint":"/-/autocomplete/projects?project_id=380","editable":"","currentUser":{},"rootPath":"/","fullPath":"videolan/libplacebo","iid":327,"id":394989,"severity":"unknown","timeTrackingLimitToHours":false,"canCreateTimelogs":null,"createNoteEmail":null,"issuableType":"issue","directlyInviteMembers":"false","weightOptions":["None","Any",0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],"weightNoneValue":"None","multipleApprovalRulesAvailable":null}</script>
+</div>
+</aside>
+
+
+
+</main>
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="js-dynamic-panel paneled-view contextual-panel gl-@container/panel !gl-absolute gl-shadow-lg @xl/content-panels:gl-w-1/2 @xl/content-panels:gl-shadow-none @xl/content-panels:!gl-relative" id="contextual-panel-portal"></div>
+</div>
+</div>
+
+</div>
+
+<div class="footer-message" style="background-color: #000000;color: #000000"><p>VideoLAN code repository instance</p></div>
+<script>
+//<![CDATA[
+if ('loading' in HTMLImageElement.prototype) {
+  document.querySelectorAll('img.lazy').forEach(img => {
+    img.loading = 'lazy';
+    let imgUrl = img.dataset.src;
+    // Only adding width + height for avatars for now
+    if (imgUrl.indexOf('/avatar/') > -1 && imgUrl.indexOf('?') === -1) {
+      const targetWidth = img.getAttribute('width') || img.width;
+      imgUrl += `?width=${targetWidth}`;
+    }
+    img.src = imgUrl;
+    img.removeAttribute('data-src');
+    img.classList.remove('lazy');
+    img.classList.add('js-lazy-loaded');
+    img.dataset.testid = 'js-lazy-loaded-content';
+  });
+}
+
+//]]>
+</script>
+<script>
+//<![CDATA[
+gl = window.gl || {};
+gl.experiments = {};
+
+
+//]]>
+</script>
+
+</body>
+</html>
+
